@@ -40,7 +40,14 @@ export default function Footer() {
     <footer className="bg-gray-900 text-gray-300 py-12 mt-12">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
-          <h2 className="text-2xl font-black text-white tracking-tighter mb-4">CENTRAL LENS</h2>
+          <div className="flex items-center space-x-2.5 mb-4">
+            <img 
+              src="https://res.cloudinary.com/idhgjmqi/image/upload/v1789294779/Central_Lens_Logo_Transparent_1.png" 
+              alt="Central Lens Logo" 
+              className="h-8 w-8 object-contain"
+            />
+            <h2 className="text-2xl font-black text-white tracking-tighter">CENTRAL LENS</h2>
+          </div>
           <p className="text-sm text-gray-400 mb-6">
             Your source for the latest news in politics, sports, technology, and more. 
             Hindi-first, video-first journalism.

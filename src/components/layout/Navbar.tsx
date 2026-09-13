@@ -86,8 +86,15 @@ export default function Navbar() {
           >
             <Menu size={24} />
           </button>
-          <Link href="/" className="text-2xl font-black text-red-600 tracking-tighter hover:opacity-90 transition">
-            CENTRAL LENS
+          <Link href="/" className="flex items-center space-x-2.5 hover:opacity-95 transition">
+            <img 
+              src="https://res.cloudinary.com/idhgjmqi/image/upload/v1789294779/Central_Lens_Logo_Transparent_1.png" 
+              alt="Central Lens Logo" 
+              className="h-9 w-9 object-contain"
+            />
+            <span className="text-2xl font-black text-red-600 tracking-tighter">
+              CENTRAL LENS
+            </span>
           </Link>
         </div>
         <div className="flex items-center space-x-3">
@@ -161,9 +168,16 @@ export default function Navbar() {
           <Link 
             href="/" 
             onClick={() => setIsMenuOpen(false)} 
-            className="text-xl font-black text-red-600 tracking-tighter"
+            className="flex items-center space-x-2"
           >
-            CENTRAL LENS
+            <img 
+              src="https://res.cloudinary.com/idhgjmqi/image/upload/v1789294779/Central_Lens_Logo_Transparent_1.png" 
+              alt="Central Lens Logo" 
+              className="h-8 w-8 object-contain"
+            />
+            <span className="text-xl font-black text-red-600 tracking-tighter">
+              CENTRAL LENS
+            </span>
           </Link>
           <button
             onClick={() => setIsMenuOpen(false)}
