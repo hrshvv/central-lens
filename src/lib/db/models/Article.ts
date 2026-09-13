@@ -55,7 +55,6 @@ const ArticleSchema = new Schema<IArticle>(
   { timestamps: true }
 );
 
-ArticleSchema.index({ slug: 1 }, { unique: true });
 ArticleSchema.index({ category: 1 });
 ArticleSchema.index({ status: 1, publishedAt: -1 });
 ArticleSchema.index({ tags: 1 });

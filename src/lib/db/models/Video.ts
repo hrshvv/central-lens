@@ -53,7 +53,6 @@ const VideoSchema = new Schema<IVideo>(
   { timestamps: true }
 );
 
-VideoSchema.index({ slug: 1 }, { unique: true });
 VideoSchema.index({ status: 1, publishedAt: -1 });
 
 export const Video: Model<IVideo> =
