@@ -53,7 +53,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
                 <img src={article.coverImage} alt={article.title} className="w-full h-48 object-cover" />
               )}
               <div className="p-4">
-                <Link href={`/category/${categorySlug}/${article.slug}`}>
+                <Link href={`/${categorySlug}/${article.slug}`}>
                   <h2 className="font-bold text-lg text-gray-900 hover:text-red-600 mb-2 line-clamp-2">
                     {article.title}
                   </h2>

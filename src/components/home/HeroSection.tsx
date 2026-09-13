@@ -34,7 +34,7 @@ export default function HeroSection({ featuredArticle, topArticles }: { featured
           <span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded mb-4 inline-block uppercase">
             {featuredArticle.category?.name || 'News'}
           </span>
-          <Link href={`/category/${featuredArticle.category?.slug}/${featuredArticle.slug}`}>
+          <Link href={`/${featuredArticle.category?.slug || 'news'}/${featuredArticle.slug}`}>
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 group-hover:text-red-400 transition-colors">
               {featuredArticle.title}
             </h1>
@@ -59,7 +59,7 @@ export default function HeroSection({ featuredArticle, topArticles }: { featured
               <span className="text-blue-600 text-xs font-bold uppercase mb-1 block">
                 {article.category?.name || 'News'}
               </span>
-              <Link href={`/category/${article.category?.slug}/${article.slug}`}>
+              <Link href={`/${article.category?.slug || 'news'}/${article.slug}`}>
                 <h3 className="font-bold text-gray-900 group-hover:text-red-600 line-clamp-2 mb-1 leading-snug">
                   {article.title}
                 </h3>
