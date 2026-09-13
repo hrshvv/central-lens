@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 
 export default function AdminArticles() {
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,11 +30,30 @@ export default function AdminArticles() {
     }
   };
 
+  const handleToggleStatus = async (article: any) => {
+    const newStatus = article.status === 'published' ? 'draft' : 'published';
+    try {
+      const res = await fetch(`/api/admin/articles/${article._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        fetchArticles();
+      } else {
+        alert('Failed to update status');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Error updating status');
+    }
+  };
+
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Articles</h1>
-        <Link href="/admin/articles/new" className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700">
+        <Link href="/admin/articles/new" className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700 transition-colors">
           <Plus size={20} />
           <span>New Article</span>
         </Link>
@@ -59,21 +78,29 @@ export default function AdminArticles() {
               ) : articles.length === 0 ? (
                 <tr><td colSpan={6} className="p-8 text-center text-gray-500">No articles found.</td></tr>
               ) : articles.map((article: any) => (
-                <tr key={article._id} className="border-b border-gray-50 hover:bg-gray-50">
+                <tr key={article._id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                   <td className="p-4 font-medium">{article.title}</td>
                   <td className="p-4">{article.category?.name || '-'}</td>
                   <td className="p-4">
-                    <span className={`px-2 py-1 rounded text-xs ${article.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                      {article.status}
-                    </span>
+                    <button 
+                      onClick={() => handleToggleStatus(article)}
+                      className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors border ${
+                        article.status === 'published' 
+                          ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100' 
+                          : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
+                      }`}
+                      title="Click to toggle status"
+                    >
+                      {article.status.charAt(0).toUpperCase() + article.status.slice(1)}
+                    </button>
                   </td>
-                  <td className="p-4">{article.views}</td>
+                  <td className="p-4 text-gray-600">{article.views || 0}</td>
                   <td className="p-4 text-gray-500 text-sm">{new Date(article.createdAt).toLocaleDateString()}</td>
                   <td className="p-4 flex justify-end space-x-2">
-                    <Link href={`/admin/articles/${article._id}/edit`} className="p-2 text-gray-500 hover:text-blue-600 rounded-lg hover:bg-blue-50">
+                    <Link href={`/admin/articles/${article._id}/edit`} className="p-2 text-gray-500 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors">
                       <Edit size={18} />
                     </Link>
-                    <button onClick={() => handleDelete(article._id)} className="p-2 text-gray-500 hover:text-red-600 rounded-lg hover:bg-red-50">
+                    <button onClick={() => handleDelete(article._id)} className="p-2 text-gray-500 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors">
                       <Trash2 size={18} />
                     </button>
                   </td>

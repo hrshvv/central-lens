@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 
 export default function AdminCategories() {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editCategory, setEditCategory] = useState<any>(null);

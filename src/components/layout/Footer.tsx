@@ -1,7 +1,41 @@
+'use client';
+
 import Link from 'next/link';
-import { Globe, MessageCircle, Mail, Link as LinkIcon } from 'lucide-react';
+import { Globe, MessageCircle, Mail, Link as LinkIcon, CheckCircle2 } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Footer() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState('');
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setStatus('loading');
+    try {
+      // Dummy API route or actual one
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      
+      if (res.ok) {
+        setStatus('success');
+        setMessage('Thank you for subscribing!');
+        setEmail('');
+      } else {
+        setStatus('error');
+        setMessage('Something went wrong. Please try again.');
+      }
+    } catch (error) {
+      setStatus('error');
+      setMessage('Failed to subscribe.');
+    }
+  };
+
   return (
     <footer className="bg-gray-900 text-gray-300 py-12 mt-12">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -22,10 +56,10 @@ export default function Footer() {
         <div>
           <h3 className="text-lg font-semibold text-white mb-4">Categories</h3>
           <ul className="space-y-2 text-sm">
-            <li><Link href="/category/politics" className="hover:text-white transition-colors">राजनीति</Link></li>
-            <li><Link href="/category/sports" className="hover:text-white transition-colors">खेल</Link></li>
-            <li><Link href="/category/technology" className="hover:text-white transition-colors">टेक्नोलॉजी</Link></li>
-            <li><Link href="/category/entertainment" className="hover:text-white transition-colors">मनोरंजन</Link></li>
+            <li><Link href="/politics" className="hover:text-white transition-colors">राजनीति</Link></li>
+            <li><Link href="/sports" className="hover:text-white transition-colors">खेल</Link></li>
+            <li><Link href="/technology" className="hover:text-white transition-colors">टेक्नोलॉजी</Link></li>
+            <li><Link href="/entertainment" className="hover:text-white transition-colors">मनोरंजन</Link></li>
           </ul>
         </div>
 
@@ -42,16 +76,40 @@ export default function Footer() {
         <div>
           <h3 className="text-lg font-semibold text-white mb-4">Subscribe to Newsletter</h3>
           <p className="text-sm text-gray-400 mb-4">Get the latest stories directly to your inbox.</p>
-          <form className="flex">
-            <input 
-              type="email" 
-              placeholder="Your email address" 
-              className="bg-gray-800 border-none rounded-l-lg py-2 px-4 focus:ring-2 focus:ring-red-600 outline-none w-full text-white"
-            />
-            <button type="submit" className="bg-red-600 hover:bg-red-700 text-white rounded-r-lg px-4 font-semibold transition-colors">
-              Subscribe
-            </button>
-          </form>
+          {status === 'success' ? (
+            <div className="flex items-center space-x-2 text-green-400 bg-green-400/10 p-3 rounded-lg border border-green-400/20">
+              <CheckCircle2 size={20} />
+              <span className="text-sm font-medium">{message}</span>
+            </div>
+          ) : (
+            <form onSubmit={handleSubscribe} className="flex flex-col space-y-2">
+              <div className="flex">
+                <input 
+                  type="email" 
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Your email address" 
+                  disabled={status === 'loading'}
+                  className="bg-gray-800 border-none rounded-l-lg py-2 px-4 focus:ring-2 focus:ring-red-600 outline-none w-full text-white disabled:opacity-50"
+                />
+                <button 
+                  type="submit" 
+                  disabled={status === 'loading'}
+                  className="bg-red-600 hover:bg-red-700 text-white rounded-r-lg px-4 font-semibold transition-colors disabled:opacity-50 flex items-center justify-center min-w-[100px]"
+                >
+                  {status === 'loading' ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    'Subscribe'
+                  )}
+                </button>
+              </div>
+              {status === 'error' && (
+                <p className="text-xs text-red-400">{message}</p>
+              )}
+            </form>
+          )}
         </div>
       </div>
       

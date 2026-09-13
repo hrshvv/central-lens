@@ -10,11 +10,13 @@ const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 export default function ArticleEditor({ initialData = null }: { initialData?: any }) {
   const router = useRouter();
   const [title, setTitle] = useState(initialData?.title || '');
+  const [coverImage, setCoverImage] = useState(initialData?.coverImage || '');
   const [content, setContent] = useState(initialData?.content || '');
   const [category, setCategory] = useState(initialData?.category?._id || initialData?.category || '');
   const [status, setStatus] = useState(initialData?.status || 'draft');
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetch('/api/admin/categories')
@@ -22,12 +24,40 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
       .then(data => setCategories(data));
   }, []);
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      // Assuming /api/admin/upload returns { url: string }
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        setCoverImage(data.url);
+      } else {
+        alert(data.error || 'Upload failed');
+      }
+    } catch (err) {
+      alert('Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     const payload = {
       title,
+      coverImage,
       slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
       content,
       category,
@@ -71,6 +101,39 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
           className="w-full border-gray-300 rounded-lg shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500"
           placeholder="Enter article title"
         />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Cover Image</label>
+        <div className="flex items-center space-x-4">
+          <input 
+            type="text" 
+            value={coverImage} 
+            onChange={(e) => setCoverImage(e.target.value)} 
+            className="flex-1 border-gray-300 rounded-lg shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Image URL or upload below"
+          />
+          <div className="relative">
+            <input 
+              type="file" 
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              disabled={uploading}
+            />
+            <button 
+              type="button"
+              className="px-4 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors whitespace-nowrap"
+            >
+              {uploading ? 'Uploading...' : 'Upload Image'}
+            </button>
+          </div>
+        </div>
+        {coverImage && (
+          <div className="mt-4">
+            <img src={coverImage} alt="Cover Preview" className="h-40 object-cover rounded-lg border border-gray-200" />
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-6">

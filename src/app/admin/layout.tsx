@@ -1,8 +1,23 @@
+'use client';
+
 import { ReactNode } from 'react';
 import Link from 'next/link';
-import { Home, FileText, LayoutDashboard, Video, Settings, LogOut, Grid } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Home, FileText, LayoutDashboard, Video, LogOut, Grid } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      router.push('/login');
+      router.refresh();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
     <div className="flex h-screen bg-gray-100">
       <aside className="w-64 bg-gray-900 text-white flex flex-col">
@@ -32,7 +47,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </Link>
         </nav>
         <div className="p-4 border-t border-gray-800">
-          <button className="flex items-center space-x-3 p-3 w-full hover:bg-gray-800 rounded-lg text-red-400">
+          <button 
+            onClick={handleLogout}
+            className="flex items-center space-x-3 p-3 w-full hover:bg-gray-800 rounded-lg text-red-400 transition-colors"
+          >
             <LogOut size={20} />
             <span>Logout</span>
           </button>

@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import dbConnect from '@/lib/db/connect';
 import { Article } from '@/lib/db/models/Article';
+import ShareButtons from '@/components/article/ShareButtons';
 
 async function getArticle(slug: string) {
   try {
@@ -50,6 +51,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
           <span>•</span>
           <span>{article.readingTime || 5} min read</span>
         </div>
+        
+        <ShareButtons title={article.title} />
       </div>
 
       {/* Cover Image */}
