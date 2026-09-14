@@ -69,7 +69,7 @@ export default async function HomePage() {
   const topArticles = latest.filter((a: any) => a._id !== featuredArticle?._id).slice(0, 4);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+    <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-4 sm:py-8">
       {/* Hero Magazine Section */}
       {latest.length > 0 ? (
         <HeroSection featuredArticle={featuredArticle} topArticles={topArticles} />
