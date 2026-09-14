@@ -1,7 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { Search, Menu, User, X, Home, ChevronRight, Calendar, MapPin, TrendingUp } from 'lucide-react';
+import { 
+  Search, Menu, User, X, Home, ChevronRight, Calendar, MapPin, TrendingUp,
+  LogIn, UserPlus, Landmark, Cpu, Trophy, Film, Globe, Car, Sparkles, Shield
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
@@ -9,6 +12,18 @@ interface NavCategory {
   name: string;
   slug: string;
 }
+
+const CATEGORY_META: Record<string, { en: string; icon: React.ComponentType<{ size?: number; className?: string }>; color: string; bg: string }> = {
+  politics: { en: 'Politics', icon: Landmark, color: 'text-blue-600', bg: 'bg-blue-50' },
+  sports: { en: 'Sports', icon: Trophy, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  technology: { en: 'Tech', icon: Cpu, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+  entertainment: { en: 'Entertainment', icon: Film, color: 'text-pink-600', bg: 'bg-pink-50' },
+  business: { en: 'Business', icon: TrendingUp, color: 'text-amber-600', bg: 'bg-amber-50' },
+  national: { en: 'National', icon: MapPin, color: 'text-red-600', bg: 'bg-red-50' },
+  world: { en: 'World', icon: Globe, color: 'text-violet-600', bg: 'bg-violet-50' },
+  auto: { en: 'Auto', icon: Car, color: 'text-slate-600', bg: 'bg-slate-50' },
+  lifestyle: { en: 'Lifestyle', icon: Sparkles, color: 'text-teal-600', bg: 'bg-teal-50' },
+};
 
 const DEFAULT_CATEGORIES: NavCategory[] = [
   { name: 'राजनीति', slug: 'politics' },
@@ -22,9 +37,15 @@ const DEFAULT_CATEGORIES: NavCategory[] = [
   { name: 'लाइफस्टाइल', slug: 'lifestyle' },
 ];
 
+interface BreakingItem {
+  title: string;
+  slug?: string;
+  categorySlug?: string;
+}
+
 export default function Navbar() {
   const pathname = usePathname();
-  const [breakingNews, setBreakingNews] = useState<string[]>([]);
+  const [breakingNews, setBreakingNews] = useState<BreakingItem[]>([]);
   const [categories, setCategories] = useState<NavCategory[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
@@ -71,28 +92,37 @@ export default function Navbar() {
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
-          setBreakingNews(data.map((a: any) => a.title));
+          setBreakingNews(data.map((a: any) => ({
+            title: a.title,
+            slug: a.slug,
+            categorySlug: a.category?.slug || 'national',
+          })));
         } else {
           // Fallback to recent articles
           fetch('/api/articles?limit=5')
             .then(res => res.json())
             .then(articles => {
               if (Array.isArray(articles) && articles.length > 0) {
-                setBreakingNews(articles.map((a: any) => a.title));
+                setBreakingNews(articles.map((a: any) => ({
+                  title: a.title,
+                  slug: a.slug,
+                  categorySlug: a.category?.slug || 'news',
+                })));
               } else {
-                setBreakingNews(['Central Lens - निष्पक्ष और सटीक पत्रकारिता']);
+                setBreakingNews([{ title: 'Central Lens - निष्पक्ष और सटीक पत्रकारिता' }]);
               }
             })
-            .catch(() => setBreakingNews(['Central Lens - निष्पक्ष और सटीक पत्रकारिता']));
+            .catch(() => setBreakingNews([{ title: 'Central Lens - निष्पक्ष और सटीक पत्रकारिता' }]));
         }
       })
-      .catch(() => setBreakingNews(['Central Lens - निष्पक्ष और सटीक पत्रकारिता']));
+      .catch(() => setBreakingNews([{ title: 'Central Lens - निष्पक्ष और सटीक पत्रकारिता' }]));
   }, []);
 
   const displayCategories = categories.length > 0 ? categories : DEFAULT_CATEGORIES;
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)]">
+    <>
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)]">
       {/* Top Edition & Date Bar (Desktop) */}
       <div className="hidden md:block bg-neutral-900 text-neutral-300 text-[11px] py-1.5 px-4 border-b border-neutral-800">
         <div className="max-w-7xl mx-auto flex justify-between items-center font-sans tracking-wide">
@@ -199,126 +229,215 @@ export default function Navbar() {
         })}
       </nav>
 
-      {/* Breaking News Ticker */}
-      <div className="bg-red-600 text-white text-xs font-bold px-4 py-2 flex items-center space-x-3 overflow-hidden shadow-inner">
-        <span className="whitespace-nowrap uppercase tracking-widest bg-red-800 px-2.5 py-0.5 rounded text-[11px] shadow-sm flex-shrink-0 flex items-center space-x-1">
-          <span className="w-1.5 h-1.5 bg-white rounded-full animate-ping mr-1"></span>
-          <span>ताज़ा खबर</span>
-        </span>
-        <div className="flex-1 overflow-hidden relative h-4">
-          <div className="absolute whitespace-nowrap animate-marquee flex space-x-8 font-devanagari">
-            {breakingNews.map((news, idx) => (
-              <span key={idx} className="inline-block font-semibold">
-                {news} <span className="mx-4 opacity-60 text-red-200">◆</span>
+      {/* Editorial Ruby Broadcast Breaking News Ticker */}
+      <div className="bg-gradient-to-r from-red-700 via-red-600 to-red-700 text-white border-y border-red-800/40 shadow-xs relative z-30 group overflow-hidden">
+        <div className="max-w-7xl mx-auto flex items-stretch h-10 px-4 sm:px-6">
+          {/* Pulsing Live Pill Badge */}
+          <div className="flex-shrink-0 flex items-center pr-3 z-20">
+            <div className="bg-white text-red-700 px-3 sm:px-4 py-1 rounded-full flex items-center space-x-2 shadow-[0_2px_8px_rgba(0,0,0,0.18)] select-none">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-600 opacity-80"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
               </span>
-            ))}
+              <span className="text-[11px] sm:text-xs tracking-wider uppercase whitespace-nowrap font-sans font-black flex items-center space-x-1.5 text-red-700">
+                <span>BREAKING</span>
+                <span className="hidden sm:inline font-devanagari font-bold text-red-600">| ताज़ा खबर</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Scrolling Headlines with Hover Pause */}
+          <div className="flex-1 overflow-hidden relative flex items-center px-4">
+            <div className="whitespace-nowrap animate-marquee group-hover:[animation-play-state:paused] flex space-x-10 font-devanagari text-xs sm:text-[13px] font-semibold tracking-wide">
+              {/* Render items duplicated to maintain smooth looping */}
+              {[...breakingNews, ...breakingNews].map((news, idx) => (
+                <div key={idx} className="inline-flex items-center space-x-4">
+                  {news.slug ? (
+                    <Link
+                      href={`/${news.categorySlug || 'news'}/${news.slug}`}
+                      className="text-white hover:text-amber-200 hover:underline transition-colors"
+                    >
+                      {news.title}
+                    </Link>
+                  ) : (
+                    <span className="text-white/95">{news.title}</span>
+                  )}
+                  <span className="text-amber-300 text-[10px] select-none font-sans drop-shadow-xs">◆</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop Hover Hint */}
+          <div className="hidden xl:flex items-center px-3.5 text-[11px] text-red-100/80 font-devanagari border-l border-red-500/50 select-none">
+            रोकने के लिए माउस लाएं
           </div>
         </div>
       </div>
+    </header>
 
-      {/* Mobile Slide-out Drawer Backdrop */}
-      {isMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity md:hidden"
-          onClick={() => setIsMenuOpen(false)}
-          aria-hidden="true"
-        />
-      )}
+    {/* Mobile Slide-out Drawer Backdrop */}
+    {isMenuOpen && (
+      <div 
+        className="fixed inset-0 bg-black/60 backdrop-blur-xs z-[99] transition-opacity duration-300 md:hidden"
+        onClick={() => setIsMenuOpen(false)}
+        aria-hidden="true"
+      />
+    )}
 
-      {/* Mobile Slide-out Drawer Panel */}
-      <aside
-        className={`fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-white z-50 shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out md:hidden font-devanagari ${
-          isMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-        aria-label="Mobile Navigation"
-      >
-        {/* Drawer Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 bg-neutral-50">
-          <Link 
-            href="/" 
-            onClick={() => setIsMenuOpen(false)} 
-            className="flex items-center space-x-2.5"
-          >
-            <img 
-              src="https://res.cloudinary.com/idhgjmqi/image/upload/v1789294779/Central_Lens_Logo_Transparent_1.png" 
-              alt="Central Lens Logo" 
-              className="h-9 w-9 object-contain"
-            />
-            <span className="text-xl font-black text-red-600 tracking-tighter">
+    {/* Mobile Slide-out Drawer Panel */}
+    <aside
+      className={`fixed top-0 bottom-0 left-0 z-[100] w-80 max-w-[85vw] h-full h-dvh bg-white shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out md:hidden font-devanagari ${
+        isMenuOpen ? 'translate-x-0' : '-translate-x-full pointer-events-none'
+      }`}
+      aria-label="Mobile Navigation"
+    >
+      {/* Drawer Header */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 bg-neutral-50/80">
+        <Link 
+          href="/" 
+          onClick={() => setIsMenuOpen(false)} 
+          className="flex items-center space-x-2.5 group"
+        >
+          <img 
+            src="https://res.cloudinary.com/idhgjmqi/image/upload/v1789294779/Central_Lens_Logo_Transparent_1.png" 
+            alt="Central Lens Logo" 
+            className="h-9 w-9 object-contain transform group-hover:scale-105 transition-transform"
+          />
+          <div className="flex flex-col">
+            <span className="text-xl font-black text-red-600 tracking-tighter leading-none">
               CENTRAL LENS
             </span>
-          </Link>
-          <button
-            onClick={() => setIsMenuOpen(false)}
-            className="p-1.5 rounded-lg text-neutral-500 hover:text-neutral-900 hover:bg-neutral-200 transition"
-            aria-label="Close menu"
-          >
-            <X size={22} />
-          </button>
-        </div>
-
-        {/* Search shortcut */}
-        <div className="p-4 border-b border-neutral-100">
-          <Link
-            href="/search"
-            onClick={() => setIsMenuOpen(false)}
-            className="flex items-center space-x-2.5 w-full px-3.5 py-2.5 text-sm text-neutral-500 bg-neutral-50 hover:bg-neutral-100 rounded-xl border border-neutral-200 shadow-sm transition"
-          >
-            <Search size={16} className="text-neutral-400" />
-            <span>खबरें खोजें (Search)...</span>
-          </Link>
-        </div>
-
-        {/* Categories List */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-1">
-          <div className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider px-3 pt-2 pb-1 font-sans">
-            कैटेगरी (Categories)
-          </div>
-
-          <Link
-            href="/"
-            onClick={() => setIsMenuOpen(false)}
-            className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-neutral-800 hover:bg-red-50 hover:text-red-600 transition"
-          >
-            <span className="flex items-center space-x-2.5">
-              <Home size={17} className="text-red-600" />
-              <span>होम (Home)</span>
+            <span className="text-[9px] font-bold text-neutral-500 tracking-[0.18em] uppercase mt-0.5 font-sans">
+              निष्पक्ष पत्रकारिता
             </span>
-            <ChevronRight size={16} className="text-neutral-400" />
-          </Link>
+          </div>
+        </Link>
+        <button
+          onClick={() => setIsMenuOpen(false)}
+          className="p-2 rounded-xl text-neutral-500 hover:text-neutral-900 hover:bg-neutral-200/70 transition"
+          aria-label="Close menu"
+        >
+          <X size={20} />
+        </button>
+      </div>
 
-          {displayCategories.map(cat => (
+      {/* Search shortcut */}
+      <div className="p-3.5 border-b border-neutral-100 bg-white">
+        <Link
+          href="/search"
+          onClick={() => setIsMenuOpen(false)}
+          className="flex items-center space-x-2.5 w-full px-3.5 py-2.5 text-sm text-neutral-500 bg-neutral-50 hover:bg-neutral-100 rounded-xl border border-neutral-200 transition group"
+        >
+          <Search size={16} className="text-neutral-400 group-hover:text-red-600 transition-colors" />
+          <span className="text-xs font-sans">खबरें खोजें (Search)...</span>
+        </Link>
+      </div>
+
+      {/* Categories List (Scrollable, full height) */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-1">
+        <div className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider px-3 pt-1 pb-1.5 font-sans flex items-center justify-between">
+          <span>कैटेगरी (Categories)</span>
+          <span className="text-[10px] text-neutral-400/80 font-normal">अनुभाग</span>
+        </div>
+
+        {/* Home Link */}
+        <Link
+          href="/"
+          onClick={() => setIsMenuOpen(false)}
+          className={`flex items-center justify-between px-3 py-2.5 rounded-xl transition font-sans ${
+            pathname === '/'
+              ? 'bg-red-50 text-red-600 font-bold border-l-4 border-red-600 shadow-2xs'
+              : 'text-neutral-800 hover:bg-neutral-50 hover:text-red-600 font-semibold'
+          }`}
+        >
+          <span className="flex items-center space-x-3">
+            <span className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+              pathname === '/' ? 'bg-red-100 text-red-600' : 'bg-red-50 text-red-600'
+            }`}>
+              <Home size={17} />
+            </span>
+            <span className="flex items-baseline space-x-2">
+              <span className="font-devanagari text-[15px] font-bold">होम</span>
+              <span className="text-[11px] text-neutral-400 font-medium">Home</span>
+            </span>
+          </span>
+          <ChevronRight size={16} className={pathname === '/' ? 'text-red-600' : 'text-neutral-300'} />
+        </Link>
+
+        {/* Dynamic / Default Categories */}
+        {displayCategories.map(cat => {
+          const meta = CATEGORY_META[cat.slug.toLowerCase()] || {
+            en: cat.slug,
+            icon: ChevronRight,
+            color: 'text-neutral-600',
+            bg: 'bg-neutral-100',
+          };
+          const IconComp = meta.icon;
+          const isActive = pathname === `/${cat.slug}`;
+
+          return (
             <Link
               key={cat.slug}
               href={`/${cat.slug}`}
               onClick={() => setIsMenuOpen(false)}
-              className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold text-neutral-700 hover:bg-red-50 hover:text-red-600 transition"
+              className={`flex items-center justify-between px-3 py-2.5 rounded-xl transition font-sans ${
+                isActive
+                  ? 'bg-red-50 text-red-600 font-bold border-l-4 border-red-600 shadow-2xs'
+                  : 'text-neutral-800 hover:bg-neutral-50 hover:text-red-600 font-semibold'
+              }`}
             >
-              <span>{cat.name}</span>
-              <ChevronRight size={16} className="text-neutral-400" />
+              <span className="flex items-center space-x-3">
+                <span className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${meta.bg} ${meta.color}`}>
+                  <IconComp size={16} />
+                </span>
+                <span className="flex items-baseline space-x-2">
+                  <span className="font-devanagari text-[15px] font-bold">{cat.name}</span>
+                  <span className="text-[11px] text-neutral-400 font-medium">{meta.en}</span>
+                </span>
+              </span>
+              <ChevronRight size={16} className={isActive ? 'text-red-600' : 'text-neutral-300'} />
             </Link>
-          ))}
+          );
+        })}
+      </div>
+
+      {/* Drawer Footer: Login & Signup Buttons */}
+      <div className="p-4 border-t border-neutral-200/80 bg-neutral-50/95 space-y-2.5 font-sans">
+        <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider px-0.5">
+          खाता व एक्सेस (Account & Access)
         </div>
 
-        {/* Drawer Footer Links */}
-        <div className="p-4 border-t border-neutral-100 bg-neutral-50 space-y-2 font-sans">
+        <div className="grid grid-cols-2 gap-2">
           <Link
             href="/login"
             onClick={() => setIsMenuOpen(false)}
-            className="flex items-center justify-center space-x-2 w-full py-2.5 px-4 bg-red-600 hover:bg-red-700 active:scale-98 text-white text-sm font-semibold rounded-xl shadow-sm transition"
+            className="flex items-center justify-center space-x-1.5 py-2.5 px-3 bg-white hover:bg-neutral-100 active:scale-95 text-neutral-800 text-xs sm:text-sm font-bold rounded-xl border border-neutral-300 shadow-2xs transition"
           >
-            <User size={16} />
-            <span>लॉग इन / खाता (Account)</span>
+            <LogIn size={15} className="text-neutral-600" />
+            <span>लॉग इन</span>
           </Link>
+
           <Link
-            href="/admin"
+            href="/register"
             onClick={() => setIsMenuOpen(false)}
-            className="flex items-center justify-center space-x-1.5 w-full py-1.5 px-4 text-xs font-medium text-neutral-500 hover:text-neutral-900 transition"
+            className="flex items-center justify-center space-x-1.5 py-2.5 px-3 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition"
           >
-            <span>एडमिन डैशबोर्ड (Admin CMS)</span>
+            <UserPlus size={15} />
+            <span>साइन अप</span>
           </Link>
         </div>
-      </aside>
-    </header>
-  );
+
+        <Link
+          href="/admin"
+          onClick={() => setIsMenuOpen(false)}
+          className="flex items-center justify-center space-x-1.5 w-full py-1.5 px-3 text-xs font-medium text-neutral-500 hover:text-red-600 transition border border-dashed border-neutral-300/80 rounded-lg hover:bg-white"
+        >
+          <Shield size={13} className="text-neutral-400" />
+          <span>एडमिन डैशबोर्ड (Admin CMS)</span>
+        </Link>
+      </div>
+    </aside>
+  </>
+);
 }
