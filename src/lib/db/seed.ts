@@ -4,6 +4,7 @@ import dbConnect from './connect';
 import { Category } from './models/Category';
 import { User } from './models/User';
 import { Article } from './models/Article';
+import { Video } from './models/Video';
 
 const categories = [
   { name: 'राजनीति', slug: 'politics', color: '#1D4ED8', order: 1 },
@@ -140,6 +141,114 @@ const realisticArticles = [
   }
 ];
 
+const realisticVideos = [
+  {
+    title: 'इसरो का गगनयान मिशन: भारतीय अंतरिक्ष यात्रियों की ट्रेनिंग और स्पेसक्राफ्ट की खास रिपोर्ट',
+    slug: 'isro-gaganyaan-mission-astronaut-training-report',
+    description: 'भारत के पहले मानवयुक्त अंतरिक्ष मिशन गगनयान की तैयारियों पर सेंट्रल लेंस की विशेष ग्राउंड रिपोर्ट। जानिए कैसे हो रही है क्रू मॉड्यूल की टेस्टिंग और अंतरिक्ष यात्रियों का कड़ा प्रशिक्षण।',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?w=1200&auto=format&fit=crop&q=80',
+    videoUrl: 'https://www.youtube.com/watch?v=21X5lGlDOfg',
+    videoType: 'long',
+    duration: 645,
+    categorySlug: 'technology',
+    tags: ['इसरो', 'गगनयान', 'स्पेस', 'भारत', 'विज्ञान'],
+    isFeatured: true,
+    views: 8420,
+  },
+  {
+    title: 'संसद में आज: डिजिटल डाटा सुरक्षा और नए साइबर कानूनों पर गरमागरम बहस',
+    slug: 'parliament-debate-digital-data-protection-cyber-law',
+    description: 'संसद के सत्र में डिजिटल सुरक्षा विधेयक पर पक्ष और विपक्ष के बीच तीखी नोकझोंक। नागरिकों की निजता और डाटा सुरक्षा को लेकर क्या हैं नए नियम, देखिए पूरी रिपोर्ट।',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=1200&auto=format&fit=crop&q=80',
+    videoUrl: 'https://www.youtube.com/watch?v=kJQP7kiw5Fk',
+    videoType: 'long',
+    duration: 480,
+    categorySlug: 'national',
+    tags: ['संसद', 'डिजिटल सुरक्षा', 'राजनीति', 'कानून'],
+    isFeatured: false,
+    views: 5210,
+  },
+  {
+    title: 'टी20 विश्व कप रणनीति: कप्तान और कोच की प्रेस कॉन्फ्रेंस का पूरा विश्लेषण',
+    slug: 't20-world-cup-press-conference-analysis-team-india',
+    description: 'आगामी आईसीसी टूर्नामेंट के लिए टीम इंडिया की प्लेइंग इलेवन और रणनीति पर विशेष कवरेज। क्या युवा ब्रिगेड दिलाएगी देश को नई ट्रॉफी?',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=1200&auto=format&fit=crop&q=80',
+    videoUrl: 'https://www.youtube.com/watch?v=fJ9rUzIMcZQ',
+    videoType: 'long',
+    duration: 520,
+    categorySlug: 'sports',
+    tags: ['क्रिकेट', 'T20', 'टीम इंडिया', 'खेल'],
+    isFeatured: false,
+    views: 12400,
+  },
+  {
+    title: 'सेंट्रल लेंस पॉडकास्ट: वैश्विक अर्थव्यवस्था में भारत की उभरती महाशक्ति और चुनौतियां',
+    slug: 'central-lens-podcast-india-global-economy-challenges',
+    description: 'वरिष्ठ अर्थशास्त्रियों और नीति निर्माताओं के साथ खास पॉडकास्ट चर्चा। एफडीआई, विनिर्माण क्षेत्र और आगामी आर्थिक सुधारों पर विस्तृत मंथन।',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=1200&auto=format&fit=crop&q=80',
+    videoUrl: 'https://www.youtube.com/watch?v=EngW7tLk6R8',
+    videoType: 'podcast',
+    duration: 1850,
+    categorySlug: 'business',
+    tags: ['पॉडकास्ट', 'अर्थव्यवस्था', 'बिज़नेस', 'इंटरव्यू'],
+    isFeatured: false,
+    views: 6300,
+  },
+  {
+    title: 'आर्टिफिशियल इंटेलिजेंस और रोजगार: क्या एआई आपकी नौकरी ले लेगा? विशेष चर्चा',
+    slug: 'ai-and-employment-future-of-jobs-special-podcast',
+    description: 'एआई क्रांति के दौर में रोजगार के नए अवसर और खतरे। टेक एक्सपर्ट्स के साथ सेंट्रल लेंस का विशेष साक्षात्कार।',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop&q=80',
+    videoUrl: 'https://www.youtube.com/watch?v=aircAruvnKk',
+    videoType: 'podcast',
+    duration: 1420,
+    categorySlug: 'technology',
+    tags: ['एआई', 'टेक्नोलॉजी', 'पॉडकास्ट', 'नौकरी'],
+    isFeatured: false,
+    views: 4100,
+  },
+  {
+    title: '60 सेकंड में बड़ी खबर: शेयर बाजार ने रचा नया इतिहास, सेंसेक्स 85,000 पार!',
+    slug: 'quick-shorts-sensex-crosses-record-high',
+    description: 'शेयर बाजार में रिकॉर्ड तोड़ तेजी! जानिए किन शेयरों में रहा सबसे ज्यादा उछाल केवल 60 सेकंड में।',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&auto=format&fit=crop&q=80',
+    videoUrl: 'https://www.youtube.com/shorts/8pDqKNuWv20',
+    videoType: 'short',
+    duration: 58,
+    categorySlug: 'business',
+    tags: ['शॉर्ट्स', 'सेंसेक्स', 'शेयर बाजार', 'क्विक न्यूज'],
+    isFeatured: false,
+    views: 18500,
+  },
+  {
+    title: 'शॉर्ट्स: नई इलेक्ट्रिक सुपरकार का पहला लुक, जानिए सिंगल चार्ज में रेंज',
+    slug: 'quick-shorts-new-electric-supercar-look-range',
+    description: 'आगामी ऑटो एक्सपो की सबसे चर्चित इलेक्ट्रिक कार का टीज़र जारी। केवल 3 सेकंड में 0 से 100 किमी प्रति घंटा की रफ्तार!',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=80',
+    videoUrl: 'https://www.youtube.com/shorts/5mgB8n_w60U',
+    videoType: 'short',
+    duration: 45,
+    categorySlug: 'auto',
+    tags: ['शॉर्ट्स', 'ईवी', 'कार', 'ऑटो'],
+    isFeatured: false,
+    views: 22100,
+  },
+  {
+    title: 'शॉर्ट्स: इसरो का अगला मून मिशन चंद्रयान-4, जानिए क्या होगा नया?',
+    slug: 'quick-shorts-isro-chandrayaan-4-next-mission',
+    description: 'इसरो ने चंद्रयान-4 के मुख्य उद्देश्यों को किया स्पष्ट। चंद्रमा की सतह से सैंपल वापस लाएगा भारत!',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80',
+    videoUrl: 'https://www.youtube.com/shorts/aqz-KE-bpKQ',
+    videoType: 'short',
+    duration: 52,
+    categorySlug: 'technology',
+    tags: ['शॉर्ट्स', 'इसरो', 'स्पेस', 'चंद्रयान-4'],
+    isFeatured: false,
+    views: 31200,
+  },
+];
+
+
 async function seed() {
   await dbConnect();
   console.log('Connected to MongoDB. Starting seed...');
@@ -215,11 +324,38 @@ async function seed() {
   await Article.insertMany(articlesToInsert);
   console.log(`✓ Seeded ${articlesToInsert.length} realistic Hindi news articles.`);
 
+  // 4. Seed Videos
+  await Video.deleteMany({});
+
+  const videosToInsert = realisticVideos.map((vid, idx) => ({
+    title: vid.title,
+    slug: vid.slug,
+    description: vid.description,
+    thumbnailUrl: vid.thumbnailUrl,
+    videoUrl: vid.videoUrl,
+    videoType: vid.videoType,
+    duration: vid.duration,
+    category: categoryMap[vid.categorySlug] || createdCategories[0]._id,
+    tags: vid.tags,
+    author: {
+      name: authorName,
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+    },
+    status: 'published',
+    views: vid.views,
+    isFeatured: vid.isFeatured,
+    publishedAt: new Date(Date.now() - idx * 3600000 * 2),
+  }));
+
+  await Video.insertMany(videosToInsert);
+  console.log(`✓ Seeded ${videosToInsert.length} multimedia Hindi news videos & shorts.`);
+
   console.log('\n======================================');
   console.log('🎉 SEEDING COMPLETED SUCCESSFULLY!');
   console.log('Your website now has:');
   console.log(` - ${createdCategories.length} Categories`);
   console.log(` - ${articlesToInsert.length} Published Articles`);
+  console.log(` - ${videosToInsert.length} Videos (Long, Shorts & Podcasts)`);
   console.log(` - Admin access enabled for harshverma1022006@gmail.com`);
   console.log('======================================\n');
 

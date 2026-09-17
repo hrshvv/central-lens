@@ -2,10 +2,12 @@ import HeroSection from '@/components/home/HeroSection';
 import TrendingCarousel from '@/components/home/TrendingCarousel';
 import CategorySection from '@/components/home/CategorySection';
 import TopRankedStories from '@/components/home/TopRankedStories';
+import VideoSection from '@/components/home/VideoSection';
 
 import dbConnect from '@/lib/db/connect';
 import { Article } from '@/lib/db/models/Article';
 import { Category } from '@/lib/db/models/Category';
+import { Video } from '@/lib/db/models/Video';
 
 async function getHomePageData() {
   try {
@@ -51,19 +53,47 @@ async function getHomePageData() {
       })
     );
 
+    // Fetch video stories for Homepage VideoSection
+    const [featuredVideo, recentVideos, shorts] = await Promise.all([
+      Video.findOne({ status: 'published', isFeatured: true })
+        .populate('category', 'name slug color')
+        .lean(),
+      Video.find({ status: 'published', videoType: { $ne: 'short' } })
+        .sort({ publishedAt: -1, createdAt: -1 })
+        .limit(4)
+        .populate('category', 'name slug color')
+        .lean(),
+      Video.find({ status: 'published', videoType: 'short' })
+        .sort({ views: -1, createdAt: -1 })
+        .limit(4)
+        .populate('category', 'name slug color')
+        .lean(),
+    ]);
+
     return {
       latest: JSON.parse(JSON.stringify(latestArticles)),
       topRanked: JSON.parse(JSON.stringify(topRankedArticles)),
       trending: JSON.parse(JSON.stringify(trending)),
       categoryData,
+      videoData: {
+        featuredVideo: featuredVideo ? JSON.parse(JSON.stringify(featuredVideo)) : null,
+        recentVideos: JSON.parse(JSON.stringify(recentVideos)),
+        shorts: JSON.parse(JSON.stringify(shorts)),
+      },
     };
   } catch (error) {
-    return { latest: [], topRanked: [], trending: [], categoryData: [] };
+    return {
+      latest: [],
+      topRanked: [],
+      trending: [],
+      categoryData: [],
+      videoData: { featuredVideo: null, recentVideos: [], shorts: [] },
+    };
   }
 }
 
 export default async function HomePage() {
-  const { latest, topRanked, trending, categoryData } = await getHomePageData();
+  const { latest, topRanked, trending, categoryData, videoData } = await getHomePageData();
   
   const featuredArticle = latest.find((a: any) => a.isFeatured) || latest[0];
   const topArticles = latest.filter((a: any) => a._id !== featuredArticle?._id).slice(0, 4);
@@ -98,9 +128,16 @@ export default async function HomePage() {
         </div>
       )}
 
+      {/* Multimedia Video Spotlight & Shorts Section */}
+      <VideoSection
+        featuredVideo={videoData.featuredVideo}
+        recentVideos={videoData.recentVideos}
+        shorts={videoData.shorts}
+      />
+
       {/* Category Feeds */}
       <div className="space-y-4">
-        {categoryData.filter(d => d.articles.length > 0).map((data, index) => (
+        {categoryData.filter((d: any) => d.articles.length > 0).map((data: any, index: number) => (
           <CategorySection 
             key={index}
             categoryName={data.categoryName}
@@ -112,3 +149,4 @@ export default async function HomePage() {
     </div>
   );
 }
+

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { 
   Search, Menu, User, X, Home, ChevronRight, Calendar, MapPin, TrendingUp,
-  LogIn, UserPlus, Landmark, Cpu, Trophy, Film, Globe, Car, Sparkles, Shield
+  LogIn, UserPlus, Landmark, Cpu, Trophy, Film, Globe, Car, Sparkles, Shield, Tv
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
@@ -211,6 +211,18 @@ export default function Navbar() {
         >
           होम
         </Link>
+        <Link 
+          href="/videos" 
+          className={`text-sm font-bold px-3.5 py-2.5 transition-colors border-b-2 flex items-center space-x-1.5 ${
+            pathname.startsWith('/videos') || pathname.startsWith('/video')
+              ? 'text-red-600 border-red-600 bg-white' 
+              : 'text-neutral-700 hover:text-red-600 border-transparent hover:border-red-400'
+          }`}
+        >
+          <Tv size={15} className="text-red-600" />
+          <span>वीडियो</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
+        </Link>
         {displayCategories.map(cat => {
           const isActive = pathname === `/${cat.slug}`;
           return (
@@ -363,6 +375,28 @@ export default function Navbar() {
             </span>
           </span>
           <ChevronRight size={16} className={pathname === '/' ? 'text-red-600' : 'text-neutral-300'} />
+        </Link>
+
+        {/* Video Hub Mobile Link */}
+        <Link
+          href="/videos"
+          onClick={() => setIsMenuOpen(false)}
+          className={`flex items-center justify-between px-3 py-2.5 rounded-xl transition font-sans ${
+            pathname.startsWith('/videos') || pathname.startsWith('/video')
+              ? 'bg-red-50 text-red-600 font-bold border-l-4 border-red-600 shadow-2xs'
+              : 'text-neutral-800 hover:bg-neutral-50 hover:text-red-600 font-semibold'
+          }`}
+        >
+          <span className="flex items-center space-x-3">
+            <span className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-red-100 text-red-600">
+              <Tv size={17} />
+            </span>
+            <span className="flex items-baseline space-x-2">
+              <span className="font-devanagari text-[15px] font-bold">वीडियो समाचार</span>
+              <span className="text-[10px] text-red-600 font-black uppercase px-1.5 py-0.5 bg-red-50 border border-red-200 rounded">LIVE</span>
+            </span>
+          </span>
+          <ChevronRight size={16} className={pathname.startsWith('/video') ? 'text-red-600' : 'text-neutral-300'} />
         </Link>
 
         {/* Dynamic / Default Categories */}

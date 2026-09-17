@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "tsx --env-file=.env src/lib/db/seed.ts"
+    "seed": "npx tsx --env-file=.env src/lib/db/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
