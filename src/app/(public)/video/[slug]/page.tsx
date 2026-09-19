@@ -124,7 +124,7 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
     <div className="bg-white text-neutral-900 min-h-screen font-devanagari pb-20">
       {/* Top Navigation Strip */}
       <div className="border-b border-neutral-200 bg-neutral-50/90 backdrop-blur-md sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between text-xs">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between text-xs ${isShort ? 'h-9' : 'h-12'}`}>
           <Link
             href="/videos"
             className="inline-flex items-center space-x-2 text-neutral-600 hover:text-red-600 transition-colors"
@@ -143,13 +143,13 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8">
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 ${isShort ? 'pt-2 sm:pt-3' : 'pt-6 sm:pt-8'}`}>
         {/* Main Grid: Player on Left, Rail on Right */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
           {/* Main Video Column */}
           <div className={`${isShort ? 'lg:col-span-7 flex flex-col items-center' : 'lg:col-span-8'}`}>
             {/* Player Container */}
-            <div className="w-full">
+            <div className="w-full flex justify-center">
               <VideoPlayer
                 videoUrl={video.videoUrl}
                 title={video.title}
@@ -159,7 +159,7 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
             </div>
 
             {/* Title & Metadata Info */}
-            <div className="mt-6 w-full">
+            <div className={`mt-6 w-full ${isShort ? 'max-w-xl' : ''}`}>
               {/* Category & Format Tags */}
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 <span
