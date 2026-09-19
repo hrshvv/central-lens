@@ -6,9 +6,10 @@ import '@/lib/db/models/Category';
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { slug } = await params;
+    const decodedSlug = decodeURIComponent(slug);
     await dbConnect();
     const video = await Video.findOneAndUpdate(
-      { slug, status: 'published' },
+      { $or: [{ slug: decodedSlug }, { slug }], status: 'published' },
       { $inc: { views: 1 } },
       { new: true }
     ).populate('category', 'name slug color').lean();

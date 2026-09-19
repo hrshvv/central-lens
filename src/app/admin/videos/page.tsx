@@ -172,9 +172,15 @@ export default function AdminVideos() {
       .map((t) => t.trim())
       .filter(Boolean);
 
+    const cleanSlug = (slug || title)
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9\u0900-\u097F]+/g, '-')
+      .replace(/(^-|-$)+/g, '') || `video-${Date.now().toString(36)}`;
+
     const payload = {
       title,
-      slug: slug || `video-${Date.now().toString(36)}`,
+      slug: cleanSlug,
       videoUrl,
       thumbnailUrl:
         thumbnailUrl ||

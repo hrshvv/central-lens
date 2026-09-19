@@ -28,8 +28,9 @@ interface VideoPageProps {
 async function getVideo(slug: string) {
   try {
     await dbConnect();
+    const decodedSlug = decodeURIComponent(slug);
     const video = await Video.findOneAndUpdate(
-      { slug, status: 'published' },
+      { $or: [{ slug: decodedSlug }, { slug }], status: 'published' },
       { $inc: { views: 1 } },
       { returnDocument: 'after' }
     )
@@ -45,9 +46,10 @@ async function getVideo(slug: string) {
 async function getRelatedVideos(categoryId: any, currentSlug: string) {
   try {
     await dbConnect();
+    const decodedSlug = decodeURIComponent(currentSlug);
     const related = await Video.find({
       category: categoryId,
-      slug: { $ne: currentSlug },
+      slug: { $nin: [currentSlug, decodedSlug] },
       status: 'published',
     })
       .sort({ publishedAt: -1, createdAt: -1 })
@@ -63,9 +65,10 @@ async function getRelatedVideos(categoryId: any, currentSlug: string) {
 async function getTrendingShorts(currentSlug: string) {
   try {
     await dbConnect();
+    const decodedSlug = decodeURIComponent(currentSlug);
     const shorts = await Video.find({
       videoType: 'short',
-      slug: { $ne: currentSlug },
+      slug: { $nin: [currentSlug, decodedSlug] },
       status: 'published',
     })
       .sort({ views: -1, createdAt: -1 })
@@ -80,7 +83,8 @@ async function getTrendingShorts(currentSlug: string) {
 
 export async function generateMetadata({ params }: VideoPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const video: any = await getVideo(slug);
+  const decodedSlug = decodeURIComponent(slug);
+  const video: any = await getVideo(decodedSlug);
   if (!video) return { title: 'वीडियो नहीं मिला | Central Lens' };
 
   return {
@@ -96,7 +100,8 @@ export async function generateMetadata({ params }: VideoPageProps): Promise<Meta
 
 export default async function VideoWatchPage({ params }: VideoPageProps) {
   const { slug } = await params;
-  const video: any = await getVideo(slug);
+  const decodedSlug = decodeURIComponent(slug);
+  const video: any = await getVideo(decodedSlug);
 
   if (!video) {
     notFound();
@@ -104,8 +109,8 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
 
   const categoryId = video.category?._id || video.category;
   const [relatedVideos, trendingShorts] = await Promise.all([
-    getRelatedVideos(categoryId, slug),
-    getTrendingShorts(slug),
+    getRelatedVideos(categoryId, decodedSlug),
+    getTrendingShorts(decodedSlug),
   ]);
 
   const catName = video.category?.name || 'समाचार';
@@ -123,8 +128,8 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
   return (
     <div className="bg-white text-neutral-900 min-h-screen font-devanagari pb-20">
       {/* Top Navigation Strip */}
-      <div className="border-b border-neutral-200 bg-neutral-50/90 backdrop-blur-md sticky top-0 z-30">
-        <div className={`max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between text-xs ${isShort ? 'h-9' : 'h-12'}`}>
+      <div className="border-b border-neutral-200 bg-neutral-50/90">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between text-xs ${isShort ? 'h-10' : 'h-12'}`}>
           <Link
             href="/videos"
             className="inline-flex items-center space-x-2 text-neutral-600 hover:text-red-600 transition-colors"
@@ -143,7 +148,7 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
         </div>
       </div>
 
-      <div className={`max-w-7xl mx-auto px-4 sm:px-6 ${isShort ? 'pt-2 sm:pt-3' : 'pt-6 sm:pt-8'}`}>
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 ${isShort ? 'pt-5 sm:pt-7' : 'pt-6 sm:pt-8'}`}>
         {/* Main Grid: Player on Left, Rail on Right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
           {/* Main Video Column */}
