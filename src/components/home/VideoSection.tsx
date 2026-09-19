@@ -29,6 +29,23 @@ interface VideoSectionProps {
   shorts: VideoItem[];
 }
 
+function formatVideoDate(date?: string | Date | null): string {
+  if (!date) return 'हाल ही में';
+  return new Date(date).toLocaleDateString('hi-IN', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+function formatVideoShortDate(date?: string | Date | null): string {
+  if (!date) return 'हाल ही में';
+  return new Date(date).toLocaleDateString('hi-IN', {
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
 export default function VideoSection({
   featuredVideo,
   recentVideos,
@@ -128,12 +145,7 @@ export default function VideoSection({
                     <span>{spotlight.views || 0} व्यूज</span>
                   </span>
                   <span>•</span>
-                  <span>
-                    {new Date(spotlight.publishedAt || spotlight.createdAt || Date.now()).toLocaleDateString(
-                      'hi-IN',
-                      { month: 'short', day: 'numeric', year: 'numeric' }
-                    )}
-                  </span>
+                  <span>{formatVideoDate(spotlight.publishedAt || spotlight.createdAt)}</span>
                 </div>
               </div>
             </div>
@@ -180,12 +192,7 @@ export default function VideoSection({
                   <div className="flex items-center space-x-2 text-[10px] text-neutral-500 font-sans mt-1">
                     <span>{vid.views || 0} व्यूज</span>
                     <span>•</span>
-                    <span>
-                      {new Date(vid.publishedAt || vid.createdAt || Date.now()).toLocaleDateString('hi-IN', {
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                    </span>
+                    <span>{formatVideoShortDate(vid.publishedAt || vid.createdAt)}</span>
                   </div>
                 </div>
               </Link>

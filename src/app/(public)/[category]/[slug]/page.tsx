@@ -1,11 +1,13 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import dbConnect from '@/lib/db/connect';
 import { Article } from '@/lib/db/models/Article';
 import '@/lib/db/models/Category';
 import ShareButtons from '@/components/article/ShareButtons';
 import ReadingProgressBar from '@/components/article/ReadingProgressBar';
 import { Clock, Calendar, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { sanitizeHtml } from '@/lib/utils/sanitize';
 
 async function getArticle(slug: string) {
   try {
@@ -14,9 +16,51 @@ async function getArticle(slug: string) {
       .populate('category', 'name slug color')
       .lean();
     return article;
-  } catch (error) {
+  } catch {
     return null;
   }
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ category: string; slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const article: any = await getArticle(slug);
+
+  if (!article) {
+    return {
+      title: 'लेख नहीं मिला | Central Lens',
+    };
+  }
+
+  const title = `${article.title} | Central Lens`;
+  const description = article.excerpt || article.subtitle || 'Central Lens - निष्पक्ष और सटीक पत्रकारिता।';
+  const imageUrl = article.coverImage || 'https://res.cloudinary.com/idhgjmqi/image/upload/v1789294779/Central_Lens_Logo_Transparent_1.png';
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      publishedTime: article.publishedAt ? new Date(article.publishedAt).toISOString() : undefined,
+      authors: [article.author?.name || 'Central Lens Desk'],
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: article.title,
+        },
+      ],
+      siteName: 'Central Lens',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [imageUrl],
+    },
+  };
 }
 
 async function getRelatedArticles(categoryId: string, currentSlug: string) {
@@ -57,8 +101,36 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
     day: 'numeric',
   });
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: article.title,
+    description: article.excerpt || article.subtitle || article.title,
+    image: [article.coverImage || 'https://res.cloudinary.com/idhgjmqi/image/upload/v1789294779/Central_Lens_Logo_Transparent_1.png'],
+    datePublished: article.publishedAt ? new Date(article.publishedAt).toISOString() : new Date(article.createdAt).toISOString(),
+    dateModified: article.updatedAt ? new Date(article.updatedAt).toISOString() : undefined,
+    author: {
+      '@type': 'Person',
+      name: article.author?.name || 'Central Lens Desk',
+    },
+    publisher: {
+      '@type': 'NewsMediaOrganization',
+      name: 'Central Lens',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://res.cloudinary.com/idhgjmqi/image/upload/v1789294779/Central_Lens_Logo_Transparent_1.png',
+      },
+    },
+  };
+
   return (
     <>
+      {/* Google News / Rich Snippet JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* Sticky Top Reading Progress Bar */}
       <ReadingProgressBar />
 
@@ -141,7 +213,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
         {/* Article Body Content */}
         <div 
           className="prose prose-neutral prose-lg md:prose-xl max-w-none prose-p:leading-relaxed prose-headings:font-black prose-headings:tracking-tight prose-a:text-red-600 hover:prose-a:text-red-700 prose-img:rounded-2xl prose-strong:text-neutral-900 text-neutral-800"
-          dangerouslySetInnerHTML={{ __html: article.content }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content) }}
         />
 
         {/* Tags */}

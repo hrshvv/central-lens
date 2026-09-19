@@ -3,19 +3,24 @@ import dbConnect from '@/lib/db/connect';
 import { Article } from '@/lib/db/models/Article';
 import { Video } from '@/lib/db/models/Video';
 
+function escapeRegex(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const query = searchParams.get('q');
 
-    if (!query) {
-      return NextResponse.json({ results: [] });
+    if (!query || !query.trim()) {
+      return NextResponse.json({ articles: [], videos: [] });
     }
+
+    const cleanQuery = query.trim().slice(0, 100);
 
     await dbConnect();
     
-    // Basic regex search for MVP. In production, use MongoDB text index or Algolia
-    const regex = new RegExp(query, 'i');
+    const regex = new RegExp(escapeRegex(cleanQuery), 'i');
     
     const [articles, videos] = await Promise.all([
       Article.find({ status: 'published', $or: [{ title: regex }, { content: regex }] })

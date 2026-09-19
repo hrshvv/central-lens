@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import {
   Plus,
@@ -56,12 +56,7 @@ export default function AdminVideos() {
   const [status, setStatus] = useState<'draft' | 'published'>('published');
   const [isFeatured, setIsFeatured] = useState(false);
 
-  useEffect(() => {
-    fetchVideos();
-    fetchCategories();
-  }, []);
-
-  const fetchVideos = async () => {
+  const fetchVideos = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch('/api/admin/videos?limit=100');
@@ -72,9 +67,9 @@ export default function AdminVideos() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const res = await fetch('/api/admin/categories');
       const data = await res.json();
@@ -87,7 +82,12 @@ export default function AdminVideos() {
     } catch (err) {
       console.error('Failed to fetch categories:', err);
     }
-  };
+  }, [categoryId]);
+
+  useEffect(() => {
+    fetchVideos();
+    fetchCategories();
+  }, [fetchVideos, fetchCategories]);
 
   // Video URL auto-detection
   const handleVideoUrlChange = (url: string) => {

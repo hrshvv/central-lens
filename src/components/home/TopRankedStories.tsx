@@ -70,7 +70,7 @@ export default function TopRankedStories({ articles }: { articles: Article[] }) 
               <div className="flex items-center justify-between text-[11px] text-neutral-500 font-sans pt-3 border-t border-neutral-100 mt-2">
                 <span className="flex items-center space-x-1">
                   <Eye size={12} className="text-neutral-400" />
-                  <span>{article.views || Math.floor(Math.random() * 800 + 400)} पाठक</span>
+                  <span>{article.views ?? 0} पाठक</span>
                 </span>
                 <span>{article.readingTime || 4} मिनट</span>
               </div>

@@ -81,10 +81,26 @@ async function getTrendingShorts(currentSlug: string) {
   }
 }
 
+async function getVideoMetadata(slug: string) {
+  try {
+    await dbConnect();
+    const decodedSlug = decodeURIComponent(slug);
+    const video = await Video.findOne({
+      $or: [{ slug: decodedSlug }, { slug }],
+      status: 'published',
+    })
+      .select('title description thumbnailUrl publishedAt createdAt')
+      .lean();
+    return video;
+  } catch {
+    return null;
+  }
+}
+
 export async function generateMetadata({ params }: VideoPageProps): Promise<Metadata> {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-  const video: any = await getVideo(decodedSlug);
+  const video: any = await getVideoMetadata(decodedSlug);
   if (!video) return { title: 'वीडियो नहीं मिला | Central Lens' };
 
   return {

@@ -9,6 +9,9 @@ import { Article } from '@/lib/db/models/Article';
 import { Category } from '@/lib/db/models/Category';
 import { Video } from '@/lib/db/models/Video';
 
+// Incremental Static Regeneration: revalidate homepage cache every 60 seconds
+export const revalidate = 60;
+
 async function getHomePageData() {
   try {
     await dbConnect();

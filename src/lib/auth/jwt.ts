@@ -12,8 +12,11 @@ export interface JwtPayload {
   role: string;
 }
 
+export const ACCESS_TOKEN_MAX_AGE = 2 * 60 * 60; // 2 hours
+export const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7 days
+
 export function signAccessToken(payload: JwtPayload): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '15m' });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: '2h' });
 }
 
 export function signRefreshToken(payload: { id: string }): string {
