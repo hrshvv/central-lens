@@ -3,10 +3,19 @@
 import Link from 'next/link';
 import { 
   Search, Menu, User, X, Home, ChevronRight, Calendar, MapPin, TrendingUp,
-  LogIn, UserPlus, Landmark, Cpu, Trophy, Film, Globe, Car, Sparkles, Shield, Tv
+  LogIn, UserPlus, Landmark, Cpu, Trophy, Film, Globe, Car, Sparkles, Shield, Tv,
+  ChevronDown, LogOut, LayoutDashboard, PlusCircle, ArrowRight
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+
+interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  avatar?: string;
+}
 
 interface NavCategory {
   name: string;
@@ -45,10 +54,39 @@ interface BreakingItem {
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [breakingNews, setBreakingNews] = useState<BreakingItem[]>([]);
   const [categories, setCategories] = useState<NavCategory[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
+
+  // Fetch current user session
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.user) {
+          setCurrentUser(data.user);
+        } else {
+          setCurrentUser(null);
+        }
+      })
+      .catch(() => setCurrentUser(null));
+  }, [pathname]);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      setCurrentUser(null);
+      setIsUserMenuOpen(false);
+      router.push('/login');
+      router.refresh();
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
+  };
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -123,8 +161,27 @@ export default function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)]">
-      {/* Top Edition & Date Bar (Desktop) */}
-      <div className="hidden md:block bg-neutral-50 text-neutral-600 text-[11px] py-1.5 px-4 border-b border-neutral-200">
+        {/* Admin Quick Switch Bar */}
+        {currentUser && (currentUser.role === 'admin' || currentUser.role === 'editor') && (
+          <div className="bg-neutral-950 text-neutral-200 text-xs py-1.5 px-4 sm:px-6 flex items-center justify-between border-b border-neutral-800 font-sans tracking-tight">
+            <div className="flex items-center space-x-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="font-semibold text-white">
+                एडमिन सत्र सक्रिय: <span className="text-neutral-300 font-normal">{currentUser.name} ({currentUser.role})</span>
+              </span>
+            </div>
+            <Link 
+              href="/admin" 
+              className="text-red-400 hover:text-white font-bold transition-colors flex items-center space-x-1"
+            >
+              <span>एडमिन पैनल पर वापस जाएं (Admin Dashboard)</span>
+              <ArrowRight size={13} />
+            </Link>
+          </div>
+        )}
+
+        {/* Top Edition & Date Bar (Desktop) */}
+        <div className="hidden md:block bg-neutral-50 text-neutral-600 text-[11px] py-1.5 px-4 border-b border-neutral-200">
         <div className="max-w-7xl mx-auto flex justify-between items-center font-sans tracking-wide">
           <div className="flex items-center space-x-4">
             <span className="flex items-center space-x-1.5 text-neutral-700 font-medium">
@@ -206,14 +263,95 @@ export default function Navbar() {
             <span className="hidden sm:inline text-xs text-neutral-500 font-sans">खोजें (Search)</span>
           </Link>
           
-          <Link 
-            href="/login" 
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-neutral-100 hover:bg-red-600 hover:text-white text-neutral-800 rounded-full transition text-xs font-semibold shadow-2xs border border-neutral-200 hover:border-red-600" 
-            aria-label="Account"
-          >
-            <User size={14} />
-            <span className="hidden sm:inline">अकाउंट</span>
-          </Link>
+          {/* User Auth Section */}
+          {currentUser ? (
+            <div className="relative">
+              <div className="flex items-center space-x-2">
+                {(currentUser.role === 'admin' || currentUser.role === 'editor') && (
+                  <Link
+                    href="/admin"
+                    className="hidden sm:flex items-center space-x-1 px-3 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-full text-xs font-bold shadow-xs transition"
+                  >
+                    <Shield size={12} className="text-red-500" />
+                    <span>डैशबोर्ड</span>
+                  </Link>
+                )}
+
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-full transition text-xs font-bold border border-neutral-200 cursor-pointer"
+                  aria-label="User profile menu"
+                >
+                  <div className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-black uppercase">
+                    {currentUser.name ? currentUser.name.charAt(0) : 'U'}
+                  </div>
+                  <span className="max-w-[80px] sm:max-w-[120px] truncate">
+                    {currentUser.name.split(' ')[0]}
+                  </span>
+                  <ChevronDown size={12} className="text-neutral-500" />
+                </button>
+              </div>
+
+              {/* Profile Dropdown Menu */}
+              {isUserMenuOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setIsUserMenuOpen(false)} 
+                  />
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-neutral-200/90 py-2 z-50 text-xs font-sans">
+                    <div className="px-4 py-2 border-b border-neutral-100">
+                      <p className="font-bold text-neutral-900 truncate">{currentUser.name}</p>
+                      <p className="text-[11px] text-neutral-400 truncate mt-0.5">{currentUser.email}</p>
+                      <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 uppercase tracking-wider">
+                        {currentUser.role === 'admin' ? 'एडमिन (Admin)' : currentUser.role === 'editor' ? 'संपादक (Editor)' : 'पाठक (Reader)'}
+                      </span>
+                    </div>
+
+                    {(currentUser.role === 'admin' || currentUser.role === 'editor') && (
+                      <div className="py-1 border-b border-neutral-100 font-devanagari">
+                        <Link
+                          href="/admin"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex items-center space-x-2 px-4 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-red-600 font-semibold transition"
+                        >
+                          <LayoutDashboard size={14} className="text-neutral-400" />
+                          <span>एडमिन डैशबोर्ड</span>
+                        </Link>
+                        <Link
+                          href="/admin/articles/new"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex items-center space-x-2 px-4 py-2 text-neutral-700 hover:bg-neutral-50 hover:text-red-600 font-semibold transition"
+                        >
+                          <PlusCircle size={14} className="text-neutral-400" />
+                          <span>नया लेख प्रकाशित करें</span>
+                        </Link>
+                      </div>
+                    )}
+
+                    <div className="pt-1 font-devanagari">
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center space-x-2 px-4 py-2 text-red-600 hover:bg-red-50 font-bold transition text-left cursor-pointer"
+                      >
+                        <LogOut size={14} />
+                        <span>लॉग आउट (Logout)</span>
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <Link 
+              href="/login" 
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-neutral-100 hover:bg-red-600 hover:text-white text-neutral-800 rounded-full transition text-xs font-semibold shadow-2xs border border-neutral-200 hover:border-red-600" 
+              aria-label="Account"
+            >
+              <User size={14} />
+              <span className="hidden sm:inline">लॉगिन / अकाउंट</span>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -428,40 +566,72 @@ export default function Navbar() {
         })}
       </div>
 
-      {/* Drawer Footer: Login & Signup Buttons */}
+      {/* Drawer Footer: User Profile / Login & Signup Buttons */}
       <div className="p-4 border-t border-neutral-200/80 bg-neutral-50/95 space-y-2.5 font-sans">
-        <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider px-0.5">
-          खाता व एक्सेस (Account & Access)
-        </div>
+        {currentUser ? (
+          <div className="space-y-2.5">
+            <div className="flex items-center space-x-3 p-2.5 bg-white rounded-xl border border-neutral-200 shadow-2xs">
+              <div className="w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center font-black text-sm uppercase">
+                {currentUser.name ? currentUser.name.charAt(0) : 'U'}
+              </div>
+              <div className="flex-1 min-w-0 text-left">
+                <p className="text-xs font-bold text-neutral-900 truncate">{currentUser.name}</p>
+                <p className="text-[10px] text-neutral-400 truncate">{currentUser.email}</p>
+                <span className="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-700 uppercase">
+                  {currentUser.role === 'admin' ? 'एडमिन (Admin)' : currentUser.role === 'editor' ? 'संपादक (Editor)' : 'पाठक (Reader)'}
+                </span>
+              </div>
+            </div>
 
-        <div className="grid grid-cols-2 gap-2">
-          <Link
-            href="/login"
-            onClick={() => setIsMenuOpen(false)}
-            className="flex items-center justify-center space-x-1.5 py-2.5 px-3 bg-white hover:bg-neutral-100 active:scale-95 text-neutral-800 text-xs sm:text-sm font-bold rounded-xl border border-neutral-300 shadow-2xs transition"
-          >
-            <LogIn size={15} className="text-neutral-600" />
-            <span>लॉग इन</span>
-          </Link>
+            {(currentUser.role === 'admin' || currentUser.role === 'editor') && (
+              <Link
+                href="/admin"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center justify-center space-x-1.5 w-full py-2.5 px-3 bg-neutral-900 text-white hover:bg-neutral-800 text-xs font-bold rounded-xl shadow-xs transition font-devanagari"
+              >
+                <Shield size={14} className="text-red-500" />
+                <span>एडमिन डैशबोर्ड (Admin CMS)</span>
+              </Link>
+            )}
 
-          <Link
-            href="/register"
-            onClick={() => setIsMenuOpen(false)}
-            className="flex items-center justify-center space-x-1.5 py-2.5 px-3 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition"
-          >
-            <UserPlus size={15} />
-            <span>साइन अप</span>
-          </Link>
-        </div>
+            <button
+              onClick={() => {
+                setIsMenuOpen(false);
+                handleLogout();
+              }}
+              className="flex items-center justify-center space-x-1.5 w-full py-2 px-3 bg-white hover:bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-200 transition font-devanagari cursor-pointer"
+            >
+              <LogOut size={14} />
+              <span>लॉग आउट (Logout)</span>
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider px-0.5">
+              खाता व एक्सेस (Account & Access)
+            </div>
 
-        <Link
-          href="/admin"
-          onClick={() => setIsMenuOpen(false)}
-          className="flex items-center justify-center space-x-1.5 w-full py-1.5 px-3 text-xs font-medium text-neutral-500 hover:text-red-600 transition border border-dashed border-neutral-300/80 rounded-lg hover:bg-white"
-        >
-          <Shield size={13} className="text-neutral-400" />
-          <span>एडमिन डैशबोर्ड (Admin CMS)</span>
-        </Link>
+            <div className="grid grid-cols-2 gap-2">
+              <Link
+                href="/login"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center justify-center space-x-1.5 py-2.5 px-3 bg-white hover:bg-neutral-100 active:scale-95 text-neutral-800 text-xs sm:text-sm font-bold rounded-xl border border-neutral-300 shadow-2xs transition"
+              >
+                <LogIn size={15} className="text-neutral-600" />
+                <span>लॉग इन</span>
+              </Link>
+
+              <Link
+                href="/register"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center justify-center space-x-1.5 py-2.5 px-3 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition"
+              >
+                <UserPlus size={15} />
+                <span>साइन अप</span>
+              </Link>
+            </div>
+          </>
+        )}
       </div>
     </aside>
   </>
