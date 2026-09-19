@@ -40,9 +40,9 @@ export default function VideoPlayer({
       />
 
       <div
-        className={`relative z-10 w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-black shadow-2xl border border-neutral-800 ${
+        className={`relative z-10 w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-black shadow-xl border border-neutral-200 ${
           isShort
-            ? 'max-w-[380px] aspect-[9/16] mx-auto ring-4 ring-neutral-900/50'
+            ? 'max-w-[380px] aspect-[9/16] mx-auto ring-4 ring-neutral-200'
             : 'aspect-video max-w-5xl'
         }`}
       >

@@ -124,28 +124,28 @@ export default function Navbar() {
     <>
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)]">
       {/* Top Edition & Date Bar (Desktop) */}
-      <div className="hidden md:block bg-neutral-900 text-neutral-300 text-[11px] py-1.5 px-4 border-b border-neutral-800">
+      <div className="hidden md:block bg-neutral-50 text-neutral-600 text-[11px] py-1.5 px-4 border-b border-neutral-200">
         <div className="max-w-7xl mx-auto flex justify-between items-center font-sans tracking-wide">
           <div className="flex items-center space-x-4">
-            <span className="flex items-center space-x-1.5 text-neutral-200">
-              <Calendar size={13} className="text-red-500 flex-shrink-0" />
+            <span className="flex items-center space-x-1.5 text-neutral-700 font-medium">
+              <Calendar size={13} className="text-red-600 flex-shrink-0" />
               <span>{currentDate || 'आज का समाचार'}</span>
             </span>
-            <span className="text-neutral-700">•</span>
-            <span className="flex items-center space-x-1 text-neutral-400">
-              <MapPin size={13} className="text-red-500 flex-shrink-0" />
+            <span className="text-neutral-300">•</span>
+            <span className="flex items-center space-x-1 text-neutral-500">
+              <MapPin size={13} className="text-red-600 flex-shrink-0" />
               <span>नई दिल्ली • राष्ट्रीय संस्करण</span>
             </span>
           </div>
 
           <div className="flex items-center space-x-4">
-            <span className="flex items-center space-x-1.5 text-neutral-300">
-              <TrendingUp size={12} className="text-emerald-400" />
-              <span>सेंसेक्स: <strong className="text-white">82,890</strong> <span className="text-emerald-400 font-semibold">+0.38%</span></span>
+            <span className="flex items-center space-x-1.5 text-neutral-600">
+              <TrendingUp size={12} className="text-emerald-600" />
+              <span>सेंसेक्स: <strong className="text-neutral-900 font-semibold">82,890</strong> <span className="text-emerald-600 font-semibold">+0.38%</span></span>
             </span>
-            <span className="text-neutral-700">•</span>
-            <Link href="/about" className="hover:text-white transition-colors">हमारे बारे में</Link>
-            <Link href="/contact" className="hover:text-white transition-colors">संपर्क करें</Link>
+            <span className="text-neutral-300">•</span>
+            <Link href="/about" className="hover:text-red-600 transition-colors text-neutral-600">हमारे बारे में</Link>
+            <Link href="/contact" className="hover:text-red-600 transition-colors text-neutral-600">संपर्क करें</Link>
           </div>
         </div>
       </div>
@@ -180,6 +180,24 @@ export default function Navbar() {
 
         <div className="flex items-center space-x-2 sm:space-x-3">
           <Link 
+            href="/videos" 
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full border transition font-bold text-xs shadow-2xs group ${
+              pathname.startsWith('/videos') || pathname.startsWith('/video')
+                ? 'bg-red-600 text-white border-red-600'
+                : 'bg-red-50 hover:bg-red-100 text-red-600 border-red-200'
+            }`}
+            aria-label="Videos"
+          >
+            <Tv size={15} className={`group-hover:scale-110 transition-transform ${
+              pathname.startsWith('/videos') || pathname.startsWith('/video') ? 'text-white' : 'text-red-600'
+            }`} />
+            <span className="font-devanagari">वीडियो</span>
+            <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+              pathname.startsWith('/videos') || pathname.startsWith('/video') ? 'bg-white' : 'bg-red-600'
+            }`} />
+          </Link>
+
+          <Link 
             href="/search" 
             className="flex items-center space-x-2 px-3 py-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-full transition text-sm font-medium" 
             aria-label="Search articles"
@@ -190,7 +208,7 @@ export default function Navbar() {
           
           <Link 
             href="/login" 
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-neutral-900 hover:bg-red-600 text-white rounded-full transition text-xs font-semibold shadow-sm" 
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-neutral-100 hover:bg-red-600 hover:text-white text-neutral-800 rounded-full transition text-xs font-semibold shadow-2xs border border-neutral-200 hover:border-red-600" 
             aria-label="Account"
           >
             <User size={14} />
@@ -210,18 +228,6 @@ export default function Navbar() {
           }`}
         >
           होम
-        </Link>
-        <Link 
-          href="/videos" 
-          className={`text-sm font-bold px-3.5 py-2.5 transition-colors border-b-2 flex items-center space-x-1.5 ${
-            pathname.startsWith('/videos') || pathname.startsWith('/video')
-              ? 'text-red-600 border-red-600 bg-white' 
-              : 'text-neutral-700 hover:text-red-600 border-transparent hover:border-red-400'
-          }`}
-        >
-          <Tv size={15} className="text-red-600" />
-          <span>वीडियो</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
         </Link>
         {displayCategories.map(cat => {
           const isActive = pathname === `/${cat.slug}`;
@@ -348,56 +354,42 @@ export default function Navbar() {
 
       {/* Categories List (Scrollable, full height) */}
       <div className="flex-1 overflow-y-auto p-3 space-y-1">
-        <div className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider px-3 pt-1 pb-1.5 font-sans flex items-center justify-between">
+        {/* Top Quick Links: Home & Video */}
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          <Link
+            href="/"
+            onClick={() => setIsMenuOpen(false)}
+            className={`flex items-center space-x-2.5 px-3 py-2.5 rounded-xl border font-sans transition ${
+              pathname === '/'
+                ? 'bg-red-50 text-red-600 border-red-200 font-bold shadow-2xs'
+                : 'bg-white text-neutral-800 border-neutral-200 hover:bg-neutral-50 font-semibold'
+            }`}
+          >
+            <Home size={16} className="text-red-600" />
+            <span className="font-devanagari text-sm">होम</span>
+          </Link>
+
+          <Link
+            href="/videos"
+            onClick={() => setIsMenuOpen(false)}
+            className={`flex items-center justify-between px-3 py-2.5 rounded-xl border font-sans transition ${
+              pathname.startsWith('/videos') || pathname.startsWith('/video')
+                ? 'bg-red-50 text-red-600 border-red-200 font-bold shadow-2xs'
+                : 'bg-white text-neutral-800 border-neutral-200 hover:bg-neutral-50 font-semibold'
+            }`}
+          >
+            <div className="flex items-center space-x-2">
+              <Tv size={16} className="text-red-600" />
+              <span className="font-devanagari text-sm">वीडियो</span>
+            </div>
+            <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
+          </Link>
+        </div>
+
+        <div className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider px-3 pt-2 pb-1.5 font-sans flex items-center justify-between border-t border-neutral-100">
           <span>कैटेगरी (Categories)</span>
           <span className="text-[10px] text-neutral-400/80 font-normal">अनुभाग</span>
         </div>
-
-        {/* Home Link */}
-        <Link
-          href="/"
-          onClick={() => setIsMenuOpen(false)}
-          className={`flex items-center justify-between px-3 py-2.5 rounded-xl transition font-sans ${
-            pathname === '/'
-              ? 'bg-red-50 text-red-600 font-bold border-l-4 border-red-600 shadow-2xs'
-              : 'text-neutral-800 hover:bg-neutral-50 hover:text-red-600 font-semibold'
-          }`}
-        >
-          <span className="flex items-center space-x-3">
-            <span className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-              pathname === '/' ? 'bg-red-100 text-red-600' : 'bg-red-50 text-red-600'
-            }`}>
-              <Home size={17} />
-            </span>
-            <span className="flex items-baseline space-x-2">
-              <span className="font-devanagari text-[15px] font-bold">होम</span>
-              <span className="text-[11px] text-neutral-400 font-medium">Home</span>
-            </span>
-          </span>
-          <ChevronRight size={16} className={pathname === '/' ? 'text-red-600' : 'text-neutral-300'} />
-        </Link>
-
-        {/* Video Hub Mobile Link */}
-        <Link
-          href="/videos"
-          onClick={() => setIsMenuOpen(false)}
-          className={`flex items-center justify-between px-3 py-2.5 rounded-xl transition font-sans ${
-            pathname.startsWith('/videos') || pathname.startsWith('/video')
-              ? 'bg-red-50 text-red-600 font-bold border-l-4 border-red-600 shadow-2xs'
-              : 'text-neutral-800 hover:bg-neutral-50 hover:text-red-600 font-semibold'
-          }`}
-        >
-          <span className="flex items-center space-x-3">
-            <span className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-red-100 text-red-600">
-              <Tv size={17} />
-            </span>
-            <span className="flex items-baseline space-x-2">
-              <span className="font-devanagari text-[15px] font-bold">वीडियो समाचार</span>
-              <span className="text-[10px] text-red-600 font-black uppercase px-1.5 py-0.5 bg-red-50 border border-red-200 rounded">LIVE</span>
-            </span>
-          </span>
-          <ChevronRight size={16} className={pathname.startsWith('/video') ? 'text-red-600' : 'text-neutral-300'} />
-        </Link>
 
         {/* Dynamic / Default Categories */}
         {displayCategories.map(cat => {

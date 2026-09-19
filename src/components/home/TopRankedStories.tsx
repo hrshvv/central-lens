@@ -18,21 +18,21 @@ export default function TopRankedStories({ articles }: { articles: Article[] }) 
   if (!articles || articles.length === 0) return null;
 
   return (
-    <section className="my-14 bg-gradient-to-b from-neutral-900 to-neutral-950 text-white rounded-3xl p-6 sm:p-10 shadow-2xl border border-neutral-800">
+    <section className="my-14 bg-neutral-50/70 text-neutral-900 rounded-3xl p-6 sm:p-10 border border-neutral-200/90 shadow-2xs">
       {/* Section Header */}
-      <div className="flex items-center justify-between border-b border-neutral-800 pb-5 mb-8">
+      <div className="flex items-center justify-between border-b border-neutral-200 pb-5 mb-8">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-2xl bg-red-600/20 text-red-500 flex items-center justify-center border border-red-500/30">
+          <div className="w-10 h-10 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center border border-red-200">
             <Flame size={22} className="animate-bounce" />
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center space-x-2">
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-neutral-900 flex items-center space-x-2">
               <span>शीर्ष 5 ट्रेंडिंग खबरें</span>
             </h2>
-            <p className="text-xs text-neutral-400 font-sans mt-0.5">आज सबसे ज्यादा पढ़ी जा रही खबरें (Most Read Today)</p>
+            <p className="text-xs text-neutral-500 font-sans mt-0.5">आज सबसे ज्यादा पढ़ी जा रही खबरें (Most Read Today)</p>
           </div>
         </div>
-        <span className="hidden sm:inline-block text-xs font-bold text-red-500 uppercase tracking-widest bg-red-500/10 px-3 py-1 rounded-full border border-red-500/20">
+        <span className="hidden sm:inline-block text-xs font-bold text-red-600 uppercase tracking-widest bg-red-50 px-3 py-1 rounded-full border border-red-200">
           लाइव रैंकिंग
         </span>
       </div>
@@ -46,28 +46,28 @@ export default function TopRankedStories({ articles }: { articles: Article[] }) 
 
           return (
             <div 
-              key={article._id || idx}
-              className="group relative flex flex-col justify-between p-4 rounded-2xl bg-neutral-800/40 hover:bg-neutral-800/80 border border-neutral-800 hover:border-red-500/40 transition-all duration-300"
+              key={article._id || idx} 
+              className="group relative flex flex-col justify-between p-4 rounded-2xl bg-white hover:bg-neutral-50/60 border border-neutral-200/80 hover:border-red-400 shadow-2xs hover:shadow-sm transition-all duration-300"
             >
               {/* Ranking Number */}
               <div className="flex items-center justify-between mb-3">
-                <span className="text-3xl font-black text-red-500/90 tracking-tighter group-hover:text-red-400 group-hover:scale-105 transition-all">
+                <span className="text-3xl font-black text-red-600 tracking-tighter group-hover:scale-105 transition-all">
                   {rank}
                 </span>
-                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider bg-neutral-800 px-2 py-0.5 rounded">
+                <span className="text-[10px] font-bold text-neutral-600 uppercase tracking-wider bg-neutral-100 px-2 py-0.5 rounded">
                   {catName}
                 </span>
               </div>
 
               {/* Title Link */}
               <Link href={`/${catSlug}/${article.slug}`} className="block flex-1 my-2">
-                <h3 className="font-bold text-sm sm:text-[15px] text-neutral-100 group-hover:text-red-400 line-clamp-3 leading-snug transition-colors">
+                <h3 className="font-bold text-sm sm:text-[15px] text-neutral-900 group-hover:text-red-600 line-clamp-3 leading-snug transition-colors">
                   {article.title}
                 </h3>
               </Link>
 
               {/* Stats Footer */}
-              <div className="flex items-center justify-between text-[11px] text-neutral-500 font-sans pt-3 border-t border-neutral-800/80 mt-2">
+              <div className="flex items-center justify-between text-[11px] text-neutral-500 font-sans pt-3 border-t border-neutral-100 mt-2">
                 <span className="flex items-center space-x-1">
                   <Eye size={12} className="text-neutral-400" />
                   <span>{article.views || Math.floor(Math.random() * 800 + 400)} पाठक</span>

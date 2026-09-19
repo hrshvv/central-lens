@@ -4,7 +4,7 @@ import { Clock, User } from 'lucide-react';
 export default function HeroSection({ featuredArticle, topArticles }: { featuredArticle: any; topArticles: any[] }) {
   if (!featuredArticle) {
     return (
-      <div className="bg-gradient-to-br from-red-600 via-red-700 to-neutral-900 text-white p-10 sm:p-14 rounded-3xl mb-12 shadow-xl">
+      <div className="bg-gradient-to-br from-red-600 via-red-700 to-red-800 text-white p-10 sm:p-14 rounded-3xl mb-12 shadow-xl">
         <span className="bg-white/20 backdrop-blur-md text-white text-xs font-bold px-3.5 py-1 rounded-full mb-5 inline-block uppercase tracking-wider">
           Central Lens
         </span>
@@ -80,7 +80,7 @@ export default function HeroSection({ featuredArticle, topArticles }: { featured
 
       {/* 4 Small Side Cards (4 cols on lg) */}
       <div className="lg:col-span-4 flex flex-col justify-between space-y-4">
-        <div className="flex items-center justify-between border-b-2 border-neutral-900 pb-2 mb-1">
+        <div className="flex items-center justify-between border-b-2 border-neutral-200 pb-2 mb-1">
           <h2 className="text-base font-black text-neutral-900 uppercase tracking-tight flex items-center space-x-2">
             <span className="w-2.5 h-2.5 bg-red-600 rounded-sm inline-block"></span>
             <span>ताज़ा सुर्खियां</span>

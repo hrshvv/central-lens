@@ -38,7 +38,7 @@ export default function TrendingCarousel({ articles }: { articles: Article[] }) 
   const currentArticle = articles[currentIndex];
 
   return (
-    <div className="relative w-full overflow-hidden rounded-3xl bg-neutral-900 shadow-2xl group">
+    <div className="relative w-full overflow-hidden rounded-3xl bg-neutral-100 shadow-lg group border border-neutral-200">
       {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 transform group-hover:scale-105"
@@ -60,12 +60,12 @@ export default function TrendingCarousel({ articles }: { articles: Article[] }) 
         </div>
         
         <Link href={`/${currentArticle.category.slug}/${currentArticle.slug}`} className="block group/link">
-          <h2 className="text-3xl sm:text-5xl font-bold text-white mb-4 leading-tight group-hover/link:text-blue-400 transition-colors line-clamp-3">
+          <h2 className="text-3xl sm:text-5xl font-bold text-white mb-4 leading-tight group-hover/link:text-red-400 transition-colors line-clamp-3">
             {currentArticle.title}
           </h2>
         </Link>
         
-        <p className="text-gray-300 text-lg max-w-3xl line-clamp-2 mb-6 hidden sm:block">
+        <p className="text-gray-200 text-lg max-w-3xl line-clamp-2 mb-6 hidden sm:block">
           {currentArticle.excerpt}
         </p>
 
@@ -76,7 +76,7 @@ export default function TrendingCarousel({ articles }: { articles: Article[] }) 
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
-                  idx === currentIndex ? 'w-8 bg-blue-500' : 'w-2 bg-white/30 hover:bg-white/50'
+                  idx === currentIndex ? 'w-8 bg-red-600' : 'w-2 bg-white/40 hover:bg-white/60'
                 }`}
                 aria-label={`Go to slide ${idx + 1}`}
               />

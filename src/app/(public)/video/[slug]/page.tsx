@@ -121,13 +121,13 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
   });
 
   return (
-    <div className="bg-neutral-950 text-neutral-100 min-h-screen font-devanagari pb-20">
+    <div className="bg-white text-neutral-900 min-h-screen font-devanagari pb-20">
       {/* Top Navigation Strip */}
-      <div className="border-b border-neutral-900 bg-neutral-950/80 backdrop-blur-md sticky top-0 z-30">
+      <div className="border-b border-neutral-200 bg-neutral-50/90 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between text-xs">
           <Link
             href="/videos"
-            className="inline-flex items-center space-x-2 text-neutral-400 hover:text-white transition-colors"
+            className="inline-flex items-center space-x-2 text-neutral-600 hover:text-red-600 transition-colors"
           >
             <ArrowLeft size={14} />
             <span>वीडियो हब (All Videos)</span>
@@ -138,7 +138,7 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
               className="w-2 h-2 rounded-full shadow-xs"
               style={{ backgroundColor: catColor }}
             />
-            <span className="text-neutral-400 font-bold">{catName}</span>
+            <span className="text-neutral-700 font-bold">{catName}</span>
           </div>
         </div>
       </div>
@@ -163,31 +163,31 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
               {/* Category & Format Tags */}
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 <span
-                  className="px-3 py-1 rounded-full text-xs font-black text-white shadow-sm"
+                  className="px-3 py-1 rounded-full text-xs font-black text-white shadow-2xs"
                   style={{ backgroundColor: catColor }}
                 >
                   {catName}
                 </span>
 
                 {isShort ? (
-                  <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-bold bg-purple-900/60 text-purple-300 border border-purple-700/60">
+                  <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200">
                     <Smartphone size={12} />
                     <span>शॉर्ट्स (Reel)</span>
                   </span>
                 ) : isPodcast ? (
-                  <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-900/60 text-amber-300 border border-amber-700/60">
+                  <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
                     <Radio size={12} />
                     <span>पॉडकास्ट</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-900/60 text-blue-300 border border-blue-700/60">
+                  <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
                     <Film size={12} />
                     <span>लॉन्ग वीडियो</span>
                   </span>
                 )}
 
                 {video.isFeatured && (
-                  <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-bold bg-red-950 text-red-400 border border-red-800">
+                  <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-600 border border-red-200">
                     <Sparkles size={11} className="fill-current" />
                     <span>मुख्य बुलेटिन</span>
                   </span>
@@ -195,18 +195,18 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
               </div>
 
               {/* Title */}
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight tracking-tight mb-4">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-neutral-900 leading-tight tracking-tight mb-4">
                 {video.title}
               </h1>
 
               {/* Author & Stats Row */}
-              <div className="flex flex-wrap items-center justify-between gap-4 py-3.5 border-t border-b border-neutral-800 text-xs text-neutral-400 font-sans">
+              <div className="flex flex-wrap items-center justify-between gap-4 py-3.5 border-t border-b border-neutral-200 text-xs text-neutral-500 font-sans">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center font-black text-sm">
+                  <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center font-black text-sm shadow-2xs">
                     {video.author?.name?.charAt(0) || 'C'}
                   </div>
                   <div>
-                    <span className="font-bold text-white block font-devanagari text-sm">
+                    <span className="font-bold text-neutral-900 block font-devanagari text-sm">
                       {video.author?.name || 'Central Lens Bureau'}
                     </span>
                     <span className="text-[11px] text-neutral-500">सेंट्रल लेंस वीडियो टीम</span>
@@ -214,20 +214,20 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
                 </div>
 
                 <div className="flex items-center space-x-4">
-                  <span className="flex items-center space-x-1 text-neutral-300">
-                    <Eye size={14} className="text-red-500" />
-                    <span className="font-bold">{video.views || 1} व्यूज</span>
+                  <span className="flex items-center space-x-1 text-neutral-700 font-medium">
+                    <Eye size={14} className="text-red-600" />
+                    <span>{video.views || 1} व्यूज</span>
                   </span>
                   <span>•</span>
-                  <span className="flex items-center space-x-1 text-neutral-400">
-                    <Calendar size={13} className="text-neutral-500" />
+                  <span className="flex items-center space-x-1 text-neutral-500">
+                    <Calendar size={13} className="text-neutral-400" />
                     <span>{publishedDateFormatted}</span>
                   </span>
                   {video.duration > 0 && (
                     <>
                       <span>•</span>
-                      <span className="flex items-center space-x-1 text-neutral-400">
-                        <Clock size={13} className="text-neutral-500" />
+                      <span className="flex items-center space-x-1 text-neutral-500">
+                        <Clock size={13} className="text-neutral-400" />
                         <span>{formatDuration(video.duration)}</span>
                       </span>
                     </>
@@ -242,11 +242,11 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
 
               {/* Description Box */}
               {video.description && (
-                <div className="mt-4 p-5 rounded-2xl bg-neutral-900/80 border border-neutral-800/80">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">
+                <div className="mt-4 p-5 rounded-2xl bg-neutral-50 border border-neutral-200">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-2">
                     विवरण (Video Overview)
                   </h3>
-                  <p className="text-sm sm:text-base text-neutral-300 leading-relaxed whitespace-pre-line font-medium">
+                  <p className="text-sm sm:text-base text-neutral-800 leading-relaxed whitespace-pre-line font-medium">
                     {video.description}
                   </p>
                 </div>
@@ -259,7 +259,7 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
                     {video.tags.map((tag: string) => (
                       <span
                         key={tag}
-                        className="bg-neutral-900 border border-neutral-800 text-neutral-300 font-medium px-3.5 py-1.5 rounded-full text-xs hover:border-red-600 hover:text-red-400 cursor-pointer transition-colors"
+                        className="bg-neutral-100 border border-neutral-200 text-neutral-700 font-medium px-3.5 py-1.5 rounded-full text-xs hover:border-red-600 hover:text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
                       >
                         #{tag}
                       </span>
@@ -269,13 +269,13 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
               )}
 
               {/* Editorial Guarantee Card */}
-              <div className="mt-8 p-5 rounded-2xl bg-neutral-900/40 border border-neutral-800/60 flex items-start space-x-3.5">
-                <div className="w-10 h-10 rounded-xl bg-red-600/10 text-red-500 flex items-center justify-center flex-shrink-0">
+              <div className="mt-8 p-5 rounded-2xl bg-neutral-50 border border-neutral-200/80 flex items-start space-x-3.5">
+                <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 border border-red-200 flex items-center justify-center flex-shrink-0">
                   <ShieldCheck size={20} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-neutral-200 text-sm">Central Lens वीडियो डेस्क</h4>
-                  <p className="text-xs text-neutral-400 mt-1 leading-relaxed">
+                  <h4 className="font-bold text-neutral-900 text-sm">Central Lens वीडियो डेस्क</h4>
+                  <p className="text-xs text-neutral-600 mt-1 leading-relaxed">
                     यह वीडियो रिपोर्ट हमारे डिजिटल न्यूजरूम द्वारा सत्यापित स्रोतों और ग्राउंड इनपुट्स के आधार पर तैयार की गई है।
                   </p>
                 </div>
@@ -287,15 +287,15 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
           <div className={`${isShort ? 'lg:col-span-5' : 'lg:col-span-4'} space-y-8`}>
             {/* Related Videos List */}
             <div>
-              <div className="flex items-center space-x-2 mb-4 pb-2 border-b border-neutral-800">
+              <div className="flex items-center space-x-2 mb-4 pb-2 border-b border-neutral-200">
                 <span className="w-2 h-5 bg-red-600 rounded-full inline-block"></span>
-                <h3 className="text-base sm:text-lg font-black text-white">
+                <h3 className="text-base sm:text-lg font-black text-neutral-900">
                   संबंधित वीडियो (Related Videos)
                 </h3>
               </div>
 
               {relatedVideos.length === 0 ? (
-                <div className="text-xs text-neutral-500 p-4 bg-neutral-900/40 rounded-xl">
+                <div className="text-xs text-neutral-500 p-4 bg-neutral-50 border border-neutral-200 rounded-xl">
                   इस श्रेणी में अन्य वीडियो जल्द आ रहे हैं।
                 </div>
               ) : (
@@ -306,11 +306,11 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
                       <Link
                         key={rel._id}
                         href={`/video/${rel.slug}`}
-                        className="group flex space-x-3 p-2 rounded-xl bg-neutral-900/40 hover:bg-neutral-900 border border-neutral-900 hover:border-neutral-800 transition-all"
+                        className="group flex space-x-3 p-2.5 rounded-xl bg-white hover:bg-neutral-50 border border-neutral-200/80 hover:border-neutral-300 shadow-2xs transition-all"
                       >
                         {/* Thumbnail */}
                         <div
-                          className={`relative rounded-lg overflow-hidden bg-neutral-950 flex-shrink-0 ${
+                          className={`relative rounded-lg overflow-hidden bg-neutral-100 flex-shrink-0 ${
                             isRelShort ? 'w-14 h-20' : 'w-28 h-18 sm:w-32 sm:h-20'
                           }`}
                         >
@@ -320,7 +320,7 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                           <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 flex items-center justify-center transition">
-                            <div className="w-6 h-6 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow">
+                            <div className="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center shadow">
                               <Play size={10} className="fill-current translate-x-0.5" />
                             </div>
                           </div>
@@ -333,7 +333,7 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
 
                         {/* Text */}
                         <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                          <h4 className="text-xs sm:text-sm font-bold text-neutral-200 group-hover:text-red-400 line-clamp-2 leading-snug transition-colors">
+                          <h4 className="text-xs sm:text-sm font-bold text-neutral-900 group-hover:text-red-600 line-clamp-2 leading-snug transition-colors">
                             {rel.title}
                           </h4>
                           <div className="flex items-center space-x-2 text-[10px] text-neutral-500 font-sans mt-1">
@@ -356,15 +356,15 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
 
             {/* Trending Shorts Quick Strip */}
             {trendingShorts.length > 0 && (
-              <div className="pt-4 border-t border-neutral-800/80">
+              <div className="pt-4 border-t border-neutral-200">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-2">
-                    <Smartphone size={16} className="text-purple-400" />
-                    <h3 className="text-sm font-black text-white">
+                    <Smartphone size={16} className="text-purple-600" />
+                    <h3 className="text-sm font-black text-neutral-900">
                       ट्रेंडिंग शॉर्ट्स (Reels)
                     </h3>
                   </div>
-                  <Link href="/videos?type=short" className="text-[11px] text-purple-400 hover:text-purple-300 font-bold">
+                  <Link href="/videos?type=short" className="text-[11px] text-purple-600 hover:text-purple-700 font-bold">
                     सभी देखें →
                   </Link>
                 </div>
@@ -374,7 +374,7 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
                     <Link
                       key={shortVid._id}
                       href={`/video/${shortVid.slug}`}
-                      className="group relative rounded-xl overflow-hidden aspect-[9/16] bg-neutral-900 border border-neutral-800 shadow-xs block"
+                      className="group relative rounded-xl overflow-hidden aspect-[9/16] bg-neutral-900 border border-neutral-200 shadow-2xs hover:shadow-md block transition-all"
                     >
                       <img
                         src={shortVid.thumbnailUrl}
@@ -388,7 +388,7 @@ export default async function VideoWatchPage({ params }: VideoPageProps) {
                         <h5 className="text-[11px] font-bold text-white line-clamp-2 leading-tight">
                           {shortVid.title}
                         </h5>
-                        <span className="text-[9px] text-neutral-400 mt-1 font-sans">
+                        <span className="text-[9px] text-neutral-300 mt-1 font-sans">
                           {shortVid.views || 0} व्यूज
                         </span>
                       </div>
