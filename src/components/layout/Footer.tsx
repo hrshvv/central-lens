@@ -67,6 +67,12 @@ export default function Footer() {
             <li><Link href="/sports" className="hover:text-red-600 transition-colors text-neutral-600">खेल</Link></li>
             <li><Link href="/technology" className="hover:text-red-600 transition-colors text-neutral-600">टेक्नोलॉजी</Link></li>
             <li><Link href="/entertainment" className="hover:text-red-600 transition-colors text-neutral-600">मनोरंजन</Link></li>
+            <li>
+              <Link href="/videos" className="hover:text-red-600 transition-colors text-neutral-600 font-semibold inline-flex items-center space-x-1.5">
+                <span>वीडियो (Videos)</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
+              </Link>
+            </li>
           </ul>
         </div>
 
