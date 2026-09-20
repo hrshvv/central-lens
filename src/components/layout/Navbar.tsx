@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { 
   Search, Menu, User, X, Home, ChevronRight, Calendar, MapPin, TrendingUp,
   LogIn, UserPlus, Landmark, Cpu, Trophy, Film, Globe, Car, Sparkles, Shield, Tv,
-  ChevronDown, LogOut, LayoutDashboard, PlusCircle, ArrowRight
+  ChevronDown, LogOut, LayoutDashboard, PlusCircle
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -161,25 +161,6 @@ export default function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)]">
-        {/* Admin Quick Switch Bar */}
-        {currentUser && (currentUser.role === 'admin' || currentUser.role === 'editor') && (
-          <div className="bg-neutral-950 text-neutral-200 text-xs py-1.5 px-4 sm:px-6 flex items-center justify-between border-b border-neutral-800 font-sans tracking-tight">
-            <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-semibold text-white">
-                एडमिन सत्र सक्रिय: <span className="text-neutral-300 font-normal">{currentUser.name} ({currentUser.role})</span>
-              </span>
-            </div>
-            <Link 
-              href="/admin" 
-              className="text-red-400 hover:text-white font-bold transition-colors flex items-center space-x-1"
-            >
-              <span>एडमिन पैनल पर वापस जाएं (Admin Dashboard)</span>
-              <ArrowRight size={13} />
-            </Link>
-          </div>
-        )}
-
         {/* Top Edition & Date Bar (Desktop) */}
         <div className="hidden md:block bg-neutral-50 text-neutral-600 text-[11px] py-1.5 px-4 border-b border-neutral-200">
         <div className="max-w-7xl mx-auto flex justify-between items-center font-sans tracking-wide">
@@ -256,11 +237,17 @@ export default function Navbar() {
 
           <Link 
             href="/search" 
-            className="flex items-center space-x-2 px-3 py-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-full transition text-sm font-medium" 
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full border transition font-bold text-xs shadow-2xs group ${
+              pathname === '/search'
+                ? 'bg-red-600 text-white border-red-600'
+                : 'bg-red-50 hover:bg-red-100 text-red-600 border-red-200'
+            }`}
             aria-label="Search articles"
           >
-            <Search size={18} />
-            <span className="hidden sm:inline text-xs text-neutral-500 font-sans">खोजें (Search)</span>
+            <Search size={14} className={`group-hover:scale-110 transition-transform ${
+              pathname === '/search' ? 'text-white' : 'text-red-600'
+            }`} />
+            <span className="font-devanagari">खोजें</span>
           </Link>
           
           {/* User Auth Section */}
@@ -270,9 +257,9 @@ export default function Navbar() {
                 {(currentUser.role === 'admin' || currentUser.role === 'editor') && (
                   <Link
                     href="/admin"
-                    className="hidden sm:flex items-center space-x-1 px-3 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-full text-xs font-bold shadow-xs transition"
+                    className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-full text-xs font-bold border border-red-200/80 shadow-2xs transition"
                   >
-                    <Shield size={12} className="text-red-500" />
+                    <Shield size={13} className="text-red-600" />
                     <span>डैशबोर्ड</span>
                   </Link>
                 )}
@@ -587,9 +574,9 @@ export default function Navbar() {
               <Link
                 href="/admin"
                 onClick={() => setIsMenuOpen(false)}
-                className="flex items-center justify-center space-x-1.5 w-full py-2.5 px-3 bg-neutral-900 text-white hover:bg-neutral-800 text-xs font-bold rounded-xl shadow-xs transition font-devanagari"
+                className="flex items-center justify-center space-x-1.5 w-full py-2.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs font-bold rounded-xl shadow-2xs transition font-devanagari"
               >
-                <Shield size={14} className="text-red-500" />
+                <Shield size={14} className="text-red-600" />
                 <span>एडमिन डैशबोर्ड (Admin CMS)</span>
               </Link>
             )}
