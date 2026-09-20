@@ -142,11 +142,11 @@ export default function LoginPage() {
                   className="h-9 w-9 object-contain transform group-hover:scale-105 transition-transform"
                 />
                 <div className="flex flex-col text-left">
-                  <span className="text-xl font-black text-red-600 tracking-tight leading-none group-hover:text-red-700 transition-colors">
-                    CENTRAL LENS
+                  <span className="text-xl font-black text-neutral-900 tracking-tight leading-none font-sans">
+                    CENTRAL <span className="text-red-600 group-hover:text-red-700 transition-colors">LENS</span>
                   </span>
-                  <span className="text-[9px] font-bold text-neutral-500 tracking-[0.2em] uppercase mt-0.5">
-                    निष्पक्ष पत्रकारिता
+                  <span className="text-[10px] font-medium text-neutral-500 tracking-normal font-devanagari mt-0.5">
+                    सत्य, सटीकता और निष्पक्ष पत्रकारिता
                   </span>
                 </div>
               </Link>
