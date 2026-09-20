@@ -206,17 +206,17 @@ export default function AboutPage() {
 
       {/* Subtle News Tip CTA */}
       <section className="py-12 max-w-4xl mx-auto px-4 sm:px-6">
-        <div className="bg-neutral-900 text-white rounded-2xl p-6 sm:p-8 text-center space-y-3">
-          <h2 className="text-xl sm:text-2xl font-bold font-devanagari">
+        <div className="bg-white rounded-2xl border border-neutral-200/90 shadow-2xs p-6 sm:p-8 text-center space-y-3 text-neutral-900">
+          <h2 className="text-xl sm:text-2xl font-bold font-devanagari text-neutral-900">
             क्या आपके पास कोई महत्वपूर्ण समाचार या टिप है?
           </h2>
-          <p className="text-neutral-300 text-xs sm:text-sm max-w-lg mx-auto font-devanagari leading-relaxed">
+          <p className="text-neutral-600 text-xs sm:text-sm max-w-lg mx-auto font-devanagari leading-relaxed">
             यदि आप किसी जनहित के मुद्दे को उजागर करना चाहते हैं, तो हमारी संपादकीय टीम से संपर्क करें। स्रोतों की पहचान पूर्णतः सुरक्षित रखी जाती है।
           </p>
           <div className="pt-2">
             <Link
               href="/contact"
-              className="inline-flex items-center space-x-2 px-5 py-2.5 bg-white hover:bg-neutral-100 text-neutral-900 font-semibold rounded-lg text-xs transition font-devanagari"
+              className="inline-flex items-center space-x-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg text-xs transition shadow-2xs font-devanagari"
             >
               <span>संपादकीय टीम को संदेश भेजें</span>
               <ArrowRight size={14} />
