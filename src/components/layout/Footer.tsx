@@ -188,9 +188,11 @@ export default function Footer() {
               </p>
 
               {status === 'success' ? (
-                <div className="flex items-center space-x-2 text-xs text-neutral-800 bg-neutral-100 p-2.5 rounded-lg border border-neutral-200">
-                  <CheckCircle2 size={15} className="text-emerald-600 flex-shrink-0" />
-                  <span>{message}</span>
+                <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-left space-y-1">
+                  <div className="flex items-center space-x-2 text-xs font-bold text-emerald-900">
+                    <CheckCircle2 size={16} className="text-emerald-600 flex-shrink-0" />
+                    <span>{message}</span>
+                  </div>
                 </div>
               ) : (
                 <form onSubmit={handleSubscribe} className="space-y-2">

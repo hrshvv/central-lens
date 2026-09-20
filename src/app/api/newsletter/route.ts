@@ -7,24 +7,33 @@ export async function POST(req: NextRequest) {
     const { email } = await req.json();
 
     if (!email || !email.includes('@')) {
-      return NextResponse.json({ error: 'Valid email is required' }, { status: 400 });
+      return NextResponse.json({ error: 'कृपया एक वैध ईमेल पता दर्ज करें।' }, { status: 400 });
     }
+
+    const cleanEmail = email.trim().toLowerCase();
 
     await dbConnect();
     
-    const existing = await Newsletter.findOne({ email });
+    const existing = await Newsletter.findOne({ email: cleanEmail });
     if (existing) {
       if (!existing.isActive) {
         existing.isActive = true;
         await existing.save();
       }
-      return NextResponse.json({ success: true, message: 'Already subscribed' });
+      return NextResponse.json({ 
+        success: true, 
+        message: 'आप पहले से ही सेंट्रल लेंस न्यूज़लेटर से जुड़े हुए हैं!' 
+      });
     }
 
-    await Newsletter.create({ email });
+    await Newsletter.create({ email: cleanEmail });
 
-    return NextResponse.json({ success: true }, { status: 201 });
+    return NextResponse.json({ 
+      success: true, 
+      message: 'धन्यवाद! आप सेंट्रल लेंस न्यूज़लेटर से सफलतापूर्वक जुड़ गए हैं।' 
+    }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('Newsletter subscription error:', error);
+    return NextResponse.json({ error: 'सर्वर त्रुटि। कृपया कुछ समय बाद पुनः प्रयास करें।' }, { status: 500 });
   }
 }
