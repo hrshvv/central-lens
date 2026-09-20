@@ -9,7 +9,8 @@ export async function GET() {
     const breakingArticles = await Article.find({ status: 'published', isBreaking: true })
       .sort({ publishedAt: -1, createdAt: -1 })
       .limit(5)
-      .select('title slug')
+      .select('title slug category')
+      .populate('category', 'name slug color')
       .lean();
 
     return NextResponse.json(breakingArticles);
