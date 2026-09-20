@@ -276,7 +276,7 @@ export default function Navbar() {
         <div className="flex items-center space-x-2 sm:space-x-3">
           <Link 
             href="/videos" 
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full border transition font-bold text-xs shadow-2xs group ${
+            className={`hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-full border transition font-bold text-xs shadow-2xs group ${
               pathname.startsWith('/videos') || pathname.startsWith('/video')
                 ? 'bg-red-600 text-white border-red-600'
                 : 'bg-red-50 hover:bg-red-100 text-red-600 border-red-200'
@@ -294,7 +294,7 @@ export default function Navbar() {
 
           <Link 
             href="/search" 
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full border transition font-bold text-xs shadow-2xs group ${
+            className={`hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-full border transition font-bold text-xs shadow-2xs group ${
               pathname === '/search'
                 ? 'bg-red-600 text-white border-red-600'
                 : 'bg-red-50 hover:bg-red-100 text-red-600 border-red-200'
