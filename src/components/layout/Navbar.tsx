@@ -61,6 +61,67 @@ export default function Navbar() {
   const [categories, setCategories] = useState<NavCategory[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
+  const [userLocation, setUserLocation] = useState<string>('नई दिल्ली • राष्ट्रीय संस्करण');
+
+  // Fetch user location via IP lookup
+  useEffect(() => {
+    try {
+      const cached = sessionStorage.getItem('cl_user_location');
+      if (cached) {
+        setUserLocation(cached);
+        return;
+      }
+
+      fetch('https://ipwho.is/')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.success && data.city) {
+            const cityHindiMap: Record<string, string> = {
+              'Delhi': 'नई दिल्ली',
+              'New Delhi': 'नई दिल्ली',
+              'Noida': 'नोएडा',
+              'Greater Noida': 'ग्रेटर नोएडा',
+              'Dadri': 'दादरी',
+              'Ghaziabad': 'गाजियाबाद',
+              'Gurugram': 'गुरुग्राम',
+              'Gurgaon': 'गुरुग्राम',
+              'Faridabad': 'फरीदाबाद',
+              'Mumbai': 'मुंबई',
+              'Pune': 'पुणे',
+              'Bengaluru': 'बेंगलुरु',
+              'Bangalore': 'बेंगलुरु',
+              'Hyderabad': 'हैदराबाद',
+              'Chennai': 'चेन्नई',
+              'Kolkata': 'कोलकाता',
+              'Ahmedabad': 'अहमदाबाद',
+              'Jaipur': 'जयपुर',
+              'Lucknow': 'लखनऊ',
+              'Kanpur': 'कानपुर',
+              'Patna': 'पटना',
+              'Bhopal': 'भोपाल',
+              'Indore': 'इंदौर',
+              'Chandigarh': 'चंडीगढ़',
+              'Varanasi': 'वाराणसी',
+              'Agra': 'आगरा',
+              'Meerut': 'मेरठ',
+              'Prayagraj': 'प्रयागराज',
+              'Allahabad': 'प्रयागराज',
+              'Ranchi': 'रांची',
+              'Dehradun': 'देहरादून',
+              'Shimla': 'शिमला',
+              'Surat': 'सूरत',
+              'Nagpur': 'नागपुर',
+            };
+
+            const cityName = cityHindiMap[data.city] || data.city;
+            const edition = `${cityName} • राष्ट्रीय संस्करण`;
+            setUserLocation(edition);
+            sessionStorage.setItem('cl_user_location', edition);
+          }
+        })
+        .catch(() => {});
+    } catch {}
+  }, []);
 
   // Fetch current user session
   useEffect(() => {
@@ -170,9 +231,9 @@ export default function Navbar() {
               <span>{currentDate || 'आज का समाचार'}</span>
             </span>
             <span className="text-neutral-300">•</span>
-            <span className="flex items-center space-x-1 text-neutral-500">
+            <span className="flex items-center space-x-1 text-neutral-500 font-devanagari">
               <MapPin size={13} className="text-red-600 flex-shrink-0" />
-              <span>नई दिल्ली • राष्ट्रीय संस्करण</span>
+              <span>{userLocation}</span>
             </span>
           </div>
 
@@ -461,8 +522,15 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Search shortcut */}
-      <div className="p-3.5 border-b border-neutral-100 bg-white">
+      {/* Search shortcut & Location */}
+      <div className="p-3.5 border-b border-neutral-100 bg-white space-y-2">
+        <div className="flex items-center justify-between text-[11px] text-neutral-500 px-1 font-devanagari">
+          <span className="flex items-center space-x-1">
+            <MapPin size={12} className="text-red-600 flex-shrink-0" />
+            <span>{userLocation}</span>
+          </span>
+          <span className="text-[10px] text-neutral-400 font-sans">{currentDate}</span>
+        </div>
         <Link
           href="/search"
           onClick={() => setIsMenuOpen(false)}
