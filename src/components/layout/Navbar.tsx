@@ -177,12 +177,8 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <span className="flex items-center space-x-1.5 text-neutral-600">
-              <TrendingUp size={12} className="text-emerald-600" />
-              <span>सेंसेक्स: <strong className="text-neutral-900 font-semibold">82,890</strong> <span className="text-emerald-600 font-semibold">+0.38%</span></span>
-            </span>
-            <span className="text-neutral-300">•</span>
             <Link href="/about" className="hover:text-red-600 transition-colors text-neutral-600">हमारे बारे में</Link>
+            <span className="text-neutral-300">•</span>
             <Link href="/contact" className="hover:text-red-600 transition-colors text-neutral-600">संपर्क करें</Link>
           </div>
         </div>
