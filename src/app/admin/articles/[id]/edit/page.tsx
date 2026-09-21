@@ -18,13 +18,24 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
       .catch(console.error);
   }, [resolvedParams.id]);
 
-  if (loading) return <div className="p-8">Loading article...</div>;
-  if (!article) return <div className="p-8 text-red-600">Article not found</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[40vh]">
+        <div className="flex flex-col items-center space-y-3">
+          <div className="w-8 h-8 border-3 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-xs font-semibold text-neutral-500 font-devanagari">लेख लोड हो रहा है...</p>
+        </div>
+      </div>
+    );
+  }
 
-  return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Edit Article</h1>
-      <ArticleEditor initialData={article} />
-    </div>
-  );
+  if (!article) {
+    return (
+      <div className="p-8 text-center text-red-600 font-devanagari font-bold">
+        लेख नहीं मिला (Article not found)
+      </div>
+    );
+  }
+
+  return <ArticleEditor initialData={article} />;
 }

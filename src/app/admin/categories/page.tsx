@@ -89,11 +89,11 @@ export default function AdminCategories() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 font-sans">
+    <div className="max-w-7xl mx-auto space-y-5 sm:space-y-6 font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3.5 sm:gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-neutral-900 tracking-tight font-devanagari">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-neutral-900 tracking-tight font-devanagari">
             कैटेगरी प्रबंधन (Categories)
           </h1>
           <p className="text-xs sm:text-sm text-neutral-500 mt-1 font-devanagari">
@@ -102,44 +102,93 @@ export default function AdminCategories() {
         </div>
         <button 
           onClick={() => openModal()} 
-          className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 active:scale-98 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition font-devanagari"
+          className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 active:scale-98 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition font-devanagari"
         >
           <Plus size={16} />
           <span>नई कैटेगरी जोड़ें</span>
         </button>
       </div>
 
-      {/* Categories Table */}
+      {/* Categories Container: Dual Mobile Cards + Desktop Table */}
       <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-neutral-50/80 text-neutral-500 text-xs uppercase tracking-wider border-b border-neutral-100">
-                <th className="py-4 px-6 font-semibold">नाम (Name)</th>
-                <th className="py-4 px-6 font-semibold">URL Slug</th>
-                <th className="py-4 px-6 font-semibold">क्रम (Order)</th>
-                <th className="py-4 px-6 font-semibold">थीम रंग (Color)</th>
-                <th className="py-4 px-6 font-semibold text-right">कार्रवाई</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-100 text-sm">
-              {loading ? (
-                <tr>
-                  <td colSpan={5} className="py-16 text-center text-neutral-400">
-                    <div className="flex flex-col items-center space-y-2">
-                      <div className="w-6 h-6 border-3 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-                      <span className="text-xs">कैटेगरी लोड हो रही हैं...</span>
-                    </div>
-                  </td>
+        {/* Loading State */}
+        {loading && (
+          <div className="py-16 text-center text-neutral-400">
+            <div className="flex flex-col items-center space-y-2">
+              <div className="w-6 h-6 border-3 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-xs font-devanagari">कैटेगरी लोड हो रही हैं...</span>
+            </div>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && categories.length === 0 && (
+          <div className="py-16 text-center text-neutral-400 text-xs font-devanagari">
+            कोई कैटेगरी नहीं मिली।
+          </div>
+        )}
+
+        {/* Mobile Cards View (< sm) */}
+        {!loading && categories.length > 0 && (
+          <div className="block sm:hidden divide-y divide-neutral-100">
+            {categories.map((cat: any) => (
+              <div key={cat._id} className="p-3.5 space-y-2.5 hover:bg-neutral-50/60 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <span 
+                      className="w-3.5 h-3.5 rounded-full flex-shrink-0 shadow-xs" 
+                      style={{ backgroundColor: cat.color || '#DC2626' }}
+                    />
+                    <span className="font-bold text-neutral-900 font-devanagari text-base">
+                      {cat.name}
+                    </span>
+                  </div>
+                  <span className="inline-block px-2 py-0.5 bg-neutral-100 rounded-md text-[11px] font-bold text-neutral-700">
+                    क्रम: {cat.order || 0}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between text-xs pt-1">
+                  <span className="font-mono text-[11px] text-neutral-500">
+                    /{cat.slug}
+                  </span>
+                  <div className="flex items-center space-x-1">
+                    <button 
+                      onClick={() => openModal(cat)} 
+                      className="p-1.5 text-neutral-500 hover:text-red-600 rounded-lg hover:bg-red-50 transition"
+                      title="संपादित करें"
+                    >
+                      <Edit3 size={15} />
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(cat._id)} 
+                      className="p-1.5 text-neutral-500 hover:text-red-600 rounded-lg hover:bg-red-50 transition"
+                      title="हटाएं"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Desktop Table View (>= sm) */}
+        {!loading && categories.length > 0 && (
+          <div className="hidden sm:block overflow-x-auto">
+            <table className="w-full text-left min-w-[550px]">
+              <thead>
+                <tr className="bg-neutral-50/80 text-neutral-500 text-xs uppercase tracking-wider border-b border-neutral-100">
+                  <th className="py-4 px-6 font-semibold">नाम (Name)</th>
+                  <th className="py-4 px-6 font-semibold">URL Slug</th>
+                  <th className="py-4 px-6 font-semibold">क्रम (Order)</th>
+                  <th className="py-4 px-6 font-semibold">थीम रंग (Color)</th>
+                  <th className="py-4 px-6 font-semibold text-right">कार्रवाई</th>
                 </tr>
-              ) : categories.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="py-16 text-center text-neutral-400 text-xs">
-                    कोई कैटेगरी नहीं मिली।
-                  </td>
-                </tr>
-              ) : (
-                categories.map((cat: any) => (
+              </thead>
+              <tbody className="divide-y divide-neutral-100 text-sm">
+                {categories.map((cat: any) => (
                   <tr key={cat._id} className="hover:bg-neutral-50/60 transition-colors">
                     <td className="py-4 px-6">
                       <div className="flex items-center space-x-3">
@@ -188,19 +237,19 @@ export default function AdminCategories() {
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Styled Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl border border-neutral-100 transform transition-all">
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-neutral-100">
-              <h2 className="text-lg font-black text-neutral-900 font-devanagari">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-2xs flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl p-4 sm:p-6 w-full max-w-md shadow-2xl border border-neutral-100 my-auto transform transition-all">
+            <div className="flex items-center justify-between pb-3 sm:pb-4 mb-3 sm:mb-4 border-b border-neutral-100">
+              <h2 className="text-base sm:text-lg font-black text-neutral-900 font-devanagari">
                 {editCategory ? 'कैटेगरी संपादित करें' : 'नई कैटेगरी जोड़ें'}
               </h2>
               <button 
@@ -211,7 +260,7 @@ export default function AdminCategories() {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4">
               <div>
                 <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5 font-devanagari">
                   कैटेगरी का नाम (Hindi Name) *
@@ -222,7 +271,7 @@ export default function AdminCategories() {
                   onChange={(e) => setName(e.target.value)} 
                   required 
                   placeholder="उदा. खेल, तकनीक, राजनीति..."
-                  className="w-full border border-neutral-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari" 
+                  className="w-full border border-neutral-200 rounded-xl p-2.5 sm:p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari" 
                 />
               </div>
 
@@ -237,11 +286,11 @@ export default function AdminCategories() {
                   onChange={(e) => setSlug(e.target.value)} 
                   required 
                   placeholder="e.g. sports, tech, politics"
-                  className="w-full border border-neutral-200 rounded-xl p-3 text-xs font-mono text-neutral-800 focus:outline-none focus:ring-2 focus:ring-red-500" 
+                  className="w-full border border-neutral-200 rounded-xl p-2.5 sm:p-3 text-xs font-mono text-neutral-800 focus:outline-none focus:ring-2 focus:ring-red-500" 
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5 flex items-center space-x-1">
                     <Palette size={13} />
@@ -252,7 +301,7 @@ export default function AdminCategories() {
                       type="color" 
                       value={color} 
                       onChange={(e) => setColor(e.target.value)} 
-                      className="w-8 h-8 rounded-lg border-0 cursor-pointer p-0 bg-transparent" 
+                      className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-0 cursor-pointer p-0 bg-transparent" 
                     />
                     <span className="text-xs font-mono text-neutral-600 uppercase">{color}</span>
                   </div>
@@ -267,22 +316,22 @@ export default function AdminCategories() {
                     type="number" 
                     value={order} 
                     onChange={(e) => setOrder(Number(e.target.value))} 
-                    className="w-full border border-neutral-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" 
+                    className="w-full border border-neutral-200 rounded-xl p-2.5 sm:p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" 
                   />
                 </div>
               </div>
 
-              <div className="pt-4 flex justify-end space-x-3 border-t border-neutral-100">
+              <div className="pt-3 sm:pt-4 flex justify-end space-x-2.5 sm:space-x-3 border-t border-neutral-100">
                 <button 
                   type="button" 
                   onClick={closeModal}
-                  className="px-4 py-2.5 rounded-xl border border-neutral-200 text-xs font-bold text-neutral-700 hover:bg-neutral-50 transition"
+                  className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-neutral-200 text-xs font-bold text-neutral-700 hover:bg-neutral-50 transition font-devanagari"
                 >
                   रद्द करें
                 </button>
                 <button 
                   type="submit" 
-                  className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center space-x-1.5"
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center space-x-1.5 font-devanagari"
                 >
                   <Check size={14} />
                   <span>सहेजें (Save)</span>

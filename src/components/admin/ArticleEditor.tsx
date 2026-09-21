@@ -145,37 +145,38 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-7xl mx-auto space-y-6 font-sans">
+    <form onSubmit={handleSubmit} className="max-w-7xl mx-auto space-y-4 sm:space-y-6 font-sans">
       {/* Top Header & Save Actions */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-2xl border border-neutral-200/80 shadow-xs">
-        <div className="flex items-center space-x-3">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3.5 sm:gap-4 bg-white p-3.5 sm:p-5 rounded-2xl border border-neutral-200/80 shadow-xs">
+        <div className="flex items-center space-x-2.5 sm:space-x-3">
           <button
             type="button"
             onClick={() => router.back()}
+            aria-label="वापस जाएं"
             className="p-2 text-neutral-400 hover:text-neutral-900 rounded-xl hover:bg-neutral-100 transition"
           >
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-xl font-black text-neutral-900 font-devanagari">
+            <h1 className="text-base sm:text-xl font-black text-neutral-900 font-devanagari">
               {initialData ? 'लेख संपादित करें (Edit Article)' : 'नया लेख लिखें (Create New Article)'}
             </h1>
-            <p className="text-xs text-neutral-400 font-sans">Central Lens CMS Content Publisher</p>
+            <p className="text-[10px] sm:text-xs text-neutral-400 font-sans">Central Lens CMS Content Publisher</p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-3 w-full sm:w-auto">
+        <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto">
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex-1 sm:flex-initial px-4 py-2.5 border border-neutral-300 rounded-xl text-xs font-bold text-neutral-700 hover:bg-neutral-50 transition"
+            className="flex-1 sm:flex-initial px-3 sm:px-4 py-2 sm:py-2.5 border border-neutral-300 rounded-xl text-xs font-bold text-neutral-700 hover:bg-neutral-50 transition font-devanagari text-center"
           >
             रद्द करें
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 sm:flex-initial flex items-center justify-center space-x-2 px-6 py-2.5 bg-red-600 hover:bg-red-700 active:scale-98 text-white rounded-xl text-xs font-bold shadow-md transition disabled:opacity-50"
+            className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 sm:space-x-2 px-4 sm:px-6 py-2 sm:py-2.5 bg-red-600 hover:bg-red-700 active:scale-98 text-white rounded-xl text-xs font-bold shadow-md transition disabled:opacity-50 font-devanagari text-center"
           >
             <Check size={16} />
             <span>{loading ? 'सहेजा जा रहा है...' : status === 'published' ? 'प्रकाशित करें (Publish)' : 'ड्राफ्ट सहेजें (Save Draft)'}</span>
@@ -183,14 +184,14 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
         </div>
       </div>
 
-      {/* 2-Column Editorial Workspace */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* 2-Column Editorial Workspace (Stacks on mobile/tablet) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
         {/* Left Column (8 cols): Main Content */}
-        <div className="lg:col-span-8 space-y-6">
+        <div className="lg:col-span-8 space-y-4 sm:space-y-6">
           {/* Title & Subtitle */}
-          <div className="bg-white p-6 rounded-2xl border border-neutral-200/80 shadow-xs space-y-4">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-neutral-200/80 shadow-xs space-y-3.5 sm:space-y-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-500 mb-2 font-sans">
+              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-500 mb-1.5 sm:mb-2 font-sans">
                 मुख्य शीर्षक (Headline) *
               </label>
               <input
@@ -199,12 +200,12 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
                 onChange={(e) => handleTitleChange(e.target.value)}
                 required
                 placeholder="आकर्षक और स्पष्ट शीर्षक दर्ज करें..."
-                className="w-full text-lg sm:text-xl font-bold text-neutral-900 border border-neutral-200 rounded-xl p-3.5 focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari placeholder-neutral-300"
+                className="w-full text-base sm:text-xl font-bold text-neutral-900 border border-neutral-200 rounded-xl p-3 sm:p-3.5 focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari placeholder-neutral-300"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-500 mb-2 font-sans">
+              <label className="block text-xs font-bold uppercase tracking-wider text-neutral-500 mb-1.5 sm:mb-2 font-sans">
                 उप-शीर्षक / संक्षिप्त विवरण (Subtitle / Excerpt)
               </label>
               <textarea
@@ -212,7 +213,7 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
                 onChange={(e) => setSubtitle(e.target.value)}
                 rows={2}
                 placeholder="लेख का सार (1-2 पंक्तियों में)..."
-                className="w-full text-sm text-neutral-700 border border-neutral-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari placeholder-neutral-300"
+                className="w-full text-xs sm:text-sm text-neutral-700 border border-neutral-200 rounded-xl p-2.5 sm:p-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari placeholder-neutral-300"
               />
             </div>
 
@@ -232,11 +233,11 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
           </div>
 
           {/* Rich Text Editor */}
-          <div className="bg-white p-6 rounded-2xl border border-neutral-200/80 shadow-xs">
-            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-500 mb-3 font-sans">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-neutral-200/80 shadow-xs">
+            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-500 mb-2 sm:mb-3 font-sans">
               लेख की पूरी सामग्री (Article Body) *
             </label>
-            <div className="h-[450px] pb-16 font-devanagari">
+            <div className="h-[380px] sm:h-[450px] pb-14 sm:pb-16 font-devanagari">
               <ReactQuill
                 theme="snow"
                 value={content}
@@ -249,9 +250,9 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
         </div>
 
         {/* Right Column (4 cols): Publishing Settings & Media */}
-        <div className="lg:col-span-4 space-y-6">
+        <div className="lg:col-span-4 space-y-4 sm:space-y-6">
           {/* Status & Highlights */}
-          <div className="bg-white p-5 rounded-2xl border border-neutral-200/80 shadow-xs space-y-4">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200/80 shadow-xs space-y-3.5 sm:space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500 font-sans">
               प्रकाशन विकल्प (Publishing)
             </h3>

@@ -285,79 +285,79 @@ export default function AdminVideos() {
   const parsedActiveUrl = parseVideoUrl(videoUrl);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 font-sans">
+    <div className="max-w-7xl mx-auto space-y-5 sm:space-y-6 font-sans">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3.5 sm:gap-4">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="p-2 rounded-xl bg-red-100 text-red-600">
-              <Tv size={22} />
+            <span className="p-1.5 sm:p-2 rounded-xl bg-red-100 text-red-600">
+              <Tv size={20} className="sm:w-[22px] sm:h-[22px]" />
             </span>
-            <h1 className="text-2xl sm:text-3xl font-black text-neutral-900 tracking-tight font-devanagari">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-neutral-900 tracking-tight font-devanagari">
               वीडियो स्टूडियो (Video Management)
             </h1>
           </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-1.5 font-devanagari">
+          <p className="text-xs sm:text-sm text-neutral-500 mt-1 font-devanagari">
             यूट्यूब, शॉर्ट्स एवं पॉडकास्ट वीडियो बुलेटिन प्रबंधित करें • कुल {stats.total} वीडियो
           </p>
         </div>
 
         <button
           onClick={openCreateModal}
-          className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 active:scale-98 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md shadow-red-600/20 transition-all font-devanagari"
+          className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 active:scale-98 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md shadow-red-600/20 transition-all font-devanagari"
         >
           <Plus size={16} />
           <span>नया वीडियो जोड़ें</span>
         </button>
       </div>
 
-      {/* Quick Overview Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white p-4 rounded-2xl border border-neutral-200/80 shadow-xs flex items-center space-x-3.5">
-          <div className="w-10 h-10 rounded-xl bg-neutral-100 text-neutral-700 flex items-center justify-center font-bold">
-            <VideoIcon size={18} />
+      {/* Quick Overview Cards - 2 on mobile, 4 on desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-neutral-200/80 shadow-xs flex items-center space-x-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-neutral-100 text-neutral-700 flex items-center justify-center font-bold flex-shrink-0">
+            <VideoIcon size={16} className="sm:w-[18px] sm:h-[18px]" />
           </div>
-          <div>
-            <div className="text-xl font-black text-neutral-900">{stats.total}</div>
-            <div className="text-[11px] font-semibold text-neutral-400 font-devanagari">कुल वीडियो</div>
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-neutral-200/80 shadow-xs flex items-center space-x-3.5">
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-            <CheckCircle2 size={18} />
-          </div>
-          <div>
-            <div className="text-xl font-black text-emerald-700">{stats.published}</div>
-            <div className="text-[11px] font-semibold text-neutral-400 font-devanagari">लाइव / प्रकाशित</div>
+          <div className="min-w-0">
+            <div className="text-lg sm:text-xl font-black text-neutral-900 truncate">{stats.total}</div>
+            <div className="text-[10px] sm:text-[11px] font-semibold text-neutral-400 font-devanagari truncate">कुल वीडियो</div>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-neutral-200/80 shadow-xs flex items-center space-x-3.5">
-          <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
-            <Smartphone size={18} />
+        <div className="bg-white p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-neutral-200/80 shadow-xs flex items-center space-x-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold flex-shrink-0">
+            <CheckCircle2 size={16} className="sm:w-[18px] sm:h-[18px]" />
           </div>
-          <div>
-            <div className="text-xl font-black text-purple-700">{stats.shorts}</div>
-            <div className="text-[11px] font-semibold text-neutral-400 font-devanagari">शॉर्ट्स / रील्स</div>
+          <div className="min-w-0">
+            <div className="text-lg sm:text-xl font-black text-emerald-700 truncate">{stats.published}</div>
+            <div className="text-[10px] sm:text-[11px] font-semibold text-neutral-400 font-devanagari truncate">लाइव / प्रकाशित</div>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-neutral-200/80 shadow-xs flex items-center space-x-3.5">
-          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
-            <Radio size={18} />
+        <div className="bg-white p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-neutral-200/80 shadow-xs flex items-center space-x-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold flex-shrink-0">
+            <Smartphone size={16} className="sm:w-[18px] sm:h-[18px]" />
           </div>
-          <div>
-            <div className="text-xl font-black text-amber-700">{stats.podcasts}</div>
-            <div className="text-[11px] font-semibold text-neutral-400 font-devanagari">पॉडकास्ट / वार्ता</div>
+          <div className="min-w-0">
+            <div className="text-lg sm:text-xl font-black text-purple-700 truncate">{stats.shorts}</div>
+            <div className="text-[10px] sm:text-[11px] font-semibold text-neutral-400 font-devanagari truncate">शॉर्ट्स / रील्स</div>
+          </div>
+        </div>
+
+        <div className="bg-white p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-neutral-200/80 shadow-xs flex items-center space-x-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold flex-shrink-0">
+            <Radio size={16} className="sm:w-[18px] sm:h-[18px]" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-lg sm:text-xl font-black text-amber-700 truncate">{stats.podcasts}</div>
+            <div className="text-[10px] sm:text-[11px] font-semibold text-neutral-400 font-devanagari truncate">पॉडकास्ट / वार्ता</div>
           </div>
         </div>
       </div>
 
       {/* Search & Filter Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-neutral-200/80 shadow-xs flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-neutral-200/80 shadow-xs flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4">
         {/* Search */}
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex-1 lg:max-w-md">
           <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400" />
           <input
             type="text"
@@ -371,10 +371,10 @@ export default function AdminVideos() {
         {/* Filter Badges */}
         <div className="flex flex-wrap items-center gap-2">
           {/* Format Tabs */}
-          <div className="flex items-center space-x-1 p-1 bg-neutral-100 rounded-xl text-xs font-semibold">
+          <div className="flex items-center space-x-1 p-1 bg-neutral-100 rounded-xl text-xs font-semibold overflow-x-auto">
             <button
               onClick={() => setTypeFilter('all')}
-              className={`px-3 py-1.5 rounded-lg transition font-devanagari ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition font-devanagari whitespace-nowrap ${
                 typeFilter === 'all'
                   ? 'bg-white text-neutral-900 shadow-xs font-bold'
                   : 'text-neutral-500 hover:text-neutral-900'
@@ -384,7 +384,7 @@ export default function AdminVideos() {
             </button>
             <button
               onClick={() => setTypeFilter('long')}
-              className={`px-3 py-1.5 rounded-lg transition font-devanagari ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition font-devanagari whitespace-nowrap ${
                 typeFilter === 'long'
                   ? 'bg-white text-blue-600 shadow-xs font-bold'
                   : 'text-neutral-500 hover:text-neutral-900'
@@ -394,7 +394,7 @@ export default function AdminVideos() {
             </button>
             <button
               onClick={() => setTypeFilter('short')}
-              className={`px-3 py-1.5 rounded-lg transition font-devanagari ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition font-devanagari whitespace-nowrap ${
                 typeFilter === 'short'
                   ? 'bg-white text-purple-600 shadow-xs font-bold'
                   : 'text-neutral-500 hover:text-neutral-900'
@@ -404,7 +404,7 @@ export default function AdminVideos() {
             </button>
             <button
               onClick={() => setTypeFilter('podcast')}
-              className={`px-3 py-1.5 rounded-lg transition font-devanagari ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition font-devanagari whitespace-nowrap ${
                 typeFilter === 'podcast'
                   ? 'bg-white text-amber-600 shadow-xs font-bold'
                   : 'text-neutral-500 hover:text-neutral-900'
@@ -415,10 +415,10 @@ export default function AdminVideos() {
           </div>
 
           {/* Status Tabs */}
-          <div className="flex items-center space-x-1 p-1 bg-neutral-100 rounded-xl text-xs font-semibold">
+          <div className="flex items-center space-x-1 p-1 bg-neutral-100 rounded-xl text-xs font-semibold overflow-x-auto">
             <button
               onClick={() => setStatusFilter('all')}
-              className={`px-3 py-1.5 rounded-lg transition font-devanagari ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition font-devanagari whitespace-nowrap ${
                 statusFilter === 'all'
                   ? 'bg-white text-neutral-900 shadow-xs font-bold'
                   : 'text-neutral-500 hover:text-neutral-900'
@@ -428,7 +428,7 @@ export default function AdminVideos() {
             </button>
             <button
               onClick={() => setStatusFilter('published')}
-              className={`px-3 py-1.5 rounded-lg transition font-devanagari ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition font-devanagari whitespace-nowrap ${
                 statusFilter === 'published'
                   ? 'bg-white text-emerald-700 shadow-xs font-bold'
                   : 'text-neutral-500 hover:text-neutral-900'
@@ -438,7 +438,7 @@ export default function AdminVideos() {
             </button>
             <button
               onClick={() => setStatusFilter('draft')}
-              className={`px-3 py-1.5 rounded-lg transition font-devanagari ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition font-devanagari whitespace-nowrap ${
                 statusFilter === 'draft'
                   ? 'bg-white text-amber-700 shadow-xs font-bold'
                   : 'text-neutral-500 hover:text-neutral-900'
@@ -450,38 +450,188 @@ export default function AdminVideos() {
         </div>
       </div>
 
-      {/* Video Table */}
+      {/* Video Container: Dual Mobile Cards + Desktop Table */}
       <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-neutral-50/80 text-neutral-500 text-xs uppercase tracking-wider border-b border-neutral-100">
-                <th className="py-4 px-6 font-semibold">वीडियो (Media)</th>
-                <th className="py-4 px-6 font-semibold">प्रारूप (Format)</th>
-                <th className="py-4 px-6 font-semibold">कैटेगरी</th>
-                <th className="py-4 px-6 font-semibold">स्थिति (Status)</th>
-                <th className="py-4 px-6 font-semibold">व्यूज</th>
-                <th className="py-4 px-6 font-semibold text-right">कार्रवाई</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-100 text-sm">
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="py-16 text-center text-neutral-400">
-                    <div className="flex flex-col items-center space-y-2">
-                      <div className="w-6 h-6 border-3 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-                      <span className="text-xs font-devanagari">वीडियो लाइब्रेरी लोड हो रही है...</span>
+        {/* Loading */}
+        {loading && (
+          <div className="py-16 text-center text-neutral-400">
+            <div className="flex flex-col items-center space-y-2">
+              <div className="w-6 h-6 border-3 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-xs font-devanagari">वीडियो लाइब्रेरी लोड हो रही है...</span>
+            </div>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && filteredVideos.length === 0 && (
+          <div className="py-16 text-center text-neutral-400 text-xs font-devanagari">
+            कोई वीडियो नहीं मिला। नया वीडियो जोड़ने के लिए ऊपर दिए गए बटन पर क्लिक करें।
+          </div>
+        )}
+
+        {/* Mobile Cards View (< md) */}
+        {!loading && filteredVideos.length > 0 && (
+          <div className="block md:hidden divide-y divide-neutral-100">
+            {filteredVideos.map((video: any) => {
+              const isShort = video.videoType === 'short';
+              const isPodcast = video.videoType === 'podcast';
+
+              return (
+                <div key={video._id} className="p-3.5 space-y-3 hover:bg-neutral-50/60 transition-colors">
+                  {/* Top: Thumbnail + Title */}
+                  <div className="flex items-start space-x-3">
+                    <div
+                      onClick={() => setPreviewModalVideo(video)}
+                      className={`relative rounded-xl overflow-hidden bg-neutral-900 flex-shrink-0 cursor-pointer group shadow-xs border border-neutral-200 ${
+                        isShort ? 'w-12 h-20' : 'w-24 h-15'
+                      }`}
+                    >
+                      <img
+                        src={
+                          video.thumbnailUrl ||
+                          'https://images.unsplash.com/photo-1578022761797-b8636ac1773c?w=400&auto=format&fit=crop&q=80'
+                        }
+                        alt=""
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform opacity-90"
+                      />
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                        <div className="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md">
+                          <Play size={10} className="fill-current translate-x-0.5" />
+                        </div>
+                      </div>
+                      {video.duration > 0 && (
+                        <span className="absolute bottom-1 right-1 bg-black/80 text-[8px] font-mono text-white px-1 rounded font-bold">
+                          {formatDuration(video.duration)}
+                        </span>
+                      )}
                     </div>
-                  </td>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center space-x-1.5">
+                        {video.isFeatured && (
+                          <span className="inline-flex items-center space-x-0.5 px-1.5 py-0.2 bg-amber-100 text-amber-800 text-[9px] font-bold rounded uppercase">
+                            <Sparkles size={9} className="fill-current" />
+                            <span>Featured</span>
+                          </span>
+                        )}
+                        <span className="font-bold text-neutral-900 block font-devanagari text-xs sm:text-sm line-clamp-2">
+                          {video.title}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-[10px] text-neutral-400 font-mono mt-1">
+                        <span className="truncate">/video/{video.slug}</span>
+                        <Link
+                          href={`/video/${video.slug}`}
+                          target="_blank"
+                          className="text-neutral-400 hover:text-red-600 transition"
+                          title="लाइव देखें"
+                        >
+                          <ExternalLink size={11} />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Middle: Badges Row */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-neutral-100/80 text-xs">
+                    <div className="flex items-center space-x-1.5">
+                      {isShort ? (
+                        <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200/60 font-devanagari">
+                          <Smartphone size={10} />
+                          <span>शॉर्ट्स</span>
+                        </span>
+                      ) : isPodcast ? (
+                        <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/60 font-devanagari">
+                          <Radio size={10} />
+                          <span>पॉडकास्ट</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/60 font-devanagari">
+                          <Film size={10} />
+                          <span>लॉन्ग</span>
+                        </span>
+                      )}
+
+                      <span
+                        className="inline-block px-2 py-0.5 rounded-md text-[10px] font-semibold font-devanagari"
+                        style={{
+                          backgroundColor: `${video.category?.color || '#DC2626'}15`,
+                          color: video.category?.color || '#DC2626',
+                        }}
+                      >
+                        {video.category?.name || 'सामान्य'}
+                      </span>
+
+                      <button
+                        onClick={() => handleToggleStatus(video)}
+                        className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors border ${
+                          video.status === 'published'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-amber-50 text-amber-700 border-amber-200'
+                        }`}
+                        title="स्थिति बदलने के लिए क्लिक करें"
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            video.status === 'published' ? 'bg-emerald-500' : 'bg-amber-500'
+                          }`}
+                        ></span>
+                        <span className="font-devanagari">{video.status === 'published' ? 'लाइव' : 'ड्राफ्ट'}</span>
+                      </button>
+                    </div>
+
+                    <div className="flex items-center space-x-1 text-neutral-400 text-[11px]">
+                      <Eye size={11} />
+                      <span>{video.views || 0}</span>
+                    </div>
+                  </div>
+
+                  {/* Bottom: Action Buttons */}
+                  <div className="flex items-center justify-end space-x-2 pt-1">
+                    <button
+                      onClick={() => setPreviewModalVideo(video)}
+                      className="inline-flex items-center space-x-1 px-2.5 py-1 text-xs font-bold text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition font-devanagari"
+                    >
+                      <Play size={12} />
+                      <span>प्रीव्यू</span>
+                    </button>
+                    <button
+                      onClick={() => openEditModal(video)}
+                      className="p-1.5 text-neutral-500 hover:text-red-600 rounded-lg hover:bg-red-50 transition"
+                      title="संपादित करें"
+                    >
+                      <Edit3 size={15} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(video._id)}
+                      className="p-1.5 text-neutral-500 hover:text-red-600 rounded-lg hover:bg-red-50 transition"
+                      title="हटाएं"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Desktop Table View (>= md) */}
+        {!loading && filteredVideos.length > 0 && (
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-left min-w-[760px]">
+              <thead>
+                <tr className="bg-neutral-50/80 text-neutral-500 text-xs uppercase tracking-wider border-b border-neutral-100">
+                  <th className="py-4 px-6 font-semibold">वीडियो (Media)</th>
+                  <th className="py-4 px-6 font-semibold">प्रारूप (Format)</th>
+                  <th className="py-4 px-6 font-semibold">कैटेगरी</th>
+                  <th className="py-4 px-6 font-semibold">स्थिति (Status)</th>
+                  <th className="py-4 px-6 font-semibold">व्यूज</th>
+                  <th className="py-4 px-6 font-semibold text-right">कार्रवाई</th>
                 </tr>
-              ) : filteredVideos.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-16 text-center text-neutral-400 text-xs font-devanagari">
-                    कोई वीडियो नहीं मिला। नया वीडियो जोड़ने के लिए ऊपर दिए गए बटन पर क्लिक करें।
-                  </td>
-                </tr>
-              ) : (
-                filteredVideos.map((video: any) => {
+              </thead>
+              <tbody className="divide-y divide-neutral-100 text-sm">
+                {filteredVideos.map((video: any) => {
                   const isShort = video.videoType === 'short';
                   const isPodcast = video.videoType === 'podcast';
 
@@ -637,23 +787,23 @@ export default function AdminVideos() {
                       </td>
                     </tr>
                   );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Create / Edit Video Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-2xl shadow-2xl border border-neutral-100 my-8 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-4 mb-5 border-b border-neutral-100">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-2xs flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl p-4 sm:p-6 w-full max-w-2xl shadow-2xl border border-neutral-100 my-auto max-h-[92vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 sm:pb-4 mb-4 border-b border-neutral-100">
               <div className="flex items-center space-x-2">
-                <span className="p-2 rounded-xl bg-red-100 text-red-600">
-                  <VideoIcon size={20} />
+                <span className="p-1.5 sm:p-2 rounded-xl bg-red-100 text-red-600">
+                  <VideoIcon size={18} className="sm:w-5 sm:h-5" />
                 </span>
-                <h2 className="text-lg font-black text-neutral-900 font-devanagari">
+                <h2 className="text-base sm:text-lg font-black text-neutral-900 font-devanagari">
                   {editingVideo ? 'वीडियो संपादित करें (Edit Video)' : 'नया वीडियो जोड़ें (Add Video)'}
                 </h2>
               </div>
@@ -665,14 +815,14 @@ export default function AdminVideos() {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4">
               {/* Video URL with Smart Detection */}
               <div>
-                <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5 flex flex-wrap items-center justify-between gap-1">
                   <span className="font-devanagari">वीडियो URL (यूट्यूब / शॉर्ट्स / MP4 लिंक) *</span>
                   {parsedActiveUrl.provider === 'youtube' && (
                     <span className="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-md">
-                      ✓ YouTube पहचान लिया गया ({parsedActiveUrl.isShort ? 'Shorts' : 'Standard'})
+                      ✓ YouTube ({parsedActiveUrl.isShort ? 'Shorts' : 'Standard'})
                     </span>
                   )}
                 </label>
@@ -682,7 +832,7 @@ export default function AdminVideos() {
                   onChange={(e) => handleVideoUrlChange(e.target.value)}
                   required
                   placeholder="उदा. https://www.youtube.com/watch?v=... अथवा https://www.youtube.com/shorts/..."
-                  className="w-full border border-neutral-200 rounded-xl p-3 text-xs font-mono text-neutral-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full border border-neutral-200 rounded-xl p-2.5 sm:p-3 text-xs font-mono text-neutral-800 focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
 
@@ -695,7 +845,7 @@ export default function AdminVideos() {
                   </div>
                   <div
                     className={`rounded-lg overflow-hidden bg-black mx-auto ${
-                      videoType === 'short' ? 'max-w-[240px] aspect-[9/16]' : 'aspect-video w-full'
+                      videoType === 'short' ? 'max-w-[200px] sm:max-w-[240px] aspect-[9/16]' : 'aspect-video w-full'
                     }`}
                   >
                     <iframe
@@ -713,18 +863,18 @@ export default function AdminVideos() {
                 <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5 font-devanagari">
                   वीडियो प्रारूप (Video Format) *
                 </label>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                   <button
                     type="button"
                     onClick={() => setVideoType('long')}
-                    className={`p-3 rounded-xl border text-left transition flex flex-col justify-between ${
+                    className={`p-2.5 sm:p-3 rounded-xl border text-left transition flex sm:flex-col justify-between items-center sm:items-start ${
                       videoType === 'long'
                         ? 'border-red-600 bg-red-50/50 text-red-700 ring-2 ring-red-500/20'
                         : 'border-neutral-200 hover:border-neutral-300 text-neutral-600'
                     }`}
                   >
                     <Film size={18} className={videoType === 'long' ? 'text-red-600' : 'text-neutral-400'} />
-                    <div className="mt-2">
+                    <div className="sm:mt-2 text-right sm:text-left">
                       <div className="font-bold text-xs font-devanagari">लॉन्ग (16:9)</div>
                       <div className="text-[10px] text-neutral-400">न्यूज बुलेटिन, रिपोर्ट</div>
                     </div>
@@ -733,7 +883,7 @@ export default function AdminVideos() {
                   <button
                     type="button"
                     onClick={() => setVideoType('short')}
-                    className={`p-3 rounded-xl border text-left transition flex flex-col justify-between ${
+                    className={`p-2.5 sm:p-3 rounded-xl border text-left transition flex sm:flex-col justify-between items-center sm:items-start ${
                       videoType === 'short'
                         ? 'border-purple-600 bg-purple-50/50 text-purple-700 ring-2 ring-purple-500/20'
                         : 'border-neutral-200 hover:border-neutral-300 text-neutral-600'
@@ -743,7 +893,7 @@ export default function AdminVideos() {
                       size={18}
                       className={videoType === 'short' ? 'text-purple-600' : 'text-neutral-400'}
                     />
-                    <div className="mt-2">
+                    <div className="sm:mt-2 text-right sm:text-left">
                       <div className="font-bold text-xs font-devanagari">शॉर्ट्स (9:16)</div>
                       <div className="text-[10px] text-neutral-400">रील्स, 60s क्विक न्यूज</div>
                     </div>
@@ -752,14 +902,14 @@ export default function AdminVideos() {
                   <button
                     type="button"
                     onClick={() => setVideoType('podcast')}
-                    className={`p-3 rounded-xl border text-left transition flex flex-col justify-between ${
+                    className={`p-2.5 sm:p-3 rounded-xl border text-left transition flex sm:flex-col justify-between items-center sm:items-start ${
                       videoType === 'podcast'
                         ? 'border-amber-600 bg-amber-50/50 text-amber-700 ring-2 ring-amber-500/20'
                         : 'border-neutral-200 hover:border-neutral-300 text-neutral-600'
                     }`}
                   >
                     <Radio size={18} className={videoType === 'podcast' ? 'text-amber-600' : 'text-neutral-400'} />
-                    <div className="mt-2">
+                    <div className="sm:mt-2 text-right sm:text-left">
                       <div className="font-bold text-xs font-devanagari">पॉडकास्ट</div>
                       <div className="text-[10px] text-neutral-400">विशेष साक्षात्कार, चर्चा</div>
                     </div>
@@ -777,8 +927,8 @@ export default function AdminVideos() {
                   value={title}
                   onChange={(e) => handleTitleChange(e.target.value)}
                   required
-                  placeholder="उदा. सुप्रीम कोर्ट का बड़ा फैसला: डिजिटल सुरक्षा पर अहम दिशा-निर्देश..."
-                  className="w-full border border-neutral-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari"
+                  placeholder="उदा. सुप्रीम कोर्ट का बड़ा फैसला..."
+                  className="w-full border border-neutral-200 rounded-xl p-2.5 sm:p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari"
                 />
               </div>
 
@@ -793,12 +943,12 @@ export default function AdminVideos() {
                   onChange={(e) => setSlug(e.target.value)}
                   required
                   placeholder="supreme-court-digital-security-bill"
-                  className="w-full border border-neutral-200 rounded-xl p-3 text-xs font-mono text-neutral-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full border border-neutral-200 rounded-xl p-2.5 sm:p-3 text-xs font-mono text-neutral-800 focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
 
               {/* Category & Duration */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5 font-devanagari">
                     कैटेगरी (Category) *
@@ -807,7 +957,7 @@ export default function AdminVideos() {
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
                     required
-                    className="w-full border border-neutral-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white font-devanagari"
+                    className="w-full border border-neutral-200 rounded-xl p-2.5 sm:p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white font-devanagari"
                   >
                     {categories.map((cat) => (
                       <option key={cat._id} value={cat._id}>
@@ -828,7 +978,7 @@ export default function AdminVideos() {
                       value={duration}
                       onChange={(e) => setDuration(Number(e.target.value))}
                       placeholder="180"
-                      className="w-full border border-neutral-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                      className="w-full border border-neutral-200 rounded-xl p-2.5 sm:p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                     />
                     <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-neutral-400">
                       ≈ {formatDuration(duration)}
@@ -842,13 +992,13 @@ export default function AdminVideos() {
                 <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5 font-devanagari">
                   थंबनेल इमेज URL (Thumbnail) *
                 </label>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2.5 sm:space-x-3">
                   <input
                     type="text"
                     value={thumbnailUrl}
                     onChange={(e) => setThumbnailUrl(e.target.value)}
                     placeholder="https://img.youtube.com/vi/.../maxresdefault.jpg"
-                    className="flex-1 border border-neutral-200 rounded-xl p-3 text-xs font-mono text-neutral-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="flex-1 border border-neutral-200 rounded-xl p-2.5 sm:p-3 text-xs font-mono text-neutral-800 focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                   {thumbnailUrl && (
                     <img
@@ -868,44 +1018,44 @@ export default function AdminVideos() {
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  rows={3}
+                  rows={2}
                   placeholder="वीडियो रिपोर्ट का संक्षिप्त विवरण या सारांश..."
-                  className="w-full border border-neutral-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari"
+                  className="w-full border border-neutral-200 rounded-xl p-2.5 sm:p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari"
                 />
               </div>
 
               {/* Tags & Reporter */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5 flex items-center space-x-1">
                     <Tag size={13} />
-                    <span className="font-devanagari">टैग्स (Tags - अल्पविराम द्वारा अलग करें)</span>
+                    <span className="font-devanagari">टैग्स (Tags)</span>
                   </label>
                   <input
                     type="text"
                     value={tagsInput}
                     onChange={(e) => setTagsInput(e.target.value)}
                     placeholder="राजनीति, ब्रेकिंग, भारत"
-                    className="w-full border border-neutral-200 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari"
+                    className="w-full border border-neutral-200 rounded-xl p-2.5 sm:p-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5 font-devanagari">
-                    रिपोर्टर / लेखक का नाम
+                    रिपोर्टर / लेखक
                   </label>
                   <input
                     type="text"
                     value={authorName}
                     onChange={(e) => setAuthorName(e.target.value)}
                     placeholder="Central Lens Bureau"
-                    className="w-full border border-neutral-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari"
+                    className="w-full border border-neutral-200 rounded-xl p-2.5 sm:p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari"
                   />
                 </div>
               </div>
 
               {/* Featured & Status */}
-              <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-neutral-50 p-4 rounded-xl border border-neutral-200/60">
+              <div className="pt-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-neutral-50 p-3 sm:p-4 rounded-xl border border-neutral-200/60">
                 <label className="flex items-center space-x-2.5 cursor-pointer">
                   <input
                     type="checkbox"
@@ -915,10 +1065,10 @@ export default function AdminVideos() {
                   />
                   <div>
                     <span className="text-xs font-bold text-neutral-900 block font-devanagari">
-                      मुख्य वीडियो बनाएं (Featured Spotlight)
+                      मुख्य वीडियो बनाएं (Featured)
                     </span>
                     <span className="text-[10px] text-neutral-500 font-devanagari">
-                      होमपेज और वीडियो हब के शीर्ष पर प्रदर्शित होगा
+                      शीर्ष पर प्रदर्शित होगा
                     </span>
                   </div>
                 </label>
@@ -928,7 +1078,7 @@ export default function AdminVideos() {
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value as any)}
-                    className="border border-neutral-200 rounded-xl px-3 py-1.5 text-xs font-bold bg-white text-neutral-800 focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari"
+                    className="border border-neutral-200 rounded-xl px-2.5 sm:px-3 py-1.5 text-xs font-bold bg-white text-neutral-800 focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari"
                   >
                     <option value="published">लाइव (Published)</option>
                     <option value="draft">ड्राफ्ट (Draft)</option>
@@ -937,19 +1087,19 @@ export default function AdminVideos() {
               </div>
 
               {/* Form Buttons */}
-              <div className="pt-4 flex justify-end space-x-3 border-t border-neutral-100">
+              <div className="pt-3 sm:pt-4 flex justify-end space-x-2.5 sm:space-x-3 border-t border-neutral-100">
                 <button
                   type="button"
                   onClick={closeModal}
                   disabled={submitting}
-                  className="px-4 py-2.5 rounded-xl border border-neutral-200 text-xs font-bold text-neutral-700 hover:bg-neutral-50 transition font-devanagari"
+                  className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-neutral-200 text-xs font-bold text-neutral-700 hover:bg-neutral-50 transition font-devanagari"
                 >
                   रद्द करें
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-5 py-2.5 bg-red-600 hover:bg-red-700 active:scale-98 text-white rounded-xl text-xs font-bold shadow-md shadow-red-600/20 transition flex items-center space-x-1.5 font-devanagari disabled:opacity-50"
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 bg-red-600 hover:bg-red-700 active:scale-98 text-white rounded-xl text-xs font-bold shadow-md shadow-red-600/20 transition flex items-center space-x-1.5 font-devanagari disabled:opacity-50"
                 >
                   <Check size={14} />
                   <span>{submitting ? 'सहेजा जा रहा है...' : 'सहेजें (Save Video)'}</span>
@@ -963,19 +1113,19 @@ export default function AdminVideos() {
       {/* Quick Playback Preview Modal */}
       {previewModalVideo && (
         <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto"
           onClick={() => setPreviewModalVideo(null)}
         >
           <div
-            className="bg-neutral-950 text-white rounded-2xl overflow-hidden max-w-3xl w-full border border-neutral-800 shadow-2xl relative"
+            className="bg-neutral-950 text-white rounded-2xl overflow-hidden max-w-3xl w-full border border-neutral-800 shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-4 flex items-center justify-between border-b border-neutral-800">
-              <div className="min-w-0 pr-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-red-500 block mb-0.5 font-devanagari">
+            <div className="p-3 sm:p-4 flex items-center justify-between border-b border-neutral-800">
+              <div className="min-w-0 pr-3 sm:pr-4">
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-red-500 block mb-0.5 font-devanagari">
                   {previewModalVideo.category?.name || 'Central Lens Video'}
                 </span>
-                <h3 className="text-sm sm:text-base font-bold text-white truncate font-devanagari">
+                <h3 className="text-xs sm:text-base font-bold text-white truncate font-devanagari">
                   {previewModalVideo.title}
                 </h3>
               </div>
@@ -983,14 +1133,14 @@ export default function AdminVideos() {
                 onClick={() => setPreviewModalVideo(null)}
                 className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
             <div
               className={`bg-black flex items-center justify-center ${
                 previewModalVideo.videoType === 'short'
-                  ? 'max-w-[340px] aspect-[9/16] mx-auto my-4 rounded-xl overflow-hidden'
+                  ? 'max-w-[260px] sm:max-w-[340px] aspect-[9/16] mx-auto my-3 sm:my-4 rounded-xl overflow-hidden'
                   : 'aspect-video w-full'
               }`}
             >
@@ -1002,8 +1152,8 @@ export default function AdminVideos() {
               />
             </div>
 
-            <div className="p-4 bg-neutral-900/60 flex items-center justify-between text-xs text-neutral-400 border-t border-neutral-800 font-devanagari">
-              <div className="flex items-center space-x-3">
+            <div className="p-3 sm:p-4 bg-neutral-900/60 flex items-center justify-between text-xs text-neutral-400 border-t border-neutral-800 font-devanagari">
+              <div className="flex items-center space-x-2 sm:space-x-3 text-[11px] sm:text-xs">
                 <span>अवधि: {formatDuration(previewModalVideo.duration)}</span>
                 <span>•</span>
                 <span>व्यूज: {previewModalVideo.views || 0}</span>
@@ -1011,9 +1161,9 @@ export default function AdminVideos() {
               <Link
                 href={`/video/${previewModalVideo.slug}`}
                 target="_blank"
-                className="text-red-400 hover:text-red-300 font-bold flex items-center space-x-1"
+                className="text-red-400 hover:text-red-300 font-bold flex items-center space-x-1 text-[11px] sm:text-xs"
               >
-                <span>लाइव पेज खोलें</span>
+                <span>लाइव देखें</span>
                 <ExternalLink size={12} />
               </Link>
             </div>
