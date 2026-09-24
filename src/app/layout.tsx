@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_Devanagari } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const notoDevanagari = Noto_Sans_Devanagari({
@@ -37,6 +38,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-devanagari text-gray-900 bg-white selection:bg-red-500 selection:text-white">
         {children}
+        <Analytics />
       </body>
     </html>
   );
