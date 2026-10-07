@@ -9,12 +9,24 @@ import ReadingProgressBar from '@/components/article/ReadingProgressBar';
 import { Clock, Calendar, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { sanitizeHtml } from '@/lib/utils/sanitize';
 
+// Revalidate article pages every 120 seconds
+export const revalidate = 120;
+
+// In-request cache so generateMetadata and page component share one DB call
+const articleCache = new Map<string, { data: any; ts: number }>();
+
 async function getArticle(slug: string) {
+  const cached = articleCache.get(slug);
+  if (cached && Date.now() - cached.ts < 5000) {
+    return cached.data;
+  }
+
   try {
     await dbConnect();
     const article = await Article.findOne({ slug, status: 'published' })
       .populate('category', 'name slug color')
       .lean();
+    articleCache.set(slug, { data: article, ts: Date.now() });
     return article;
   } catch {
     return null;
@@ -65,12 +77,16 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
 
 async function getRelatedArticles(categoryId: string, currentSlug: string) {
   try {
-    await dbConnect();
-    const related = await Article.find({
-      category: categoryId,
-      slug: { $ne: currentSlug },
-      status: 'published',
-    })
+    // dbConnect already called by getArticle, connection is pooled
+    const related = await Article.find(
+      {
+        category: categoryId,
+        slug: { $ne: currentSlug },
+        status: 'published',
+      },
+      // Only fetch fields needed for the related cards
+      { title: 1, slug: 1, coverImage: 1, category: 1, publishedAt: 1, createdAt: 1 }
+    )
       .sort({ publishedAt: -1, createdAt: -1 })
       .limit(3)
       .populate('category', 'name slug color')

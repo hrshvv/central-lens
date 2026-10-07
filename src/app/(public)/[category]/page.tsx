@@ -6,6 +6,9 @@ import { Article } from '@/lib/db/models/Article';
 import { Category } from '@/lib/db/models/Category';
 import { Clock, Eye, ArrowLeft, Newspaper, Sparkles } from 'lucide-react';
 
+// Revalidate category pages every 60 seconds (ISR) instead of hitting DB on every request
+export const revalidate = 60;
+
 interface CategoryPageProps {
   params: Promise<{ category: string }>;
 }
@@ -17,27 +20,55 @@ const SLUG_ALIASES: Record<string, string> = {
   'madhyapradesh': 'mp',
 };
 
+// Projection: only fetch fields needed for the listing cards — skip heavy `content` field
+const LISTING_PROJECTION = {
+  title: 1,
+  slug: 1,
+  subtitle: 1,
+  coverImage: 1,
+  category: 1,
+  isBreaking: 1,
+  views: 1,
+  publishedAt: 1,
+  createdAt: 1,
+};
+
+// Cache the resolved data so generateMetadata and the page component share a single DB call
+const dataCache = new Map<string, { data: any; ts: number }>();
+
 async function getCategoryData(categorySlug: string) {
+  const cacheKey = categorySlug.toLowerCase();
+  const cached = dataCache.get(cacheKey);
+  if (cached && Date.now() - cached.ts < 5000) {
+    return cached.data;
+  }
+
   try {
     await dbConnect();
-    const resolvedSlug = SLUG_ALIASES[categorySlug.toLowerCase()] || categorySlug.toLowerCase();
+    const resolvedSlug = SLUG_ALIASES[cacheKey] || cacheKey;
     const categoryDoc = await Category.findOne({ 
       $or: [{ slug: resolvedSlug }, { slug: categorySlug }] 
     }).lean();
     if (!categoryDoc) {
+      dataCache.set(cacheKey, { data: null, ts: Date.now() });
       return null;
     }
 
-    const articles = await Article.find({ category: (categoryDoc as any)._id, status: 'published' })
+    const articles = await Article.find(
+      { category: (categoryDoc as any)._id, status: 'published' },
+      LISTING_PROJECTION
+    )
       .sort({ publishedAt: -1, createdAt: -1 })
       .limit(24)
       .populate('category', 'name slug color')
       .lean();
 
-    return {
+    const result = {
       category: categoryDoc,
       articles: JSON.parse(JSON.stringify(articles)),
     };
+    dataCache.set(cacheKey, { data: result, ts: Date.now() });
+    return result;
   } catch {
     return null;
   }
@@ -45,19 +76,16 @@ async function getCategoryData(categorySlug: string) {
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { category: categorySlug } = await params;
-  await dbConnect();
-  const resolvedSlug = SLUG_ALIASES[categorySlug.toLowerCase()] || categorySlug.toLowerCase();
-  const categoryDoc = await Category.findOne({ 
-    $or: [{ slug: resolvedSlug }, { slug: categorySlug }] 
-  }).lean();
+  // Reuse the same cached data call — no duplicate DB query
+  const data = await getCategoryData(categorySlug);
 
-  if (!categoryDoc) {
+  if (!data) {
     return {
       title: 'राज्य नहीं मिला | Central Lens',
     };
   }
 
-  const name = categoryDoc.name;
+  const name = (data.category as any).name;
   const title = `${name} समाचार (State News & Live Updates) | Central Lens`;
   const description = `सेंट्रल लेंस पर ${name} से जुड़े ताजा समाचार, ब्रेकिंग न्यूज़, ग्राउंड रिपोर्ट्स और विश्लेषण।`;
 

@@ -44,10 +44,21 @@ async function getHomePageData() {
       .sort({ order: 1 })
       .limit(8)
       .lean();
+
+    // Fetch category articles in parallel, with projection to skip heavy content field
+    const CARD_PROJECTION = {
+      title: 1, slug: 1, subtitle: 1, coverImage: 1, category: 1,
+      isBreaking: 1, isFeatured: 1, isTrending: 1, views: 1,
+      publishedAt: 1, createdAt: 1, readingTime: 1,
+      'author.name': 1, 'author.avatar': 1, tags: 1, excerpt: 1,
+    };
     
     const rawCategoryData = await Promise.all(
       topCategories.map(async (cat: any) => {
-        const catArticles = await Article.find({ status: 'published', category: cat._id })
+        const catArticles = await Article.find(
+          { status: 'published', category: cat._id },
+          CARD_PROJECTION
+        )
           .sort({ publishedAt: -1, createdAt: -1 })
           .limit(4)
           .lean();

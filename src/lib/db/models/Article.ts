@@ -58,6 +58,10 @@ const ArticleSchema = new Schema<IArticle>(
 ArticleSchema.index({ category: 1 });
 ArticleSchema.index({ status: 1, publishedAt: -1 });
 ArticleSchema.index({ tags: 1 });
+// Compound index for category list page query: find by category+status, sorted by publishedAt
+ArticleSchema.index({ category: 1, status: 1, publishedAt: -1 });
+// Compound index for article detail page: find by slug+status
+ArticleSchema.index({ slug: 1, status: 1 });
 
 export const Article: Model<IArticle> =
   mongoose.models.Article || mongoose.model<IArticle>('Article', ArticleSchema);
