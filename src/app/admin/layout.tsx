@@ -73,7 +73,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const navItems = [
     { label: 'डैशबोर्ड (Dashboard)', href: '/admin', icon: LayoutDashboard, exact: true },
     { label: 'लेख प्रबंधन (Articles)', href: '/admin/articles', icon: FileText, exact: false },
-    { label: 'कैटेगरी (Categories)', href: '/admin/categories', icon: Grid, exact: false },
+    { label: 'राज्य (States)', href: '/admin/categories', icon: Grid, exact: false },
     { label: 'वीडियो (Videos)', href: '/admin/videos', icon: Video, exact: false },
   ];
 
@@ -81,7 +81,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const currentSection = pathname.split('/')[2];
   const sectionTitleMap: Record<string, string> = {
     articles: 'लेख',
-    categories: 'कैटेगरी',
+    categories: 'राज्य',
     videos: 'वीडियो',
   };
   const sectionTitle = currentSection ? (sectionTitleMap[currentSection] || currentSection) : 'डैशबोर्ड';

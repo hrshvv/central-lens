@@ -39,10 +39,13 @@ async function getHomePageData() {
 
     const trending = trendingArticles.length > 0 ? trendingArticles : latestArticles.slice(0, 3);
 
-    // Fetch articles for specific core categories
-    const topCategories = await Category.find({ slug: { $in: ['national', 'politics', 'sports', 'technology', 'business'] } }).lean();
+    // Fetch articles for specific core categories (States)
+    const topCategories = await Category.find({ isActive: { $ne: false } })
+      .sort({ order: 1 })
+      .limit(8)
+      .lean();
     
-    const categoryData = await Promise.all(
+    const rawCategoryData = await Promise.all(
       topCategories.map(async (cat: any) => {
         const catArticles = await Article.find({ status: 'published', category: cat._id })
           .sort({ publishedAt: -1, createdAt: -1 })
@@ -55,6 +58,7 @@ async function getHomePageData() {
         };
       })
     );
+    const categoryData = rawCategoryData.filter((c: any) => c.articles.length > 0);
 
     // Fetch video stories for Homepage VideoSection
     const [featuredVideo, recentVideos, shorts] = await Promise.all([

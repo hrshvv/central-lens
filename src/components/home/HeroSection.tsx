@@ -12,7 +12,7 @@ export default function HeroSection({ featuredArticle, topArticles }: { featured
           भारत की आवाज़, निष्पक्ष पत्रकारिता
         </h1>
         <p className="text-neutral-200 max-w-2xl text-lg mb-8 leading-relaxed">
-          देश, विदेश, राजनीति, खेल और तकनीक की हर बड़ी खबर पर सबसे सटीक और गहरी नजर।
+          मध्य प्रदेश, छत्तीसगढ़, दिल्ली, उत्तर प्रदेश सहित सभी राज्यों की हर बड़ी खबर पर सबसे सटीक और गहरी नजर।
         </p>
         <Link 
           href="/admin" 

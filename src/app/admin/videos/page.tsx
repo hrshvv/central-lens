@@ -624,7 +624,7 @@ export default function AdminVideos() {
                 <tr className="bg-neutral-50/80 text-neutral-500 text-xs uppercase tracking-wider border-b border-neutral-100">
                   <th className="py-4 px-6 font-semibold">वीडियो (Media)</th>
                   <th className="py-4 px-6 font-semibold">प्रारूप (Format)</th>
-                  <th className="py-4 px-6 font-semibold">कैटेगरी</th>
+                  <th className="py-4 px-6 font-semibold">राज्य</th>
                   <th className="py-4 px-6 font-semibold">स्थिति (Status)</th>
                   <th className="py-4 px-6 font-semibold">व्यूज</th>
                   <th className="py-4 px-6 font-semibold text-right">कार्रवाई</th>
@@ -951,7 +951,7 @@ export default function AdminVideos() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5 font-devanagari">
-                    कैटेगरी (Category) *
+                    राज्य (State) *
                   </label>
                   <select
                     value={categoryId}

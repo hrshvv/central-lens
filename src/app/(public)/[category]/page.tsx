@@ -10,10 +10,20 @@ interface CategoryPageProps {
   params: Promise<{ category: string }>;
 }
 
+const SLUG_ALIASES: Record<string, string> = {
+  'up': 'uttar-pradesh',
+  'uttarpradesh': 'uttar-pradesh',
+  'madhya-pradesh': 'mp',
+  'madhyapradesh': 'mp',
+};
+
 async function getCategoryData(categorySlug: string) {
   try {
     await dbConnect();
-    const categoryDoc = await Category.findOne({ slug: categorySlug }).lean();
+    const resolvedSlug = SLUG_ALIASES[categorySlug.toLowerCase()] || categorySlug.toLowerCase();
+    const categoryDoc = await Category.findOne({ 
+      $or: [{ slug: resolvedSlug }, { slug: categorySlug }] 
+    }).lean();
     if (!categoryDoc) {
       return null;
     }
@@ -36,16 +46,19 @@ async function getCategoryData(categorySlug: string) {
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { category: categorySlug } = await params;
   await dbConnect();
-  const categoryDoc = await Category.findOne({ slug: categorySlug }).lean();
+  const resolvedSlug = SLUG_ALIASES[categorySlug.toLowerCase()] || categorySlug.toLowerCase();
+  const categoryDoc = await Category.findOne({ 
+    $or: [{ slug: resolvedSlug }, { slug: categorySlug }] 
+  }).lean();
 
   if (!categoryDoc) {
     return {
-      title: 'श्रेणी नहीं मिली | Central Lens',
+      title: 'राज्य नहीं मिला | Central Lens',
     };
   }
 
   const name = categoryDoc.name;
-  const title = `${name} समाचार (News & Live Updates) | Central Lens`;
+  const title = `${name} समाचार (State News & Live Updates) | Central Lens`;
   const description = `सेंट्रल लेंस पर ${name} से जुड़े ताजा समाचार, ब्रेकिंग न्यूज़, ग्राउंड रिपोर्ट्स और विश्लेषण।`;
 
   return {
@@ -109,9 +122,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           <div className="w-14 h-14 rounded-2xl bg-red-50 text-red-600 mx-auto flex items-center justify-center">
             <Newspaper size={28} />
           </div>
-          <h3 className="text-xl font-bold text-neutral-900">इस श्रेणी में अभी कोई लेख उपलब्ध नहीं है।</h3>
+          <h3 className="text-xl font-bold text-neutral-900">इस राज्य के लिए अभी कोई लेख उपलब्ध नहीं है।</h3>
           <p className="text-xs text-neutral-500 max-w-sm mx-auto font-sans">
-            हमारी संपादकीय टीम शीघ्र ही इस विषय पर ताजा समाचार प्रकाशित करेगी।
+            हमारी संपादकीय टीम शीघ्र ही इस राज्य पर ताजा समाचार प्रकाशित करेगी।
           </p>
           <div className="pt-2">
             <Link

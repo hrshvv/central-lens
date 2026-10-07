@@ -23,27 +23,34 @@ interface NavCategory {
 }
 
 const CATEGORY_META: Record<string, { en: string; icon: React.ComponentType<{ size?: number; className?: string }>; color: string; bg: string }> = {
-  politics: { en: 'Politics', icon: Landmark, color: 'text-blue-600', bg: 'bg-blue-50' },
-  sports: { en: 'Sports', icon: Trophy, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  technology: { en: 'Tech', icon: Cpu, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-  entertainment: { en: 'Entertainment', icon: Film, color: 'text-pink-600', bg: 'bg-pink-50' },
-  business: { en: 'Business', icon: TrendingUp, color: 'text-amber-600', bg: 'bg-amber-50' },
-  national: { en: 'National', icon: MapPin, color: 'text-red-600', bg: 'bg-red-50' },
-  world: { en: 'World', icon: Globe, color: 'text-violet-600', bg: 'bg-violet-50' },
-  auto: { en: 'Auto', icon: Car, color: 'text-slate-600', bg: 'bg-slate-50' },
-  lifestyle: { en: 'Lifestyle', icon: Sparkles, color: 'text-teal-600', bg: 'bg-teal-50' },
+  mp: { en: 'Madhya Pradesh', icon: MapPin, color: 'text-orange-600', bg: 'bg-orange-50' },
+  'madhya-pradesh': { en: 'Madhya Pradesh', icon: MapPin, color: 'text-orange-600', bg: 'bg-orange-50' },
+  chhattisgarh: { en: 'Chhattisgarh', icon: MapPin, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  delhi: { en: 'Delhi', icon: Landmark, color: 'text-red-600', bg: 'bg-red-50' },
+  'uttar-pradesh': { en: 'Uttar Pradesh', icon: MapPin, color: 'text-blue-600', bg: 'bg-blue-50' },
+  uttarpradesh: { en: 'Uttar Pradesh', icon: MapPin, color: 'text-blue-600', bg: 'bg-blue-50' },
+  up: { en: 'Uttar Pradesh', icon: MapPin, color: 'text-blue-600', bg: 'bg-blue-50' },
+  bihar: { en: 'Bihar', icon: MapPin, color: 'text-amber-600', bg: 'bg-amber-50' },
+  jharkhand: { en: 'Jharkhand', icon: MapPin, color: 'text-teal-600', bg: 'bg-teal-50' },
+  punjab: { en: 'Punjab', icon: MapPin, color: 'text-yellow-600', bg: 'bg-yellow-50' },
+  haryana: { en: 'Haryana', icon: MapPin, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+  odisha: { en: 'Odisha', icon: MapPin, color: 'text-cyan-600', bg: 'bg-cyan-50' },
+  rajasthan: { en: 'Rajasthan', icon: MapPin, color: 'text-rose-600', bg: 'bg-rose-50' },
+  gujarat: { en: 'Gujarat', icon: MapPin, color: 'text-violet-600', bg: 'bg-violet-50' },
 };
 
 const DEFAULT_CATEGORIES: NavCategory[] = [
-  { name: 'राजनीति', slug: 'politics' },
-  { name: 'खेल', slug: 'sports' },
-  { name: 'टेक्नोलॉजी', slug: 'technology' },
-  { name: 'मनोरंजन', slug: 'entertainment' },
-  { name: 'बिज़नेस', slug: 'business' },
-  { name: 'देश', slug: 'national' },
-  { name: 'विदेश', slug: 'world' },
-  { name: 'ऑटो', slug: 'auto' },
-  { name: 'लाइफस्टाइल', slug: 'lifestyle' },
+  { name: 'मध्य प्रदेश', slug: 'mp' },
+  { name: 'छत्तीसगढ़', slug: 'chhattisgarh' },
+  { name: 'दिल्ली', slug: 'delhi' },
+  { name: 'उत्तर प्रदेश', slug: 'uttar-pradesh' },
+  { name: 'बिहार', slug: 'bihar' },
+  { name: 'झारखंड', slug: 'jharkhand' },
+  { name: 'पंजाब', slug: 'punjab' },
+  { name: 'हरियाणा', slug: 'haryana' },
+  { name: 'ओडिशा', slug: 'odisha' },
+  { name: 'राजस्थान', slug: 'rajasthan' },
+  { name: 'गुजरात', slug: 'gujarat' },
 ];
 
 interface BreakingItem {
@@ -194,7 +201,7 @@ export default function Navbar() {
           setBreakingNews(data.map((a: any) => ({
             title: a.title,
             slug: a.slug,
-            categorySlug: a.category?.slug || 'national',
+            categorySlug: a.category?.slug || 'mp',
           })));
         } else {
           // Fallback to recent articles
@@ -403,7 +410,7 @@ export default function Navbar() {
       <nav className="hidden md:flex overflow-x-auto whitespace-nowrap bg-neutral-50/80 border-t border-neutral-100 px-4 max-w-7xl mx-auto space-x-1 scrollbar-hide font-devanagari">
         <Link 
           href="/" 
-          className={`text-sm font-bold px-3.5 py-2.5 transition-colors border-b-2 ${
+          className={`text-sm font-bold px-3.5 py-2.5 transition-colors border-b-2 flex-shrink-0 ${
             pathname === '/' 
               ? 'text-red-600 border-red-600 bg-white' 
               : 'text-neutral-700 hover:text-red-600 border-transparent hover:border-red-400'
@@ -417,7 +424,7 @@ export default function Navbar() {
             <Link 
               key={cat.slug} 
               href={`/${cat.slug}`} 
-              className={`text-sm font-bold px-3.5 py-2.5 transition-colors border-b-2 ${
+              className={`text-sm font-bold px-3 py-2.5 transition-colors border-b-2 flex-shrink-0 ${
                 isActive 
                   ? 'text-red-600 border-red-600 bg-white' 
                   : 'text-neutral-700 hover:text-red-600 border-transparent hover:border-red-400'
@@ -576,8 +583,8 @@ export default function Navbar() {
         </div>
 
         <div className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider px-3 pt-2 pb-1.5 font-sans flex items-center justify-between border-t border-neutral-100">
-          <span>कैटेगरी (Categories)</span>
-          <span className="text-[10px] text-neutral-400/80 font-normal">अनुभाग</span>
+          <span>राज्य (States)</span>
+          <span className="text-[10px] text-neutral-400/80 font-normal">संस्करण</span>
         </div>
 
         {/* Dynamic / Default Categories */}

@@ -270,14 +270,14 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-neutral-600 mb-1.5 font-sans">श्रेणी (Category) *</label>
+              <label className="block text-xs font-medium text-neutral-600 mb-1.5 font-sans">राज्य (State) *</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 required
                 className="w-full bg-neutral-50 border border-neutral-200 rounded-xl p-2.5 text-xs font-bold text-neutral-800 focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari"
               >
-                <option value="">श्रेणी चुनें...</option>
+                <option value="">राज्य चुनें...</option>
                 {categories.map((cat: any) => (
                   <option key={cat._id} value={cat._id}>{cat.name} ({cat.slug})</option>
                 ))}

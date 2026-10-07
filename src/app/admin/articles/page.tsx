@@ -251,7 +251,7 @@ export default function AdminArticles() {
               <thead>
                 <tr className="bg-neutral-50/80 text-neutral-500 text-xs uppercase tracking-wider border-b border-neutral-100">
                   <th className="py-4 px-6 font-semibold">लेख (Article)</th>
-                  <th className="py-4 px-6 font-semibold">कैटेगरी</th>
+                  <th className="py-4 px-6 font-semibold">राज्य</th>
                   <th className="py-4 px-6 font-semibold">स्थिति (Status)</th>
                   <th className="py-4 px-6 font-semibold">व्यूज</th>
                   <th className="py-4 px-6 font-semibold">दिनांक</th>

@@ -75,7 +75,7 @@ export default function AdminDashboard() {
       badge: 'अप्रकाशित',
     },
     {
-      title: 'कैटेगरी (Categories)',
+      title: 'राज्य (States)',
       value: stats?.stats?.totalCategories || 0,
       icon: Layers,
       accent: 'border-t-4 border-t-neutral-900',
@@ -99,7 +99,7 @@ export default function AdminDashboard() {
             डैशबोर्ड ओवरव्यू (Dashboard Overview)
           </h1>
           <p className="text-neutral-500 text-xs sm:text-sm mt-1 max-w-xl font-devanagari">
-            यहाँ से आप नए समाचार प्रकाशित कर सकते हैं, श्रेणियों का प्रबंधन कर सकते हैं और लाइव पोर्टल का संचालन कर सकते हैं।
+            यहाँ से आप नए समाचार प्रकाशित कर सकते हैं, राज्यों का प्रबंधन कर सकते हैं और लाइव पोर्टल का संचालन कर सकते हैं।
           </p>
         </div>
 
@@ -115,7 +115,7 @@ export default function AdminDashboard() {
             href="/admin/categories"
             className="flex-1 md:flex-initial flex items-center justify-center space-x-1.5 sm:space-x-2 px-3.5 sm:px-5 py-2.5 sm:py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-xl text-xs font-bold border border-neutral-200 transition font-devanagari text-center"
           >
-            <span>कैटेगरी जोड़ें</span>
+            <span>राज्य जोड़ें</span>
           </Link>
         </div>
       </div>
@@ -229,7 +229,7 @@ export default function AdminDashboard() {
             <thead>
               <tr className="bg-neutral-50/80 text-neutral-500 text-xs uppercase tracking-wider border-b border-neutral-100">
                 <th className="py-4 px-6 font-bold">शीर्षक (Title)</th>
-                <th className="py-4 px-6 font-bold">कैटेगरी</th>
+                <th className="py-4 px-6 font-bold">राज्य</th>
                 <th className="py-4 px-6 font-bold">स्थिति</th>
                 <th className="py-4 px-6 font-bold">दिनांक</th>
                 <th className="py-4 px-6 font-bold text-right">कार्रवाई</th>

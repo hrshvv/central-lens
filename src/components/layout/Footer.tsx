@@ -112,32 +112,42 @@ export default function Footer() {
           {/* Categories (2 cols) */}
           <div className="lg:col-span-2 space-y-3">
             <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-wider font-sans">
-              श्रेणियां
+              राज्य (States)
             </h3>
             <ul className="space-y-2 text-xs">
               <li>
-                <Link href="/national" className="text-neutral-500 hover:text-neutral-900 transition-colors">
-                  राष्ट्रीय (National)
+                <Link href="/mp" className="text-neutral-500 hover:text-neutral-900 transition-colors">
+                  मध्य प्रदेश (MP)
                 </Link>
               </li>
               <li>
-                <Link href="/politics" className="text-neutral-500 hover:text-neutral-900 transition-colors">
-                  राजनीति (Politics)
+                <Link href="/chhattisgarh" className="text-neutral-500 hover:text-neutral-900 transition-colors">
+                  छत्तीसगढ़ (Chhattisgarh)
                 </Link>
               </li>
               <li>
-                <Link href="/sports" className="text-neutral-500 hover:text-neutral-900 transition-colors">
-                  खेल (Sports)
+                <Link href="/delhi" className="text-neutral-500 hover:text-neutral-900 transition-colors">
+                  दिल्ली (Delhi)
                 </Link>
               </li>
               <li>
-                <Link href="/technology" className="text-neutral-500 hover:text-neutral-900 transition-colors">
-                  टेक & AI (Tech)
+                <Link href="/uttar-pradesh" className="text-neutral-500 hover:text-neutral-900 transition-colors">
+                  उत्तर प्रदेश (UP)
                 </Link>
               </li>
               <li>
-                <Link href="/business" className="text-neutral-500 hover:text-neutral-900 transition-colors">
-                  व्यापार (Business)
+                <Link href="/bihar" className="text-neutral-500 hover:text-neutral-900 transition-colors">
+                  बिहार (Bihar)
+                </Link>
+              </li>
+              <li>
+                <Link href="/rajasthan" className="text-neutral-500 hover:text-neutral-900 transition-colors">
+                  राजस्थान (Rajasthan)
+                </Link>
+              </li>
+              <li>
+                <Link href="/gujarat" className="text-neutral-500 hover:text-neutral-900 transition-colors">
+                  गुजरात (Gujarat)
                 </Link>
               </li>
               <li>

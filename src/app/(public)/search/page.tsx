@@ -34,14 +34,14 @@ function SearchResults() {
   const [activeTab, setActiveTab] = useState<'all' | 'articles' | 'videos'>('all');
 
   const trendingTags = [
-    'राजनीति',
-    'राष्ट्रीय',
-    'खेल',
-    'टेक्नोलॉजी',
-    'व्यापार',
-    'बजट',
-    'चुनाव',
-    'विश्व'
+    'मध्य प्रदेश',
+    'उत्तर प्रदेश',
+    'दिल्ली',
+    'बिहार',
+    'राजस्थान',
+    'गुजरात',
+    'छत्तीसगढ़',
+    'पंजाब'
   ];
 
   // Debounce the input query
@@ -509,17 +509,17 @@ function SearchResults() {
             <div className="flex items-center space-x-2.5 mb-4">
               <Compass size={18} className="text-red-600" />
               <h3 className="text-base font-bold text-neutral-900">
-                प्रमुख श्रेणियों के अनुसार खोजें
+                प्रमुख राज्यों के अनुसार खोजें (States)
               </h3>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
               {[
-                { name: 'राष्ट्रीय', slug: 'national' },
-                { name: 'राजनीति', slug: 'politics' },
-                { name: 'खेल जगत', slug: 'sports' },
-                { name: 'टेक्नोलॉजी', slug: 'technology' },
-                { name: 'व्यापार', slug: 'business' },
-                { name: 'मनोरंजन', slug: 'entertainment' },
+                { name: 'मध्य प्रदेश', slug: 'mp' },
+                { name: 'छत्तीसगढ़', slug: 'chhattisgarh' },
+                { name: 'दिल्ली', slug: 'delhi' },
+                { name: 'उत्तर प्रदेश', slug: 'uttar-pradesh' },
+                { name: 'बिहार', slug: 'bihar' },
+                { name: 'राजस्थान', slug: 'rajasthan' },
               ].map((cat) => (
                 <Link
                   key={cat.slug}

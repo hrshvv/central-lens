@@ -74,7 +74,7 @@ export default function AdminCategories() {
         fetchCategories();
       } else {
         const error = await res.json();
-        alert(`त्रुटि: ${error.error || 'कैटेगरी सहेजने में विफल'}`);
+        alert(`त्रुटि: ${error.error || 'राज्य सहेजने में विफल'}`);
       }
     } catch {
       alert('तकनीकी समस्या आई');
@@ -82,7 +82,7 @@ export default function AdminCategories() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('क्या आप इस श्रेणी को हटाना चाहते हैं?')) {
+    if (confirm('क्या आप इस राज्य को हटाना चाहते हैं?')) {
       await fetch(`/api/admin/categories/${id}`, { method: 'DELETE' });
       fetchCategories();
     }
@@ -94,10 +94,10 @@ export default function AdminCategories() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3.5 sm:gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-neutral-900 tracking-tight font-devanagari">
-            कैटेगरी प्रबंधन (Categories)
+            राज्य प्रबंधन (States)
           </h1>
           <p className="text-xs sm:text-sm text-neutral-500 mt-1 font-devanagari">
-            पोर्टल पर समाचारों के वर्गीकरण एवं नेविगेशन बार का क्रम निर्धारित करें
+            पोर्टल पर राज्यों के वर्गीकरण एवं नेविगेशन बार का क्रम निर्धारित करें
           </p>
         </div>
         <button 
@@ -105,7 +105,7 @@ export default function AdminCategories() {
           className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 active:scale-98 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition font-devanagari"
         >
           <Plus size={16} />
-          <span>नई कैटेगरी जोड़ें</span>
+          <span>नया राज्य जोड़ें</span>
         </button>
       </div>
 
@@ -116,7 +116,7 @@ export default function AdminCategories() {
           <div className="py-16 text-center text-neutral-400">
             <div className="flex flex-col items-center space-y-2">
               <div className="w-6 h-6 border-3 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-xs font-devanagari">कैटेगरी लोड हो रही हैं...</span>
+              <span className="text-xs font-devanagari">राज्य लोड हो रहे हैं...</span>
             </div>
           </div>
         )}
@@ -124,7 +124,7 @@ export default function AdminCategories() {
         {/* Empty State */}
         {!loading && categories.length === 0 && (
           <div className="py-16 text-center text-neutral-400 text-xs font-devanagari">
-            कोई कैटेगरी नहीं मिली।
+            कोई राज्य नहीं मिला।
           </div>
         )}
 
@@ -250,7 +250,7 @@ export default function AdminCategories() {
           <div className="bg-white rounded-2xl p-4 sm:p-6 w-full max-w-md shadow-2xl border border-neutral-100 my-auto transform transition-all">
             <div className="flex items-center justify-between pb-3 sm:pb-4 mb-3 sm:mb-4 border-b border-neutral-100">
               <h2 className="text-base sm:text-lg font-black text-neutral-900 font-devanagari">
-                {editCategory ? 'कैटेगरी संपादित करें' : 'नई कैटेगरी जोड़ें'}
+                {editCategory ? 'राज्य संपादित करें' : 'नया राज्य जोड़ें'}
               </h2>
               <button 
                 onClick={closeModal}
@@ -263,14 +263,14 @@ export default function AdminCategories() {
             <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4">
               <div>
                 <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5 font-devanagari">
-                  कैटेगरी का नाम (Hindi Name) *
+                  राज्य का नाम (State Name) *
                 </label>
                 <input 
                   type="text" 
                   value={name} 
                   onChange={(e) => setName(e.target.value)} 
                   required 
-                  placeholder="उदा. खेल, तकनीक, राजनीति..."
+                  placeholder="उदा. मध्य प्रदेश, दिल्ली, उत्तर प्रदेश..."
                   className="w-full border border-neutral-200 rounded-xl p-2.5 sm:p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari" 
                 />
               </div>
@@ -285,7 +285,7 @@ export default function AdminCategories() {
                   value={slug} 
                   onChange={(e) => setSlug(e.target.value)} 
                   required 
-                  placeholder="e.g. sports, tech, politics"
+                  placeholder="e.g. mp, delhi, uttar-pradesh"
                   className="w-full border border-neutral-200 rounded-xl p-2.5 sm:p-3 text-xs font-mono text-neutral-800 focus:outline-none focus:ring-2 focus:ring-red-500" 
                 />
               </div>
