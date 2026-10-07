@@ -3,17 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { 
-  Mail, 
-  MapPin, 
-  Phone, 
   Send, 
   CheckCircle2, 
-  ShieldCheck, 
-  Clock, 
-  AlertCircle,
   HelpCircle,
   ArrowRight,
-  FileCheck2,
   Sparkles
 } from 'lucide-react';
 
@@ -45,45 +38,6 @@ export default function ContactPage() {
       });
     }, 600);
   };
-
-  const contactChannels = [
-    {
-      icon: Mail,
-      title: 'संपादकीय डेस्क (Editorial Desk)',
-      desc: 'प्रेस विज्ञप्ति, लेख एवं प्रमुख समाचार सुझावों के लिए।',
-      contact: 'editorial@centrallens.in',
-      subtext: 'प्रतिक्रिया समय: 2 से 4 घंटे',
-      badge: '24/7 सक्रिय',
-      badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    },
-    {
-      icon: ShieldCheck,
-      title: 'गोपनीय टिप (Whistleblower Desk)',
-      desc: 'संवेदनशील दस्तावेज व खोजी पत्रकारिता से जुड़ी जानकारियां।',
-      contact: 'tips@centrallens.in',
-      subtext: 'पूर्णतः गोपनीय एवं स्रोत सुरक्षित',
-      badge: 'एन्क्रिप्टेड',
-      badgeColor: 'bg-red-50 text-red-700 border-red-200',
-    },
-    {
-      icon: FileCheck2,
-      title: 'सुधार व शिकायत (Grievance Officer)',
-      desc: 'समाचार में किसी त्रुटि का सुधार या विधिक शिकायत दर्ज करने हेतु।',
-      contact: 'corrections@centrallens.in',
-      subtext: 'डिजिटल मीडिया आचार संहिता अनुसार',
-      badge: 'कानूनी अनुपालन',
-      badgeColor: 'bg-amber-50 text-amber-700 border-amber-200',
-    },
-    {
-      icon: MapPin,
-      title: 'मुख्यालय ब्यूरो (New Delhi HQ)',
-      desc: 'सेंट्रल लेंस मीडिया कॉर्पोरेशन, प्रेस एन्क्लेव।',
-      contact: 'कनॉट प्लेस, नई दिल्ली - 110001, भारत',
-      subtext: 'कार्य दिवस: सोमवार - शनिवार (10 AM - 7 PM)',
-      badge: 'सेंट्रल ऑफिस',
-      badgeColor: 'bg-neutral-100 text-neutral-700 border-neutral-200',
-    },
-  ];
 
   const faqs = [
     {
@@ -132,84 +86,21 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Main Content: Channels & Form */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-        <div className="grid lg:grid-cols-12 gap-8 items-start">
-          
-          {/* Left Column: Direct Communication Channels */}
-          <div className="lg:col-span-5 space-y-4">
-            <div className="mb-2">
-              <span className="text-xs font-bold text-red-600 uppercase tracking-wider font-sans">
-                सीधे चैनल
-              </span>
-              <h2 className="text-2xl font-black text-neutral-900 font-devanagari mt-1">
-                विभागीय संपर्क सूत्र
-              </h2>
+      {/* Main Content: Interactive Send Message Form */}
+      <section className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <div className="bg-white rounded-3xl border border-neutral-200/90 shadow-sm p-6 sm:p-10 relative">
+          <div className="mb-6 text-center">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 px-3 py-1 rounded-full mb-2 font-devanagari">
+              <Sparkles size={13} />
+              <span>सीधा संदेश</span>
             </div>
-
-            <div className="space-y-3.5">
-              {contactChannels.map((c, idx) => {
-                const Icon = c.icon;
-                return (
-                  <div 
-                    key={idx}
-                    className="p-5 bg-white rounded-2xl border border-neutral-200/80 shadow-2xs hover:border-red-200 hover:shadow-xs transition-all group"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-3.5">
-                        <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0 group-hover:bg-red-600 group-hover:text-white transition-colors">
-                          <Icon size={20} />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-bold text-neutral-900 text-sm font-devanagari">
-                              {c.title}
-                            </h3>
-                          </div>
-                          <p className="text-xs text-neutral-500 font-devanagari mt-0.5">
-                            {c.desc}
-                          </p>
-                          <p className="text-sm font-bold text-red-600 font-sans mt-2 select-all">
-                            {c.contact}
-                          </p>
-                          <p className="text-[11px] text-neutral-400 font-devanagari mt-0.5">
-                            {c.subtext}
-                          </p>
-                        </div>
-                      </div>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border flex-shrink-0 font-sans ${c.badgeColor}`}>
-                        {c.badge}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Confidentiality Trust Box */}
-            <div className="p-4 rounded-2xl bg-neutral-100/80 border border-neutral-200 flex items-start gap-3 mt-6">
-              <ShieldCheck className="text-emerald-600 flex-shrink-0 mt-0.5" size={20} />
-              <div className="text-xs text-neutral-600 font-devanagari leading-relaxed">
-                <strong className="text-neutral-900 font-bold block mb-0.5">स्रोत गोपनीयता की गारंटी:</strong>
-                हम व्हिसलब्लोअर्स और समाचार सूत्रों की पहचान को कानून सम्मत सर्वोच्च सुरक्षा प्रदान करते हैं। आपकी व्यक्तिगत पहचान कभी उजागर नहीं की जाती।
-              </div>
-            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-neutral-900 font-devanagari">
+              संपादकीय टीम को संदेश भेजें
+            </h2>
+            <p className="text-xs sm:text-sm text-neutral-500 font-devanagari mt-1 max-w-lg mx-auto">
+              नीचे दिया गया फॉर्म भरें, हमारी टीम यथाशीघ्र आपसे ईमेल या फ़ोन पर संपर्क करेगी।
+            </p>
           </div>
-
-          {/* Right Column: Interactive Send Message Form */}
-          <div className="lg:col-span-7 bg-white rounded-3xl border border-neutral-200/90 shadow-sm p-6 sm:p-9 relative">
-            <div className="mb-6">
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 px-3 py-1 rounded-full mb-2 font-devanagari">
-                <Sparkles size={13} />
-                <span>सीधा संदेश</span>
-              </div>
-              <h2 className="text-2xl font-black text-neutral-900 font-devanagari">
-                संपादकीय टीम को संदेश भेजें
-              </h2>
-              <p className="text-xs sm:text-sm text-neutral-500 font-devanagari mt-1">
-                नीचे दिया गया फॉर्म भरें, हमारी टीम यथाशीघ्र आपसे ईमेल या फ़ोन पर संपर्क करेगी।
-              </p>
-            </div>
 
             {submitted ? (
               <div className="py-12 px-6 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-center space-y-4">
@@ -323,8 +214,7 @@ export default function ContactPage() {
               </form>
             )}
           </div>
-        </div>
-      </section>
+        </section>
 
       {/* Frequently Asked Questions */}
       <section className="py-14 bg-white border-t border-neutral-200/80">
