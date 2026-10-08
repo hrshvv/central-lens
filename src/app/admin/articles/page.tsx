@@ -25,7 +25,7 @@ export default function AdminArticles() {
 
   const fetchArticles = () => {
     setLoading(true);
-    fetch('/api/admin/articles')
+    fetch('/api/admin/articles?limit=100')
       .then(res => res.json())
       .then(data => {
         setArticles(data.data || []);

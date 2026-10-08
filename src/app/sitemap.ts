@@ -7,7 +7,7 @@ import { Video } from '@/lib/db/models/Video';
 export const revalidate = 3600; // Cache sitemap for 1 hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://centrallens.in';
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://centrallens.in').replace(/\/$/, '');
 
   // Static routes
   const staticRoutes: MetadataRoute.Sitemap = [
