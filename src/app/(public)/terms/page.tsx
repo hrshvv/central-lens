@@ -145,7 +145,7 @@ export default function TermsOfServicePage() {
             नियम व शर्तों या किसी सामग्री के संबंध में किसी भी विधिक स्पष्टीकरण के लिए हमारी विधिक टीम से संपर्क करें:
           </p>
           <p className="text-xs text-neutral-700 font-sans">
-            ईमेल: <a href="mailto:legal@centrallens.in" className="text-red-600 font-semibold hover:underline">legal@centrallens.in</a> / <a href="mailto:editorial@centrallens.in" className="text-red-600 font-semibold hover:underline">editorial@centrallens.in</a>
+            ईमेल: <a href="mailto:centrallens5@gmail.com" className="text-red-600 font-semibold hover:underline">centrallens5@gmail.com</a>
           </p>
           <div className="pt-2 flex flex-wrap gap-3">
             <Link

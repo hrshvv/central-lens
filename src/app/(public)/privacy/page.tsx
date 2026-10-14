@@ -181,7 +181,7 @@ export default function PrivacyPolicyPage() {
           </p>
           <div className="pt-2 text-xs space-y-1.5 text-neutral-700 font-sans">
             <p><strong className="text-neutral-900">अधिकारी:</strong> शिकायत निवारण प्रकोष्ठ (Grievance Desk)</p>
-            <p><strong className="text-neutral-900">ईमेल:</strong> <a href="mailto:privacy@centrallens.in" className="text-red-600 font-semibold hover:underline">privacy@centrallens.in</a></p>
+            <p><strong className="text-neutral-900">ईमेल:</strong> <a href="mailto:centrallens5@gmail.com" className="text-red-600 font-semibold hover:underline font-sans">centrallens5@gmail.com</a></p>
             <p><strong className="text-neutral-900">पता:</strong> Central Lens Media, प्रेस एन्क्लेव, कनॉट प्लेस, नई दिल्ली - 110001</p>
           </div>
           <div className="pt-3">
