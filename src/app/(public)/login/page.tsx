@@ -31,7 +31,7 @@ export default function LoginPage() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.user) {
-          if (data.user.role === 'admin' || data.user.role === 'editor') {
+          if (data.user.role === 'admin' || data.user.role === 'editor' || data.user.role === 'owner') {
             router.replace('/admin');
           } else {
             router.replace('/');
@@ -76,8 +76,8 @@ export default function LoginPage() {
         return;
       }
 
-      // If user is admin or editor, redirect to CMS, else to home
-      if (data.user?.role === 'admin' || data.user?.role === 'editor') {
+      // If user is admin, owner or editor, redirect to CMS, else to home
+      if (data.user?.role === 'admin' || data.user?.role === 'editor' || data.user?.role === 'owner') {
         router.push('/admin');
       } else {
         router.push('/');

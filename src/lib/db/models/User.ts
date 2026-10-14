@@ -4,7 +4,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   passwordHash: string;
-  role: 'reader' | 'editor' | 'admin';
+  role: 'reader' | 'editor' | 'admin' | 'owner';
   avatar?: string;
   savedArticles: mongoose.Types.ObjectId[];
   newsletterSubscribed: boolean;
@@ -19,7 +19,7 @@ const UserSchema = new Schema<IUser>(
     passwordHash: { type: String, required: true },
     role: {
       type: String,
-      enum: ['reader', 'editor', 'admin'],
+      enum: ['reader', 'editor', 'admin', 'owner'],
       default: 'reader',
     },
     avatar: { type: String },

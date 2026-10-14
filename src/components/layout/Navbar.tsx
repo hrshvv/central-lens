@@ -318,7 +318,7 @@ export default function Navbar() {
           {currentUser ? (
             <div className="relative">
               <div className="flex items-center space-x-2">
-                {(currentUser.role === 'admin' || currentUser.role === 'editor') && (
+                {(currentUser.role === 'admin' || currentUser.role === 'editor' || currentUser.role === 'owner') && (
                   <Link
                     href="/admin"
                     className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-full text-xs font-bold border border-red-200/80 shadow-2xs transition"
@@ -355,11 +355,11 @@ export default function Navbar() {
                       <p className="font-bold text-neutral-900 truncate">{currentUser.name}</p>
                       <p className="text-[11px] text-neutral-400 truncate mt-0.5">{currentUser.email}</p>
                       <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 uppercase tracking-wider">
-                        {currentUser.role === 'admin' ? 'एडमिन (Admin)' : currentUser.role === 'editor' ? 'संपादक (Editor)' : 'पाठक (Reader)'}
+                        {currentUser.role === 'owner' ? '👑 ओनर (Owner)' : currentUser.role === 'admin' ? '🛡️ एडमिन (Admin)' : currentUser.role === 'editor' ? 'संपादक (Editor)' : 'पाठक (Reader)'}
                       </span>
                     </div>
 
-                    {(currentUser.role === 'admin' || currentUser.role === 'editor') && (
+                    {(currentUser.role === 'admin' || currentUser.role === 'editor' || currentUser.role === 'owner') && (
                       <div className="py-1 border-b border-neutral-100 font-devanagari">
                         <Link
                           href="/admin"
@@ -636,12 +636,12 @@ export default function Navbar() {
                 <p className="text-xs font-bold text-neutral-900 truncate">{currentUser.name}</p>
                 <p className="text-[10px] text-neutral-400 truncate">{currentUser.email}</p>
                 <span className="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-700 uppercase">
-                  {currentUser.role === 'admin' ? 'एडमिन (Admin)' : currentUser.role === 'editor' ? 'संपादक (Editor)' : 'पाठक (Reader)'}
+                  {currentUser.role === 'owner' ? '👑 ओनर (Owner)' : currentUser.role === 'admin' ? '🛡️ एडमिन (Admin)' : currentUser.role === 'editor' ? 'संपादक (Editor)' : 'पाठक (Reader)'}
                 </span>
               </div>
             </div>
 
-            {(currentUser.role === 'admin' || currentUser.role === 'editor') && (
+            {(currentUser.role === 'admin' || currentUser.role === 'editor' || currentUser.role === 'owner') && (
               <Link
                 href="/admin"
                 onClick={() => setIsMenuOpen(false)}

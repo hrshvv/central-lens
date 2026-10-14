@@ -9,14 +9,17 @@ import {
   Layers, 
   Plus, 
   ArrowUpRight, 
-  Sparkles,
-  Eye,
-  ExternalLink
+  Sparkles, 
+  Crown,
+  Users,
+  Mail,
+  Video,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [stats, setStats] = useState<any>(null);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,8 +31,8 @@ export default function AdminDashboard() {
         }
         return res.json();
       })
-      .then(data => {
-        if (data) setStats(data);
+      .then(d => {
+        if (d) setData(d);
         setLoading(false);
       })
       .catch((err) => {
@@ -49,57 +52,110 @@ export default function AdminDashboard() {
     );
   }
 
-  const statCards = [
+  const isOwner = data?.isOwner === true;
+  const stats = data?.stats || {};
+
+  const statCards = isOwner ? [
     {
-      title: 'कुल लेख (Total Articles)',
-      value: stats?.stats?.totalArticles || 0,
+      title: 'कुल लेख (All Articles)',
+      value: stats.totalArticles || 0,
       icon: FileText,
       accent: 'border-t-4 border-t-red-600',
       iconColor: 'bg-red-50 text-red-600',
-      badge: 'लाइब्रेरी',
+      badge: 'संपूर्ण पोर्टल',
     },
     {
       title: 'प्रकाशित लेख (Published)',
-      value: stats?.stats?.publishedArticles || 0,
+      value: stats.publishedArticles || 0,
       icon: CheckCircle2,
       accent: 'border-t-4 border-t-emerald-600',
       iconColor: 'bg-emerald-50 text-emerald-600',
       badge: 'लाइव',
     },
     {
-      title: 'ड्राफ्ट्स (Drafts)',
-      value: stats?.stats?.draftArticles || 0,
+      title: 'सदस्य व टीम (Users & Roles)',
+      value: stats.totalUsers || 0,
+      icon: Users,
+      accent: 'border-t-4 border-t-amber-500',
+      iconColor: 'bg-amber-50 text-amber-600',
+      badge: 'ओनर कंट्रोल',
+      href: '/admin/users'
+    },
+    {
+      title: 'न्यूज़लेटर (Newsletters)',
+      value: stats.totalNewsletters || 0,
+      icon: Mail,
+      accent: 'border-t-4 border-t-blue-600',
+      iconColor: 'bg-blue-50 text-blue-600',
+      badge: 'प्रसारण',
+      href: '/admin/newsletters'
+    },
+  ] : [
+    {
+      title: 'आपके कुल लेख (My Articles)',
+      value: stats.totalArticles || 0,
+      icon: FileText,
+      accent: 'border-t-4 border-t-red-600',
+      iconColor: 'bg-red-50 text-red-600',
+      badge: 'आपके द्वारा',
+    },
+    {
+      title: 'आपके प्रकाशित लेख (My Live)',
+      value: stats.publishedArticles || 0,
+      icon: CheckCircle2,
+      accent: 'border-t-4 border-t-emerald-600',
+      iconColor: 'bg-emerald-50 text-emerald-600',
+      badge: 'लाइव',
+    },
+    {
+      title: 'आपके ड्राफ्ट्स (My Drafts)',
+      value: stats.draftArticles || 0,
       icon: Sparkles,
       accent: 'border-t-4 border-t-amber-500',
       iconColor: 'bg-amber-50 text-amber-600',
       badge: 'अप्रकाशित',
     },
     {
-      title: 'राज्य (States)',
-      value: stats?.stats?.totalCategories || 0,
-      icon: Layers,
+      title: 'आपके वीडियो (My Videos)',
+      value: stats.totalVideos || 0,
+      icon: Video,
       accent: 'border-t-4 border-t-neutral-900',
       iconColor: 'bg-neutral-100 text-neutral-900',
-      badge: 'सक्रिय',
+      badge: 'कंटेंट',
     },
   ];
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8 font-sans">
-      {/* Central Lens Branded Welcome Banner (White & Red Theme) */}
-      <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 border border-neutral-200/80 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sm:gap-6 border-l-4 border-l-red-600">
+      {/* Central Lens Branded Welcome Banner */}
+      <div className={`bg-white rounded-2xl p-4 sm:p-6 lg:p-8 border shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sm:gap-6 border-l-4 ${
+        isOwner ? 'border-amber-200/90 border-l-amber-500 bg-gradient-to-r from-amber-50/40 via-white to-red-50/30' : 'border-neutral-200/80 border-l-red-600'
+      }`}>
         <div>
           <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider mb-1.5 font-sans">
-            <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
-            <span className="text-neutral-900 font-black tracking-tight font-sans">
-              CENTRAL <span className="text-red-600">LENS</span> <span className="text-neutral-600 font-semibold font-devanagari ml-1">एडमिन न्यूज़ रूम</span>
-            </span>
+            {isOwner ? (
+              <>
+                <Crown size={14} className="text-amber-600 fill-amber-500" />
+                <span className="text-amber-900 font-black tracking-tight font-sans">
+                  CENTRAL <span className="text-red-600">LENS</span> <span className="text-amber-800 font-semibold font-devanagari ml-1">ओनर कंट्रोल डेस्क</span>
+                </span>
+              </>
+            ) : (
+              <>
+                <ShieldCheck size={14} className="text-blue-600" />
+                <span className="text-neutral-900 font-black tracking-tight font-sans">
+                  CENTRAL <span className="text-red-600">LENS</span> <span className="text-neutral-600 font-semibold font-devanagari ml-1">एडमिन डेस्क</span>
+                </span>
+              </>
+            )}
           </div>
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-neutral-900 font-devanagari">
-            डैशबोर्ड ओवरव्यू (Dashboard Overview)
+            {isOwner ? 'ओनर डैशबोर्ड ओवरव्यू (Full Access)' : 'व्यक्तिगत एडमिन डैशबोर्ड (My Content)'}
           </h1>
           <p className="text-neutral-500 text-xs sm:text-sm mt-1 max-w-xl font-devanagari">
-            यहाँ से आप नए समाचार प्रकाशित कर सकते हैं, राज्यों का प्रबंधन कर सकते हैं और लाइव पोर्टल का संचालन कर सकते हैं।
+            {isOwner
+              ? 'ओनर स्तर पर आप पोर्टल के सभी लेख, वीडियो, न्यूज़लेटर और एडमिन भूमिकाओं को नियंत्रित कर सकते हैं।'
+              : 'यहाँ आप अपने द्वारा जोड़े गए समाचार लेख, वीडियो व न्यूज़लेटर देख और प्रबंधित कर सकते हैं।'}
           </p>
         </div>
 
@@ -111,22 +167,32 @@ export default function AdminDashboard() {
             <Plus size={16} className="flex-shrink-0" />
             <span>नया लेख लिखें</span>
           </Link>
-          <Link
-            href="/admin/categories"
-            className="flex-1 md:flex-initial flex items-center justify-center space-x-1.5 sm:space-x-2 px-3.5 sm:px-5 py-2.5 sm:py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-xl text-xs font-bold border border-neutral-200 transition font-devanagari text-center"
-          >
-            <span>राज्य जोड़ें</span>
-          </Link>
+          {isOwner ? (
+            <Link
+              href="/admin/users"
+              className="flex-1 md:flex-initial flex items-center justify-center space-x-1.5 sm:space-x-2 px-3.5 sm:px-5 py-2.5 sm:py-3 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-xl text-xs font-bold border border-amber-300 transition font-devanagari text-center"
+            >
+              <Users size={16} />
+              <span>भूमिकाएं प्रबंधित करें</span>
+            </Link>
+          ) : (
+            <Link
+              href="/admin/newsletters"
+              className="flex-1 md:flex-initial flex items-center justify-center space-x-1.5 sm:space-x-2 px-3.5 sm:px-5 py-2.5 sm:py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-xl text-xs font-bold border border-neutral-200 transition font-devanagari text-center"
+            >
+              <Mail size={15} />
+              <span>न्यूज़लेटर</span>
+            </Link>
+          )}
         </div>
       </div>
 
-      {/* Metric Cards Grid - 2 columns on mobile, 4 on desktop */}
+      {/* Metric Cards Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-        {statCards.map((card, idx) => {
+        {statCards.map((card: any, idx: number) => {
           const Icon = card.icon;
-          return (
+          const CardContent = (
             <div 
-              key={idx} 
               className={`bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-neutral-200/80 shadow-xs hover:shadow-md transition-all flex flex-col justify-between ${card.accent}`}
             >
               <div className="flex items-center justify-between mb-2 sm:mb-3">
@@ -147,6 +213,14 @@ export default function AdminDashboard() {
               </div>
             </div>
           );
+
+          return card.href ? (
+            <Link key={idx} href={card.href} className="block transition-transform hover:-translate-y-0.5">
+              {CardContent}
+            </Link>
+          ) : (
+            <div key={idx}>{CardContent}</div>
+          );
         })}
       </div>
 
@@ -157,78 +231,29 @@ export default function AdminDashboard() {
             <span className="w-2 h-5 sm:h-6 bg-red-600 rounded-full inline-block flex-shrink-0"></span>
             <div>
               <h2 className="text-base sm:text-lg font-black text-neutral-900 tracking-tight font-devanagari">
-                हालिया प्रकाशित लेख (Recent Articles)
+                {isOwner ? 'हालिया प्रकाशित लेख (All Admins)' : 'आपके हालिया लेख (My Recent Articles)'}
               </h2>
-              <p className="text-[11px] sm:text-xs text-neutral-400 mt-0.5">वेबसाइट पर लाइव और ड्राफ्ट लेख</p>
+              <p className="text-[11px] sm:text-xs text-neutral-400 mt-0.5">
+                {isOwner ? 'वेबसाइट पर सभी एडमिन्स द्वारा लाइव और ड्राफ्ट लेख' : 'केवल आपके द्वारा बनाए गए लेख'}
+              </p>
             </div>
           </div>
           <Link 
             href="/admin/articles" 
             className="self-start sm:self-auto flex items-center space-x-1 text-xs font-bold text-red-600 hover:text-red-700 font-devanagari"
           >
-            <span>सभी {stats?.stats?.totalArticles || 0} लेख देखें</span>
+            <span>सभी {stats.totalArticles || 0} लेख देखें</span>
             <ArrowUpRight size={14} />
           </Link>
         </div>
 
-        {/* Mobile Cards View (< md) */}
-        <div className="block md:hidden divide-y divide-neutral-100">
-          {stats?.recentArticles?.length === 0 ? (
-            <div className="py-10 text-center text-neutral-400 text-xs font-devanagari">
-              कोई हालिया लेख नहीं मिला।
-            </div>
-          ) : (
-            stats?.recentArticles?.map((article: any) => (
-              <div key={article._id} className="p-3.5 space-y-2.5 hover:bg-neutral-50/60 transition-colors">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <span className="font-bold text-neutral-900 block font-devanagari text-xs sm:text-sm line-clamp-2">
-                      {article.title}
-                    </span>
-                    <span className="text-[10px] text-neutral-400 font-mono block truncate mt-0.5">
-                      /{article.slug}
-                    </span>
-                  </div>
-                  <span className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex-shrink-0 ${
-                    article.status === 'published' 
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-                      : 'bg-amber-50 text-amber-700 border border-amber-200'
-                  }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${article.status === 'published' ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
-                    <span>{article.status === 'published' ? 'लाइव' : 'ड्राफ्ट'}</span>
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-neutral-500 pt-1">
-                  <div className="flex items-center space-x-2">
-                    <span className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-neutral-100 text-neutral-700 font-devanagari">
-                      {article.category?.name || 'सामान्य'}
-                    </span>
-                    <span className="text-[11px] text-neutral-400 font-sans">
-                      {new Date(article.createdAt).toLocaleDateString('hi-IN', {
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                    </span>
-                  </div>
-                  <Link 
-                    href={`/admin/articles/${article._id}/edit`}
-                    className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold text-neutral-700 bg-neutral-100 hover:bg-red-50 hover:text-red-600 transition font-devanagari"
-                  >
-                    <span>संपादित करें</span>
-                  </Link>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* Desktop Table View (>= md) */}
-        <div className="hidden md:block overflow-x-auto">
+        {/* Articles List / Table */}
+        <div className="overflow-x-auto">
           <table className="w-full text-left min-w-[640px]">
             <thead>
               <tr className="bg-neutral-50/80 text-neutral-500 text-xs uppercase tracking-wider border-b border-neutral-100">
                 <th className="py-4 px-6 font-bold">शीर्षक (Title)</th>
+                {isOwner && <th className="py-4 px-6 font-bold">लेखक / एडमिन</th>}
                 <th className="py-4 px-6 font-bold">राज्य</th>
                 <th className="py-4 px-6 font-bold">स्थिति</th>
                 <th className="py-4 px-6 font-bold">दिनांक</th>
@@ -236,14 +261,14 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-100 text-sm">
-              {stats?.recentArticles?.length === 0 ? (
+              {!data?.recentArticles || data.recentArticles.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-neutral-400 text-xs">
+                  <td colSpan={isOwner ? 6 : 5} className="py-12 text-center text-neutral-400 text-xs font-devanagari">
                     कोई हालिया लेख नहीं मिला।
                   </td>
                 </tr>
               ) : (
-                stats?.recentArticles?.map((article: any) => (
+                data.recentArticles.map((article: any) => (
                   <tr key={article._id} className="hover:bg-neutral-50/60 transition-colors">
                     <td className="py-4 px-6 max-w-md">
                       <span className="font-bold text-neutral-900 block truncate font-devanagari">
@@ -253,6 +278,13 @@ export default function AdminDashboard() {
                         /{article.slug}
                       </span>
                     </td>
+                    {isOwner && (
+                      <td className="py-4 px-6">
+                        <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-xs font-bold bg-neutral-100 text-neutral-800">
+                          <span>{article.createdBy?.name || article.author?.name || 'अज्ञात'}</span>
+                        </span>
+                      </td>
+                    )}
                     <td className="py-4 px-6">
                       <span className="inline-block px-2.5 py-1 rounded-md text-xs font-bold bg-neutral-100 text-neutral-700 font-devanagari">
                         {article.category?.name || 'सामान्य'}

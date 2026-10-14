@@ -266,18 +266,18 @@ async function seed() {
     categoryMap[cat.slug] = cat._id;
   });
 
-  // 2. Promote harshverma1022006@gmail.com to Admin (if exists)
+  // 2. Promote harshverma1022006@gmail.com to Owner (if exists)
   const userToPromote = await User.findOneAndUpdate(
     { email: 'harshverma1022006@gmail.com' },
-    { role: 'admin' },
+    { role: 'owner' },
     { new: true }
   );
 
   if (userToPromote) {
-    console.log(`✓ Promoted existing user ${userToPromote.email} to ADMIN role.`);
+    console.log(`✓ Promoted existing user ${userToPromote.email} to OWNER role.`);
   }
 
-  // Ensure an Admin user exists
+  // Ensure an Owner/Admin user exists
   let adminUser = userToPromote;
   if (!adminUser) {
     const existingAdmin = await User.findOne({ email: 'admin@centrallens.co.in' });
@@ -287,10 +287,10 @@ async function seed() {
         name: 'Harsh Verma',
         email: 'admin@centrallens.co.in',
         passwordHash,
-        role: 'admin',
+        role: 'owner',
         newsletterSubscribed: true,
       });
-      console.log('✓ Created default admin user (admin@centrallens.co.in / admin123).');
+      console.log('✓ Created default owner user (admin@centrallens.co.in / admin123).');
     } else {
       adminUser = existingAdmin;
     }
@@ -314,6 +314,7 @@ async function seed() {
       name: authorName,
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
     },
+    createdBy: adminUser?._id,
     status: 'published',
     isFeatured: art.isFeatured,
     isTrending: art.isTrending,

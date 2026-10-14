@@ -14,7 +14,11 @@ import {
   Menu, 
   X,
   Plus,
-  ShieldCheck
+  ShieldCheck,
+  Mail,
+  Users,
+  Crown,
+  Shield
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -70,9 +74,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     }
   };
 
+  const isOwner = adminUser?.role === 'owner';
+
   const navItems = [
     { label: 'डैशबोर्ड (Dashboard)', href: '/admin', icon: LayoutDashboard, exact: true },
     { label: 'लेख प्रबंधन (Articles)', href: '/admin/articles', icon: FileText, exact: false },
+    { label: 'न्यूज़लेटर (Newsletter)', href: '/admin/newsletters', icon: Mail, exact: false },
     { label: 'राज्य (States)', href: '/admin/categories', icon: Grid, exact: false },
     { label: 'वीडियो (Videos)', href: '/admin/videos', icon: Video, exact: false },
   ];
@@ -83,6 +90,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     articles: 'लेख',
     categories: 'राज्य',
     videos: 'वीडियो',
+    newsletters: 'न्यूज़लेटर',
+    users: 'भूमिका व सदस्य',
   };
   const sectionTitle = currentSection ? (sectionTitleMap[currentSection] || currentSection) : 'डैशबोर्ड';
 
@@ -115,8 +124,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               <span className="text-lg sm:text-xl font-black text-neutral-900 tracking-tight leading-none font-sans">
                 CENTRAL <span className="text-red-600 group-hover:text-red-700 transition-colors">LENS</span>
               </span>
-              <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mt-1 font-sans">
-                Admin Newsroom
+              <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mt-1 font-sans flex items-center space-x-1">
+                <span>Admin Newsroom</span>
+                {isOwner && <Crown size={11} className="text-amber-500 fill-amber-500" />}
               </span>
             </div>
           </Link>
@@ -144,7 +154,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         {/* Navigation Links */}
         <nav className="flex-1 px-3 py-3 space-y-1.5 overflow-y-auto">
           <div className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-neutral-400 font-sans">
-            नेविगेशन
+            कंटेंट प्रबंधन
           </div>
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -169,6 +179,35 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             );
           })}
 
+          {/* Owner-Exclusive Role Management Section */}
+          {isOwner && (
+            <>
+              <div className="pt-4 px-3 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-amber-600 font-sans flex items-center space-x-1">
+                <Crown size={12} className="text-amber-500 fill-amber-500" />
+                <span>ओनर कंट्रोल (Owner Controls)</span>
+              </div>
+              <Link
+                href="/admin/users"
+                onClick={() => setMobileSidebarOpen(false)}
+                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all font-devanagari ${
+                  pathname.startsWith('/admin/users')
+                    ? 'bg-amber-500 text-white shadow-sm'
+                    : 'text-amber-900 bg-amber-50/70 hover:bg-amber-100/80 hover:text-amber-900 border border-amber-200/70'
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  <Users size={17} className={pathname.startsWith('/admin/users') ? 'text-white' : 'text-amber-600'} />
+                  <span>भूमिका प्रबंधन (Roles & Users)</span>
+                </div>
+                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${
+                  pathname.startsWith('/admin/users') ? 'bg-white/20 text-white' : 'bg-amber-200/80 text-amber-800'
+                }`}>
+                  PRO
+                </span>
+              </Link>
+            </>
+          )}
+
           <div className="pt-4 sm:pt-6 px-3 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-neutral-400 font-sans">
             लाइव पोर्टल
           </div>
@@ -187,17 +226,32 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         {/* User & Logout Footer */}
         <div className="p-3.5 sm:p-4 border-t border-neutral-100 bg-neutral-50/70">
           <div className="flex items-center space-x-3 mb-2.5 px-1.5">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-red-600 text-white flex items-center justify-center font-black text-xs uppercase flex-shrink-0">
+            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full text-white flex items-center justify-center font-black text-xs uppercase flex-shrink-0 ${
+              isOwner ? 'bg-gradient-to-br from-amber-500 to-red-600 ring-2 ring-amber-300' : 'bg-red-600'
+            }`}>
               {adminUser?.name ? adminUser.name.charAt(0) : 'CL'}
             </div>
             <div className="flex-1 min-w-0 text-left">
               <span className="text-xs font-bold text-neutral-900 block truncate flex items-center space-x-1 font-devanagari">
                 <span className="truncate">{adminUser?.name || 'एडमिन डेस्क'}</span>
-                <ShieldCheck size={13} className="text-blue-600 flex-shrink-0" />
+                {isOwner ? (
+                  <Crown size={13} className="text-amber-500 fill-amber-500 flex-shrink-0" />
+                ) : (
+                  <ShieldCheck size={13} className="text-blue-600 flex-shrink-0" />
+                )}
               </span>
-              <span className="text-[10px] text-neutral-400 block truncate">
-                {adminUser?.email || 'admin@centrallens.in'}
-              </span>
+              <div className="flex items-center space-x-1.5 mt-0.5">
+                <span className={`inline-block px-1.5 py-0.2 rounded text-[9px] font-black uppercase tracking-wider ${
+                  isOwner 
+                    ? 'bg-amber-100 text-amber-800 border border-amber-300 font-bold' 
+                    : 'bg-neutral-200 text-neutral-700 font-medium'
+                }`}>
+                  {isOwner ? '👑 Owner' : adminUser?.role === 'admin' ? '🛡️ Admin' : 'Editor'}
+                </span>
+                <span className="text-[10px] text-neutral-400 truncate">
+                  {adminUser?.email}
+                </span>
+              </div>
             </div>
           </div>
           <button 
@@ -234,6 +288,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </div>
 
           <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
+            {isOwner && (
+              <span className="hidden sm:inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-black bg-amber-50 text-amber-800 border border-amber-300">
+                <Crown size={12} className="text-amber-500 fill-amber-500" />
+                <span>ओनर मोड (Full Access)</span>
+              </span>
+            )}
             <Link
               href="/"
               target="_blank"

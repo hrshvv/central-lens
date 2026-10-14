@@ -53,7 +53,7 @@ export async function proxy(request: NextRequest) {
     }
 
     const role = await verifyJwtRole(token, jwtSecret);
-    if (!role || (role !== 'admin' && role !== 'editor')) {
+    if (!role || (role !== 'admin' && role !== 'editor' && role !== 'owner')) {
       return NextResponse.redirect(new URL('/login?error=unauthorized', request.url));
     }
   }

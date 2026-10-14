@@ -29,6 +29,7 @@ import { parseVideoUrl, formatDuration } from '@/lib/utils/video';
 export default function AdminVideos() {
   const [videos, setVideos] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   // Search & Filter State
@@ -85,6 +86,11 @@ export default function AdminVideos() {
   }, [categoryId]);
 
   useEffect(() => {
+    fetch('/api/auth/me')
+      .then(res => res.ok ? res.json() : null)
+      .then(d => { if (d?.user) setCurrentUser(d.user); })
+      .catch(() => {});
+
     fetchVideos();
     fetchCategories();
   }, [fetchVideos, fetchCategories]);
@@ -126,7 +132,7 @@ export default function AdminVideos() {
     setDuration(180);
     setDescription('');
     setTagsInput('');
-    setAuthorName('Central Lens Bureau');
+    setAuthorName(currentUser?.name || 'Central Lens Bureau');
     setStatus('published');
     setIsFeatured(false);
     if (categories.length > 0) setCategoryId(categories[0]._id);
@@ -230,7 +236,8 @@ export default function AdminVideos() {
         if (res.ok) {
           fetchVideos();
         } else {
-          alert('हटाने में विफल');
+          const data = await res.json();
+          alert(data.error || 'हटाने में विफल');
         }
       } catch (err) {
         console.error(err);
@@ -249,6 +256,9 @@ export default function AdminVideos() {
       });
       if (res.ok) {
         fetchVideos();
+      } else {
+        const data = await res.json();
+        alert(data.error || 'स्थिति बदलने में विफल');
       }
     } catch (err) {
       console.error(err);
@@ -294,11 +304,13 @@ export default function AdminVideos() {
               <Tv size={20} className="sm:w-[22px] sm:h-[22px]" />
             </span>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-neutral-900 tracking-tight font-devanagari">
-              वीडियो स्टूडियो (Video Management)
+              {currentUser?.role === 'owner' ? 'वीडियो स्टूडियो (All Videos)' : 'मेरे वीडियो (My Videos)'}
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-neutral-500 mt-1 font-devanagari">
-            यूट्यूब, शॉर्ट्स एवं पॉडकास्ट वीडियो बुलेटिन प्रबंधित करें • कुल {stats.total} वीडियो
+            {currentUser?.role === 'owner' 
+              ? `ओनर मोड • सभी एडमिन्स के वीडियो बुलेटिन प्रबंधित करें • कुल ${stats.total} वीडियो`
+              : `व्यक्तिगत मोड • केवल आपके द्वारा जोड़े गए वीडियो • कुल ${stats.total} वीडियो`}
           </p>
         </div>
 

@@ -2,18 +2,33 @@ import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/middleware';
 import dbConnect from '@/lib/db/connect';
 import { Article } from '@/lib/db/models/Article';
+import { User } from '@/lib/db/models/User';
+import '@/lib/db/models/Category';
 
-async function getHandler(req: NextRequest) {
+async function getHandler(req: NextRequest, user: any) {
   try {
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const status = searchParams.get('status');
     const category = searchParams.get('category');
+    const search = searchParams.get('search');
 
     const query: any = {};
-    if (status) query.status = status;
+    if (status && status !== 'all') query.status = status;
     if (category) query.category = category;
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { slug: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    // Role hierarchy:
+    // If not owner, admin can ONLY see their own added articles
+    if (user.role !== 'owner') {
+      query.createdBy = user.id;
+    }
 
     await dbConnect();
     
@@ -21,7 +36,8 @@ async function getHandler(req: NextRequest) {
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
-      .populate('category', 'name color')
+      .populate('category', 'name slug color')
+      .populate('createdBy', 'name email role avatar')
       .lean();
 
     const total = await Article.countDocuments(query);
@@ -35,17 +51,37 @@ async function getHandler(req: NextRequest) {
         totalPages: Math.ceil(total / limit),
       },
     });
-  } catch (error) {
+  } catch (error: any) {
+    console.error('Error fetching admin articles:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
-async function postHandler(req: NextRequest) {
+async function postHandler(req: NextRequest, user: any) {
   try {
     const body = await req.json();
     await dbConnect();
+
+    // Attach creator user ID
+    body.createdBy = user.id;
+
+    // Ensure author name is populated from user record if missing
+    if (!body.author?.name || body.author.name === 'Central Lens Bureau') {
+      const creatorUser = await User.findById(user.id);
+      if (creatorUser) {
+        body.author = {
+          name: creatorUser.name,
+          avatar: creatorUser.avatar,
+        };
+      }
+    }
+
     const article = await Article.create(body);
-    return NextResponse.json(article, { status: 201 });
+    const populated = await Article.findById(article._id)
+      .populate('category', 'name slug color')
+      .populate('createdBy', 'name email role');
+
+    return NextResponse.json(populated || article, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }

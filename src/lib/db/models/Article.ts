@@ -14,6 +14,7 @@ export interface IArticle extends Document {
     avatar?: string;
     bio?: string;
   };
+  createdBy?: mongoose.Types.ObjectId;
   status: 'draft' | 'published' | 'archived';
   isFeatured: boolean;
   isTrending: boolean;
@@ -40,6 +41,7 @@ const ArticleSchema = new Schema<IArticle>(
       avatar: { type: String },
       bio: { type: String },
     },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
     status: {
       type: String,
       enum: ['draft', 'published', 'archived'],
@@ -56,6 +58,7 @@ const ArticleSchema = new Schema<IArticle>(
 );
 
 ArticleSchema.index({ category: 1 });
+ArticleSchema.index({ createdBy: 1 });
 ArticleSchema.index({ status: 1, publishedAt: -1 });
 ArticleSchema.index({ tags: 1 });
 // Compound index for category list page query: find by category+status, sorted by publishedAt

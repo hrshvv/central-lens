@@ -10,16 +10,26 @@ import {
   Eye, 
   ExternalLink,
   Sparkles,
-  Calendar
+  Calendar,
+  Crown,
+  User
 } from 'lucide-react';
 
 export default function AdminArticles() {
   const [articles, setArticles] = useState<any[]>([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
 
   useEffect(() => {
+    fetch('/api/auth/me')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data?.user) setCurrentUser(data.user);
+      })
+      .catch(() => {});
+
     fetchArticles();
   }, []);
 
@@ -39,8 +49,13 @@ export default function AdminArticles() {
 
   const handleDelete = async (id: string) => {
     if (confirm('क्या आप इस लेख को हटाना चाहते हैं?')) {
-      await fetch(`/api/admin/articles/${id}`, { method: 'DELETE' });
-      fetchArticles();
+      const res = await fetch(`/api/admin/articles/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        fetchArticles();
+      } else {
+        const data = await res.json();
+        alert(data.error || 'हटाने में विफल');
+      }
     }
   };
 
@@ -55,13 +70,16 @@ export default function AdminArticles() {
       if (res.ok) {
         fetchArticles();
       } else {
-        alert('स्थिति बदलने में विफल');
+        const data = await res.json();
+        alert(data.error || 'स्थिति बदलने में विफल');
       }
     } catch (error) {
       console.error(error);
       alert('त्रुटि हुई');
     }
   };
+
+  const isOwner = currentUser?.role === 'owner';
 
   const filteredArticles = articles.filter((article) => {
     const matchesSearch = article.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -75,8 +93,20 @@ export default function AdminArticles() {
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3.5 sm:gap-4">
         <div>
+          <div className="flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider mb-1">
+            {isOwner ? (
+              <span className="text-amber-600 flex items-center space-x-1 font-bold">
+                <Crown size={13} className="fill-amber-500" />
+                <span>ओनर मोड (सभी एडमिन्स के लेख)</span>
+              </span>
+            ) : (
+              <span className="text-neutral-500 font-semibold font-devanagari">
+                व्यक्तिगत एडमिन सूची (केवल आपके लेख)
+              </span>
+            )}
+          </div>
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-neutral-900 tracking-tight font-devanagari">
-            लेख प्रबंधन (Articles Management)
+            {isOwner ? 'लेख प्रबंधन (All Articles)' : 'मेरे लेख (My Articles)'}
           </h1>
           <p className="text-xs sm:text-sm text-neutral-500 mt-1 font-devanagari">
             कुल {articles.length} लेख उपलब्ध हैं • प्रकाशित अथवा ड्राफ्ट प्रबंधित करें
@@ -105,7 +135,7 @@ export default function AdminArticles() {
           />
         </div>
 
-        {/* Status Filter Tabs - scrollable if needed */}
+        {/* Status Filter Tabs */}
         <div className="flex items-center space-x-1 p-1 bg-neutral-100 rounded-xl overflow-x-auto w-full md:w-auto text-xs font-semibold">
           <button
             onClick={() => setStatusFilter('all')}
@@ -134,19 +164,15 @@ export default function AdminArticles() {
         </div>
       </div>
 
-      {/* Articles Container: Dual Mobile Cards + Desktop Table */}
+      {/* Articles Container */}
       <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-xs overflow-hidden">
-        {/* Loading State */}
         {loading && (
-          <div className="py-16 text-center text-neutral-400">
-            <div className="flex flex-col items-center space-y-2">
-              <div className="w-6 h-6 border-3 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-xs font-devanagari">लेख लोड हो रहे हैं...</span>
-            </div>
+          <div className="py-20 text-center text-xs text-neutral-400 font-devanagari">
+            <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            लेख लोड हो रहे हैं...
           </div>
         )}
 
-        {/* Empty State */}
         {!loading && filteredArticles.length === 0 && (
           <div className="py-16 text-center text-neutral-400 text-xs font-devanagari">
             कोई लेख नहीं मिला।
@@ -160,7 +186,6 @@ export default function AdminArticles() {
               const catSlug = article.category?.slug || 'news';
               return (
                 <div key={article._id} className="p-3.5 space-y-3 hover:bg-neutral-50/60 transition-colors">
-                  {/* Top: Image + Title + Slug */}
                   <div className="flex items-start space-x-3">
                     <div className="w-14 h-14 rounded-xl bg-neutral-100 overflow-hidden flex-shrink-0 border border-neutral-200/60">
                       {article.coverImage ? (
@@ -187,7 +212,14 @@ export default function AdminArticles() {
                     </div>
                   </div>
 
-                  {/* Middle: Badges Row */}
+                  {/* Creator tag if owner */}
+                  {isOwner && article.createdBy && (
+                    <div className="text-[11px] text-neutral-500 font-sans flex items-center space-x-1">
+                      <span className="font-semibold text-neutral-700">लेखक:</span>
+                      <span className="bg-neutral-100 px-2 py-0.5 rounded text-neutral-800 font-bold">{article.createdBy.name}</span>
+                    </div>
+                  )}
+
                   <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-neutral-100/80 text-xs">
                     <div className="flex items-center space-x-2">
                       <span className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-neutral-100 text-neutral-700 font-devanagari">
@@ -221,7 +253,6 @@ export default function AdminArticles() {
                     </div>
                   </div>
 
-                  {/* Bottom: Action Buttons */}
                   <div className="flex items-center justify-end space-x-2 pt-1">
                     <Link 
                       href={`/admin/articles/${article._id}/edit`} 
@@ -232,7 +263,7 @@ export default function AdminArticles() {
                     </Link>
                     <button 
                       onClick={() => handleDelete(article._id)} 
-                      className="p-1.5 text-neutral-500 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                      className="p-1.5 text-neutral-500 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
                       title="हटाएं"
                     >
                       <Trash2 size={16} />
@@ -251,6 +282,7 @@ export default function AdminArticles() {
               <thead>
                 <tr className="bg-neutral-50/80 text-neutral-500 text-xs uppercase tracking-wider border-b border-neutral-100">
                   <th className="py-4 px-6 font-semibold">लेख (Article)</th>
+                  {isOwner && <th className="py-4 px-6 font-semibold">लेखक / एडमिन</th>}
                   <th className="py-4 px-6 font-semibold">राज्य</th>
                   <th className="py-4 px-6 font-semibold">स्थिति (Status)</th>
                   <th className="py-4 px-6 font-semibold">व्यूज</th>
@@ -291,6 +323,22 @@ export default function AdminArticles() {
                           </div>
                         </div>
                       </td>
+
+                      {/* Author Column if Owner */}
+                      {isOwner && (
+                        <td className="py-4 px-6">
+                          <div className="flex flex-col">
+                            <span className="font-bold text-neutral-900 text-xs">
+                              {article.createdBy?.name || article.author?.name || 'अज्ञात'}
+                            </span>
+                            {article.createdBy?.email && (
+                              <span className="text-[10px] text-neutral-400 font-mono">
+                                {article.createdBy.email}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                      )}
 
                       {/* Category */}
                       <td className="py-4 px-6">
@@ -337,14 +385,14 @@ export default function AdminArticles() {
                         <div className="flex items-center justify-end space-x-2">
                           <Link 
                             href={`/admin/articles/${article._id}/edit`} 
-                            className="p-2 text-neutral-500 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
-                            title="संपादित करें"
+                            className="inline-flex items-center space-x-1 px-3 py-1.5 text-xs font-bold text-neutral-700 bg-neutral-100 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-devanagari"
                           >
-                            <Edit3 size={16} />
+                            <Edit3 size={14} />
+                            <span>संपादित करें</span>
                           </Link>
                           <button 
                             onClick={() => handleDelete(article._id)} 
-                            className="p-2 text-neutral-500 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                            className="p-1.5 text-neutral-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
                             title="हटाएं"
                           >
                             <Trash2 size={16} />

@@ -4,7 +4,7 @@ import dbConnect from '@/lib/db/connect';
 import { Video } from '@/lib/db/models/Video';
 import '@/lib/db/models/Category';
 
-async function getHandler(req: NextRequest) {
+async function getHandler(req: NextRequest, user: any) {
   try {
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');
@@ -25,11 +25,18 @@ async function getHandler(req: NextRequest) {
       ];
     }
 
+    // Role hierarchy:
+    // If not owner, admin can ONLY see their own added videos
+    if (user.role !== 'owner') {
+      query.createdBy = user.id;
+    }
+
     const videos = await Video.find(query)
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
       .populate('category', 'name slug color')
+      .populate('createdBy', 'name email role')
       .lean();
 
     const total = await Video.countDocuments(query);
@@ -48,10 +55,13 @@ async function getHandler(req: NextRequest) {
   }
 }
 
-async function postHandler(req: NextRequest) {
+async function postHandler(req: NextRequest, user: any) {
   try {
     const body = await req.json();
     await dbConnect();
+
+    // Attach creator user ID
+    body.createdBy = user.id;
 
     // Auto-generate slug if missing
     if (!body.slug && body.title) {
@@ -67,7 +77,10 @@ async function postHandler(req: NextRequest) {
     }
 
     const video = await Video.create(body);
-    const populated = await Video.findById(video._id).populate('category', 'name slug color');
+    const populated = await Video.findById(video._id)
+      .populate('category', 'name slug color')
+      .populate('createdBy', 'name email role');
+
     return NextResponse.json(populated || video, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 400 });
@@ -76,4 +89,3 @@ async function postHandler(req: NextRequest) {
 
 export const GET = withAuth(getHandler, ['admin', 'editor']);
 export const POST = withAuth(postHandler, ['admin', 'editor']);
-
