@@ -240,15 +240,16 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                   <ShieldCheck size={13} className="text-blue-600 flex-shrink-0" />
                 )}
               </span>
-              <div className="flex items-center space-x-1.5 mt-0.5">
-                <span className={`inline-block px-1.5 py-0.2 rounded text-[9px] font-black uppercase tracking-wider ${
+              <div className="flex items-center space-x-1.5 mt-0.5 min-w-0">
+                <span className={`inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider whitespace-nowrap flex-shrink-0 ${
                   isOwner 
-                    ? 'bg-amber-100 text-amber-800 border border-amber-300 font-bold' 
+                    ? 'bg-amber-100 text-amber-900 border border-amber-300 font-bold' 
                     : 'bg-neutral-200 text-neutral-700 font-medium'
                 }`}>
-                  {isOwner ? '👑 Owner' : adminUser?.role === 'admin' ? '🛡️ Admin' : 'Editor'}
+                  <span>{isOwner ? '👑' : adminUser?.role === 'admin' ? '🛡️' : '✏️'}</span>
+                  <span>{isOwner ? 'OWNER' : adminUser?.role === 'admin' ? 'ADMIN' : 'EDITOR'}</span>
                 </span>
-                <span className="text-[10px] text-neutral-400 truncate">
+                <span className="text-[10px] text-neutral-400 truncate font-mono">
                   {adminUser?.email}
                 </span>
               </div>

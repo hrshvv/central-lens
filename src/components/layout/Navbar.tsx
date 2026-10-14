@@ -354,7 +354,7 @@ export default function Navbar() {
                     <div className="px-4 py-2 border-b border-neutral-100">
                       <p className="font-bold text-neutral-900 truncate">{currentUser.name}</p>
                       <p className="text-[11px] text-neutral-400 truncate mt-0.5">{currentUser.email}</p>
-                      <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 uppercase tracking-wider">
+                      <span className="inline-flex items-center space-x-1 mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 uppercase tracking-wider whitespace-nowrap">
                         {currentUser.role === 'owner' ? '👑 ओनर (Owner)' : currentUser.role === 'admin' ? '🛡️ एडमिन (Admin)' : currentUser.role === 'editor' ? 'संपादक (Editor)' : 'पाठक (Reader)'}
                       </span>
                     </div>
@@ -635,7 +635,7 @@ export default function Navbar() {
               <div className="flex-1 min-w-0 text-left">
                 <p className="text-xs font-bold text-neutral-900 truncate">{currentUser.name}</p>
                 <p className="text-[10px] text-neutral-400 truncate">{currentUser.email}</p>
-                <span className="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-700 uppercase">
+                <span className="inline-flex items-center space-x-1 mt-0.5 px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-700 uppercase whitespace-nowrap">
                   {currentUser.role === 'owner' ? '👑 ओनर (Owner)' : currentUser.role === 'admin' ? '🛡️ एडमिन (Admin)' : currentUser.role === 'editor' ? 'संपादक (Editor)' : 'पाठक (Reader)'}
                 </span>
               </div>
