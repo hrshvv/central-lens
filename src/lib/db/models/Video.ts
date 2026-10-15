@@ -15,10 +15,11 @@ export interface IVideo extends Document {
     avatar?: string;
   };
   createdBy?: mongoose.Types.ObjectId;
-  status: 'draft' | 'published';
+  status: 'draft' | 'published' | 'scheduled';
   views: number;
   isFeatured: boolean;
   publishedAt?: Date;
+  scheduledAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -45,18 +46,20 @@ const VideoSchema = new Schema<IVideo>(
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
     status: {
       type: String,
-      enum: ['draft', 'published'],
+      enum: ['draft', 'published', 'scheduled'],
       default: 'draft',
     },
     views: { type: Number, default: 0 },
     isFeatured: { type: Boolean, default: false },
     publishedAt: { type: Date },
+    scheduledAt: { type: Date },
   },
   { timestamps: true }
 );
 
 VideoSchema.index({ createdBy: 1 });
 VideoSchema.index({ status: 1, publishedAt: -1 });
+VideoSchema.index({ status: 1, scheduledAt: 1 });
 
 export const Video: Model<IVideo> =
   mongoose.models.Video || mongoose.model<IVideo>('Video', VideoSchema);

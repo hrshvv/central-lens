@@ -15,13 +15,14 @@ export interface IArticle extends Document {
     bio?: string;
   };
   createdBy?: mongoose.Types.ObjectId;
-  status: 'draft' | 'published' | 'archived';
+  status: 'draft' | 'published' | 'scheduled' | 'archived';
   isFeatured: boolean;
   isTrending: boolean;
   isBreaking: boolean;
   views: number;
   readingTime: number;
   publishedAt?: Date;
+  scheduledAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -44,7 +45,7 @@ const ArticleSchema = new Schema<IArticle>(
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
     status: {
       type: String,
-      enum: ['draft', 'published', 'archived'],
+      enum: ['draft', 'published', 'scheduled', 'archived'],
       default: 'draft',
     },
     isFeatured: { type: Boolean, default: false },
@@ -53,6 +54,7 @@ const ArticleSchema = new Schema<IArticle>(
     views: { type: Number, default: 0 },
     readingTime: { type: Number, default: 0 },
     publishedAt: { type: Date },
+    scheduledAt: { type: Date },
   },
   { timestamps: true }
 );
@@ -60,6 +62,7 @@ const ArticleSchema = new Schema<IArticle>(
 ArticleSchema.index({ category: 1 });
 ArticleSchema.index({ createdBy: 1 });
 ArticleSchema.index({ status: 1, publishedAt: -1 });
+ArticleSchema.index({ status: 1, scheduledAt: 1 });
 ArticleSchema.index({ tags: 1 });
 // Compound index for category list page query: find by category+status, sorted by publishedAt
 ArticleSchema.index({ category: 1, status: 1, publishedAt: -1 });

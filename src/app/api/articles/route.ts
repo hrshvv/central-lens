@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/connect';
 import { Article } from '@/lib/db/models/Article';
 import '@/lib/db/models/Category';
+import { processScheduledPublish } from '@/lib/db/publishHelper';
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,6 +11,7 @@ export async function GET(req: NextRequest) {
     const isFeatured = searchParams.get('isFeatured') === 'true';
 
     await dbConnect();
+    await processScheduledPublish();
     
     const query: any = { status: 'published' };
     if (isFeatured) query.isFeatured = true;

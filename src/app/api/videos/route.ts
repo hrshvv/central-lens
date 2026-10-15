@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/connect';
 import { Video } from '@/lib/db/models/Video';
 import '@/lib/db/models/Category';
+import { processScheduledPublish } from '@/lib/db/publishHelper';
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,6 +14,7 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
 
     await dbConnect();
+    await processScheduledPublish();
 
     const query: Record<string, any> = { status: 'published' };
 

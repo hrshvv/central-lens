@@ -4,6 +4,7 @@ import dbConnect from '@/lib/db/connect';
 import { Video } from '@/lib/db/models/Video';
 import { Category } from '@/lib/db/models/Category';
 import '@/lib/db/models/Category';
+import { processScheduledPublish } from '@/lib/db/publishHelper';
 import { 
   Play, 
   Sparkles, 
@@ -34,6 +35,7 @@ interface VideosPageProps {
 async function getVideosData(typeFilter?: string, categorySlug?: string) {
   try {
     await dbConnect();
+    await processScheduledPublish();
 
     // 1. Featured Spotlight Video
     const featuredVideo = await Video.findOne({ status: 'published', isFeatured: true })

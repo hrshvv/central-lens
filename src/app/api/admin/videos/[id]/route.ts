@@ -67,8 +67,30 @@ async function putHandler(req: NextRequest, user: any, context: { params: Promis
       }
     }
 
-    if (body.status === 'published' && !body.publishedAt) {
-      body.publishedAt = new Date();
+    // Handle scheduled status and dates
+    if (body.status === 'scheduled') {
+      if (!body.scheduledAt) {
+        return NextResponse.json(
+          { error: 'शेड्यूल करने के लिए प्रकाशन का समय चुनना अनिवार्य है।' },
+          { status: 400 }
+        );
+      }
+      const schedDate = new Date(body.scheduledAt);
+      if (isNaN(schedDate.getTime())) {
+        return NextResponse.json({ error: 'अमान्य तारीख या समय।' }, { status: 400 });
+      }
+      if (schedDate <= new Date()) {
+        body.status = 'published';
+        body.publishedAt = new Date();
+        body.scheduledAt = null;
+      } else {
+        body.scheduledAt = schedDate;
+      }
+    } else if (body.status === 'published') {
+      body.publishedAt = existing.publishedAt || new Date();
+      body.scheduledAt = null;
+    } else {
+      body.scheduledAt = null;
     }
 
     if (user.role !== 'owner') {

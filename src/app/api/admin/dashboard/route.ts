@@ -6,19 +6,23 @@ import { Video } from '@/lib/db/models/Video';
 import { Category } from '@/lib/db/models/Category';
 import { User } from '@/lib/db/models/User';
 import { NewsletterPost } from '@/lib/db/models/NewsletterPost';
+import { processScheduledPublish } from '@/lib/db/publishHelper';
 
 async function getHandler(req: NextRequest, user: any) {
   try {
     await dbConnect();
+    await processScheduledPublish();
     const isOwner = user.role === 'owner';
 
     if (!isOwner) {
       // Regular Admin: Stats & Recent Articles scoped exclusively to their own content
-      const [totalArticles, publishedArticles, draftArticles, totalVideos, totalCategories, totalNewsletters] = await Promise.all([
+      const [totalArticles, publishedArticles, scheduledArticles, draftArticles, totalVideos, scheduledVideos, totalCategories, totalNewsletters] = await Promise.all([
         Article.countDocuments({ createdBy: user.id }),
         Article.countDocuments({ createdBy: user.id, status: 'published' }),
+        Article.countDocuments({ createdBy: user.id, status: 'scheduled' }),
         Article.countDocuments({ createdBy: user.id, status: 'draft' }),
         Video.countDocuments({ createdBy: user.id }),
+        Video.countDocuments({ createdBy: user.id, status: 'scheduled' }),
         Category.countDocuments(),
         NewsletterPost.countDocuments({ createdBy: user.id })
       ]);
@@ -36,8 +40,10 @@ async function getHandler(req: NextRequest, user: any) {
         stats: {
           totalArticles,
           publishedArticles,
+          scheduledArticles,
           draftArticles,
           totalVideos,
+          scheduledVideos,
           totalCategories,
           totalNewsletters
         },
@@ -46,11 +52,13 @@ async function getHandler(req: NextRequest, user: any) {
     }
 
     // Owner: Complete platform-wide overview
-    const [totalArticles, publishedArticles, draftArticles, totalVideos, totalCategories, totalUsers, totalNewsletters] = await Promise.all([
+    const [totalArticles, publishedArticles, scheduledArticles, draftArticles, totalVideos, scheduledVideos, totalCategories, totalUsers, totalNewsletters] = await Promise.all([
       Article.countDocuments(),
       Article.countDocuments({ status: 'published' }),
+      Article.countDocuments({ status: 'scheduled' }),
       Article.countDocuments({ status: 'draft' }),
       Video.countDocuments(),
+      Video.countDocuments({ status: 'scheduled' }),
       Category.countDocuments(),
       User.countDocuments(),
       NewsletterPost.countDocuments()
@@ -69,8 +77,10 @@ async function getHandler(req: NextRequest, user: any) {
       stats: {
         totalArticles,
         publishedArticles,
+        scheduledArticles,
         draftArticles,
         totalVideos,
+        scheduledVideos,
         totalCategories,
         totalUsers,
         totalNewsletters

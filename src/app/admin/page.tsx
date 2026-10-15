@@ -14,7 +14,8 @@ import {
   Users,
   Mail,
   Video,
-  ShieldCheck
+  ShieldCheck,
+  Clock
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -63,6 +64,7 @@ export default function AdminDashboard() {
       accent: 'border-t-4 border-t-red-600',
       iconColor: 'bg-red-50 text-red-600',
       badge: 'संपूर्ण पोर्टल',
+      href: '/admin/articles',
     },
     {
       title: 'प्रकाशित लेख (Published)',
@@ -71,6 +73,16 @@ export default function AdminDashboard() {
       accent: 'border-t-4 border-t-emerald-600',
       iconColor: 'bg-emerald-50 text-emerald-600',
       badge: 'लाइव',
+      href: '/admin/articles?status=published',
+    },
+    {
+      title: '⏰ शेड्यूल लेख (Scheduled)',
+      value: stats.scheduledArticles || 0,
+      icon: Clock,
+      accent: 'border-t-4 border-t-purple-600',
+      iconColor: 'bg-purple-50 text-purple-600',
+      badge: 'ऑटो-पब्लिश NEW',
+      href: '/admin/articles?status=scheduled',
     },
     {
       title: 'सदस्य व टीम (Users & Roles)',
@@ -81,15 +93,6 @@ export default function AdminDashboard() {
       badge: 'ओनर कंट्रोल',
       href: '/admin/users'
     },
-    {
-      title: 'न्यूज़लेटर (Newsletters)',
-      value: stats.totalNewsletters || 0,
-      icon: Mail,
-      accent: 'border-t-4 border-t-blue-600',
-      iconColor: 'bg-blue-50 text-blue-600',
-      badge: 'प्रसारण',
-      href: '/admin/newsletters'
-    },
   ] : [
     {
       title: 'आपके कुल लेख (My Articles)',
@@ -98,6 +101,7 @@ export default function AdminDashboard() {
       accent: 'border-t-4 border-t-red-600',
       iconColor: 'bg-red-50 text-red-600',
       badge: 'आपके द्वारा',
+      href: '/admin/articles',
     },
     {
       title: 'आपके प्रकाशित लेख (My Live)',
@@ -106,6 +110,16 @@ export default function AdminDashboard() {
       accent: 'border-t-4 border-t-emerald-600',
       iconColor: 'bg-emerald-50 text-emerald-600',
       badge: 'लाइव',
+      href: '/admin/articles?status=published',
+    },
+    {
+      title: '⏰ शेड्यूल लेख (Scheduled)',
+      value: stats.scheduledArticles || 0,
+      icon: Clock,
+      accent: 'border-t-4 border-t-purple-600',
+      iconColor: 'bg-purple-50 text-purple-600',
+      badge: 'ऑटो-पब्लिश NEW',
+      href: '/admin/articles?status=scheduled',
     },
     {
       title: 'आपके ड्राफ्ट्स (My Drafts)',
@@ -114,14 +128,7 @@ export default function AdminDashboard() {
       accent: 'border-t-4 border-t-amber-500',
       iconColor: 'bg-amber-50 text-amber-600',
       badge: 'अप्रकाशित',
-    },
-    {
-      title: 'आपके वीडियो (My Videos)',
-      value: stats.totalVideos || 0,
-      icon: Video,
-      accent: 'border-t-4 border-t-neutral-900',
-      iconColor: 'bg-neutral-100 text-neutral-900',
-      badge: 'कंटेंट',
+      href: '/admin/articles?status=draft',
     },
   ];
 
@@ -184,6 +191,43 @@ export default function AdminDashboard() {
               <span>न्यूज़लेटर</span>
             </Link>
           )}
+        </div>
+      </div>
+
+      {/* Scheduled Publishing Feature Banner */}
+      <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-neutral-900 rounded-2xl p-4 sm:p-5 text-white shadow-md border border-purple-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300 flex-shrink-0">
+            <Clock size={22} className="animate-pulse text-purple-300" />
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="text-[10px] font-black text-amber-300 bg-amber-400/20 px-2 py-0.5 rounded-full font-sans">
+                NEW FEATURE
+              </span>
+              <h3 className="text-sm sm:text-base font-bold font-devanagari text-white">
+                समय तय करके प्रकाशन (Scheduled Publishing)
+              </h3>
+            </div>
+            <p className="text-xs text-purple-200/90 mt-1 font-devanagari">
+              अब आप लेख और वीडियो का भविष्य का प्रकाशन समय सेट कर सकते हैं। समय आते ही कंटेंट अपने-आप लाइव हो जाएगा।
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <Link
+            href="/admin/articles/new"
+            className="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition shadow-sm font-devanagari text-center whitespace-nowrap"
+          >
+            ⏰ लेख शेड्यूल करें
+          </Link>
+          <Link
+            href="/admin/videos"
+            className="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition border border-white/20 font-devanagari text-center whitespace-nowrap"
+          >
+            🎬 वीडियो स्टूडियो
+          </Link>
         </div>
       </div>
 
@@ -294,10 +338,18 @@ export default function AdminDashboard() {
                       <span className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
                         article.status === 'published' 
                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-                          : 'bg-amber-50 text-amber-700 border border-amber-200'
+                          : article.status === 'scheduled'
+                            ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                            : 'bg-amber-50 text-amber-700 border border-amber-200'
                       }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${article.status === 'published' ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
-                        <span>{article.status === 'published' ? 'लाइव' : 'ड्राफ्ट'}</span>
+                        <span className={`w-1.5 h-1.5 rounded-full ${
+                          article.status === 'published' 
+                            ? 'bg-emerald-500' 
+                            : article.status === 'scheduled'
+                              ? 'bg-purple-500'
+                              : 'bg-amber-500'
+                        }`}></span>
+                        <span>{article.status === 'published' ? 'लाइव' : article.status === 'scheduled' ? '⏰ शेड्यूल' : 'ड्राफ्ट'}</span>
                       </span>
                     </td>
                     <td className="py-4 px-6 text-xs text-neutral-500 font-sans">

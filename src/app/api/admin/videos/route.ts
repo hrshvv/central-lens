@@ -3,6 +3,7 @@ import { withAuth } from '@/lib/auth/middleware';
 import dbConnect from '@/lib/db/connect';
 import { Video } from '@/lib/db/models/Video';
 import '@/lib/db/models/Category';
+import { processScheduledPublish } from '@/lib/db/publishHelper';
 
 async function getHandler(req: NextRequest, user: any) {
   try {
@@ -13,6 +14,7 @@ async function getHandler(req: NextRequest, user: any) {
     const search = searchParams.get('search');
 
     await dbConnect();
+    await processScheduledPublish();
     
     const query: Record<string, any> = {};
     if (status && status !== 'all') {
@@ -72,8 +74,30 @@ async function postHandler(req: NextRequest, user: any) {
         .replace(/(^-|-$)+/g, '') || `video-${Date.now().toString(36)}`;
     }
 
-    if (body.status === 'published' && !body.publishedAt) {
-      body.publishedAt = new Date();
+    // Handle scheduled status and dates
+    if (body.status === 'scheduled') {
+      if (!body.scheduledAt) {
+        return NextResponse.json(
+          { error: 'शेड्यूल करने के लिए प्रकाशन का समय चुनना अनिवार्य है।' },
+          { status: 400 }
+        );
+      }
+      const schedDate = new Date(body.scheduledAt);
+      if (isNaN(schedDate.getTime())) {
+        return NextResponse.json({ error: 'अमान्य तारीख या समय।' }, { status: 400 });
+      }
+      if (schedDate <= new Date()) {
+        body.status = 'published';
+        body.publishedAt = new Date();
+        delete body.scheduledAt;
+      } else {
+        body.scheduledAt = schedDate;
+      }
+    } else if (body.status === 'published') {
+      body.publishedAt = body.publishedAt ? new Date(body.publishedAt) : new Date();
+      delete body.scheduledAt;
+    } else {
+      delete body.scheduledAt;
     }
 
     const video = await Video.create(body);

@@ -35,7 +35,7 @@ export default function AdminVideos() {
   // Search & Filter State
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<'all' | 'long' | 'short' | 'podcast'>('all');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'scheduled' | 'draft'>('all');
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,8 +54,94 @@ export default function AdminVideos() {
   const [description, setDescription] = useState('');
   const [tagsInput, setTagsInput] = useState('');
   const [authorName, setAuthorName] = useState('Central Lens Bureau');
-  const [status, setStatus] = useState<'draft' | 'published'>('published');
+  const [status, setStatus] = useState<'draft' | 'published' | 'scheduled'>('published');
+  const [scheduledAt, setScheduledAt] = useState('');
   const [isFeatured, setIsFeatured] = useState(false);
+
+  const formatDatetimeLocal = (date?: string | Date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return '';
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const YYYY = d.getFullYear();
+    const MM = pad(d.getMonth() + 1);
+    const DD = pad(d.getDate());
+    const hh = pad(d.getHours());
+    const mm = pad(d.getMinutes());
+    return `${YYYY}-${MM}-${DD}T${hh}:${mm}`;
+  };
+
+  // Quick Schedule Modal State for List items
+  const [scheduleModalVideo, setScheduleModalVideo] = useState<any>(null);
+  const [quickVideoScheduleTime, setQuickVideoScheduleTime] = useState('');
+  const [savingVideoSchedule, setSavingVideoSchedule] = useState(false);
+
+  const applyModalPreset = (hoursFromNow: number) => {
+    const target = new Date(Date.now() + hoursFromNow * 3600 * 1000);
+    setScheduledAt(formatDatetimeLocal(target));
+  };
+
+  const applyModalTomorrow = (hour: number) => {
+    const target = new Date();
+    target.setDate(target.getDate() + 1);
+    target.setHours(hour, 0, 0, 0);
+    setScheduledAt(formatDatetimeLocal(target));
+  };
+
+  const openScheduleModal = (video: any) => {
+    setScheduleModalVideo(video);
+    if (video.scheduledAt) {
+      setQuickVideoScheduleTime(formatDatetimeLocal(video.scheduledAt));
+    } else {
+      const d = new Date(Date.now() + 2 * 3600 * 1000);
+      setQuickVideoScheduleTime(formatDatetimeLocal(d));
+    }
+  };
+
+  const applyQuickVideoPreset = (hoursFromNow: number) => {
+    const target = new Date(Date.now() + hoursFromNow * 3600 * 1000);
+    setQuickVideoScheduleTime(formatDatetimeLocal(target));
+  };
+
+  const applyQuickVideoTomorrow = (hour: number) => {
+    const target = new Date();
+    target.setDate(target.getDate() + 1);
+    target.setHours(hour, 0, 0, 0);
+    setQuickVideoScheduleTime(formatDatetimeLocal(target));
+  };
+
+  const handleSaveVideoSchedule = async (targetStatus: 'scheduled' | 'published' | 'draft') => {
+    if (!scheduleModalVideo) return;
+    if (targetStatus === 'scheduled' && !quickVideoScheduleTime) {
+      alert('कृपया प्रकाशन का समय चुनें');
+      return;
+    }
+
+    setSavingVideoSchedule(true);
+    try {
+      const payload: any = { status: targetStatus };
+      if (targetStatus === 'scheduled') {
+        payload.scheduledAt = new Date(quickVideoScheduleTime).toISOString();
+      }
+      const res = await fetch(`/api/admin/videos/${scheduleModalVideo._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        setScheduleModalVideo(null);
+        fetchVideos();
+      } else {
+        const data = await res.json();
+        alert(data.error || 'अद्यतन विफल');
+      }
+    } catch {
+      alert('सर्वर त्रुटि हुई');
+    } finally {
+      setSavingVideoSchedule(false);
+    }
+  };
 
   const fetchVideos = useCallback(async () => {
     setLoading(true);
@@ -134,6 +220,7 @@ export default function AdminVideos() {
     setTagsInput('');
     setAuthorName(currentUser?.name || 'Central Lens Bureau');
     setStatus('published');
+    setScheduledAt('');
     setIsFeatured(false);
     if (categories.length > 0) setCategoryId(categories[0]._id);
     setIsModalOpen(true);
@@ -152,6 +239,7 @@ export default function AdminVideos() {
     setTagsInput(Array.isArray(video.tags) ? video.tags.join(', ') : '');
     setAuthorName(video.author?.name || 'Central Lens Bureau');
     setStatus(video.status || 'published');
+    setScheduledAt(video.scheduledAt ? formatDatetimeLocal(video.scheduledAt) : '');
     setIsFeatured(!!video.isFeatured);
     setIsModalOpen(true);
   };
@@ -171,6 +259,10 @@ export default function AdminVideos() {
       alert('कृपया वीडियो का शीर्षक दर्ज करें');
       return;
     }
+    if (status === 'scheduled' && !scheduledAt) {
+      alert('कृपया वीडियो शेड्यूल करने के लिए प्रकाशन का समय चुनें।');
+      return;
+    }
 
     setSubmitting(true);
     const tags = tagsInput
@@ -184,7 +276,7 @@ export default function AdminVideos() {
       .replace(/[^a-z0-9\u0900-\u097F]+/g, '-')
       .replace(/(^-|-$)+/g, '') || `video-${Date.now().toString(36)}`;
 
-    const payload = {
+    const payload: any = {
       title,
       slug: cleanSlug,
       videoUrl,
@@ -201,8 +293,9 @@ export default function AdminVideos() {
         name: authorName || 'Central Lens Bureau',
       },
       status,
+      scheduledAt: status === 'scheduled' ? new Date(scheduledAt).toISOString() : undefined,
       isFeatured,
-      publishedAt: status === 'published' ? new Date() : undefined,
+      publishedAt: status === 'published' ? (editingVideo?.publishedAt || new Date()) : undefined,
     };
 
     const url = editingVideo ? `/api/admin/videos/${editingVideo._id}` : '/api/admin/videos';
@@ -285,6 +378,7 @@ export default function AdminVideos() {
     return {
       total: videos.length,
       published: videos.filter((v) => v.status === 'published').length,
+      scheduled: videos.filter((v) => v.status === 'scheduled').length,
       draft: videos.filter((v) => v.status === 'draft').length,
       shorts: videos.filter((v) => v.videoType === 'short').length,
       podcasts: videos.filter((v) => v.videoType === 'podcast').length,
@@ -446,7 +540,17 @@ export default function AdminVideos() {
                   : 'text-neutral-500 hover:text-neutral-900'
               }`}
             >
-              लाइव
+              लाइव ({stats.published})
+            </button>
+            <button
+              onClick={() => setStatusFilter('scheduled')}
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition font-devanagari whitespace-nowrap ${
+                statusFilter === 'scheduled'
+                  ? 'bg-white text-purple-700 shadow-xs font-bold'
+                  : 'text-neutral-500 hover:text-neutral-900'
+              }`}
+            >
+              ⏰ शेड्यूल ({stats.scheduled})
             </button>
             <button
               onClick={() => setStatusFilter('draft')}
@@ -456,7 +560,7 @@ export default function AdminVideos() {
                   : 'text-neutral-500 hover:text-neutral-900'
               }`}
             >
-              ड्राफ्ट
+              ड्राफ्ट ({stats.draft})
             </button>
           </div>
         </div>
@@ -574,22 +678,33 @@ export default function AdminVideos() {
                         {video.category?.name || 'सामान्य'}
                       </span>
 
-                      <button
-                        onClick={() => handleToggleStatus(video)}
-                        className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors border ${
-                          video.status === 'published'
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                            : 'bg-amber-50 text-amber-700 border-amber-200'
-                        }`}
-                        title="स्थिति बदलने के लिए क्लिक करें"
-                      >
-                        <span
-                          className={`w-1.5 h-1.5 rounded-full ${
-                            video.status === 'published' ? 'bg-emerald-500' : 'bg-amber-500'
+                      {video.status === 'scheduled' ? (
+                        <button
+                          onClick={() => handleToggleStatus(video)}
+                          className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors border bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100"
+                          title="तुरंत लाइव करने के लिए क्लिक करें"
+                        >
+                          <Clock size={10} className="text-purple-600 flex-shrink-0" />
+                          <span className="font-devanagari">⏰ शेड्यूल</span>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleToggleStatus(video)}
+                          className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors border ${
+                            video.status === 'published'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              : 'bg-amber-50 text-amber-700 border-amber-200'
                           }`}
-                        ></span>
-                        <span className="font-devanagari">{video.status === 'published' ? 'लाइव' : 'ड्राफ्ट'}</span>
-                      </button>
+                          title="स्थिति बदलने के लिए क्लिक करें"
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              video.status === 'published' ? 'bg-emerald-500' : 'bg-amber-500'
+                            }`}
+                          ></span>
+                          <span className="font-devanagari">{video.status === 'published' ? 'लाइव' : 'ड्राफ्ट'}</span>
+                        </button>
+                      )}
                     </div>
 
                     <div className="flex items-center space-x-1 text-neutral-400 text-[11px]">
@@ -600,6 +715,14 @@ export default function AdminVideos() {
 
                   {/* Bottom: Action Buttons */}
                   <div className="flex items-center justify-end space-x-2 pt-1">
+                    <button
+                      onClick={() => openScheduleModal(video)}
+                      className="inline-flex items-center space-x-1 px-2.5 py-1 text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition font-devanagari cursor-pointer"
+                      title="प्रकाशन समय तय करें (Schedule Video)"
+                    >
+                      <Clock size={12} className="text-purple-600" />
+                      <span>शेड्यूल</span>
+                    </button>
                     <button
                       onClick={() => setPreviewModalVideo(video)}
                       className="inline-flex items-center space-x-1 px-2.5 py-1 text-xs font-bold text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition font-devanagari"
@@ -745,22 +868,45 @@ export default function AdminVideos() {
 
                       {/* Status Toggle Button */}
                       <td className="py-4 px-6">
-                        <button
-                          onClick={() => handleToggleStatus(video)}
-                          className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold transition-colors border ${
-                            video.status === 'published'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
-                              : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
-                          }`}
-                          title="स्थिति बदलने के लिए क्लिक करें"
-                        >
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full ${
-                              video.status === 'published' ? 'bg-emerald-500' : 'bg-amber-500'
+                        {video.status === 'scheduled' ? (
+                          <div className="flex flex-col items-start gap-1">
+                            <button
+                              onClick={() => handleToggleStatus(video)}
+                              className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold transition-colors border bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100 cursor-pointer"
+                              title="तुरंत लाइव करने के लिए क्लिक करें"
+                            >
+                              <Clock size={13} className="text-purple-600 flex-shrink-0" />
+                              <span className="font-devanagari">⏰ शेड्यूल</span>
+                            </button>
+                            {video.scheduledAt && (
+                              <span className="text-[10px] text-purple-600/90 font-mono font-medium pl-1">
+                                {new Date(video.scheduledAt).toLocaleDateString('hi-IN', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handleToggleStatus(video)}
+                            className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold transition-colors border cursor-pointer ${
+                              video.status === 'published'
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                                : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
                             }`}
-                          ></span>
-                          <span className="font-devanagari">{video.status === 'published' ? 'लाइव' : 'ड्राफ्ट'}</span>
-                        </button>
+                            title="स्थिति बदलने के लिए क्लिक करें"
+                          >
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                video.status === 'published' ? 'bg-emerald-500' : 'bg-amber-500'
+                              }`}
+                            ></span>
+                            <span className="font-devanagari">{video.status === 'published' ? 'लाइव' : 'ड्राफ्ट'}</span>
+                          </button>
+                        )}
                       </td>
 
                       {/* Views */}
@@ -774,6 +920,14 @@ export default function AdminVideos() {
                       {/* Actions */}
                       <td className="py-4 px-6 text-right">
                         <div className="flex items-center justify-end space-x-2">
+                          <button
+                            onClick={() => openScheduleModal(video)}
+                            className="inline-flex items-center space-x-1 px-2.5 py-1.5 text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-colors font-devanagari cursor-pointer"
+                            title="प्रकाशन समय तय करें (Schedule Video)"
+                          >
+                            <Clock size={13} className="text-purple-600" />
+                            <span>शेड्यूल</span>
+                          </button>
                           <button
                             onClick={() => setPreviewModalVideo(video)}
                             className="p-2 text-neutral-500 hover:text-red-600 rounded-lg hover:bg-red-50 transition"
@@ -1066,8 +1220,8 @@ export default function AdminVideos() {
                 </div>
               </div>
 
-              {/* Featured & Status */}
-              <div className="pt-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-neutral-50 p-3 sm:p-4 rounded-xl border border-neutral-200/60">
+              {/* Featured Flag */}
+              <div className="bg-neutral-50 p-3 sm:p-4 rounded-xl border border-neutral-200/60">
                 <label className="flex items-center space-x-2.5 cursor-pointer">
                   <input
                     type="checkbox"
@@ -1080,23 +1234,163 @@ export default function AdminVideos() {
                       मुख्य वीडियो बनाएं (Featured)
                     </span>
                     <span className="text-[10px] text-neutral-500 font-devanagari">
-                      शीर्ष पर प्रदर्शित होगा
+                      वीडियो पृष्ठ पर शीर्ष हीरो सेक्शन में प्रदर्शित होगा
                     </span>
                   </div>
                 </label>
+              </div>
 
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs font-bold text-neutral-600 font-devanagari">स्थिति:</span>
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value as any)}
-                    className="border border-neutral-200 rounded-xl px-2.5 sm:px-3 py-1.5 text-xs font-bold bg-white text-neutral-800 focus:outline-none focus:ring-2 focus:ring-red-500 font-devanagari"
+              {/* Status Section with Prominent Visual Cards */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider font-devanagari flex items-center justify-between">
+                  <span>प्रकाशन स्थिति (Publishing Status) *</span>
+                  <span className="text-[10px] text-purple-700 font-bold bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full">
+                    ⏰ शेड्यूलिंग उपलब्ध
+                  </span>
+                </label>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {/* Option 1: Live */}
+                  <button
+                    type="button"
+                    onClick={() => setStatus('published')}
+                    className={`p-2.5 rounded-xl border text-left transition flex items-center space-x-2.5 cursor-pointer ${
+                      status === 'published'
+                        ? 'border-emerald-500 bg-emerald-50/70 text-emerald-950 ring-2 ring-emerald-500/20'
+                        : 'border-neutral-200 bg-neutral-50/60 hover:bg-neutral-100 text-neutral-700'
+                    }`}
                   >
-                    <option value="published">लाइव (Published)</option>
-                    <option value="draft">ड्राफ्ट (Draft)</option>
-                  </select>
+                    <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center flex-shrink-0 ${
+                      status === 'published' ? 'border-emerald-600 bg-emerald-600' : 'border-neutral-300 bg-white'
+                    }`}>
+                      {status === 'published' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                    </span>
+                    <div>
+                      <div className="text-xs font-bold font-devanagari">तुरंत लाइव</div>
+                      <div className="text-[10px] text-neutral-400 font-sans">Publish Now</div>
+                    </div>
+                  </button>
+
+                  {/* Option 2: Schedule */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStatus('scheduled');
+                      if (!scheduledAt) applyModalPreset(2);
+                    }}
+                    className={`p-2.5 rounded-xl border text-left transition flex items-center space-x-2.5 cursor-pointer ${
+                      status === 'scheduled'
+                        ? 'border-purple-500 bg-purple-50/80 text-purple-950 ring-2 ring-purple-500/20'
+                        : 'border-neutral-200 bg-neutral-50/60 hover:bg-neutral-100 text-neutral-700'
+                    }`}
+                  >
+                    <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center flex-shrink-0 ${
+                      status === 'scheduled' ? 'border-purple-600 bg-purple-600' : 'border-neutral-300 bg-white'
+                    }`}>
+                      {status === 'scheduled' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                    </span>
+                    <div>
+                      <div className="text-xs font-black text-purple-900 font-devanagari flex items-center space-x-1">
+                        <span>⏰ समय तय करें</span>
+                        <span className="text-[9px] bg-amber-400 text-neutral-900 font-black px-1 rounded">NEW</span>
+                      </div>
+                      <div className="text-[10px] text-purple-700 font-sans">Schedule for Later</div>
+                    </div>
+                  </button>
+
+                  {/* Option 3: Draft */}
+                  <button
+                    type="button"
+                    onClick={() => setStatus('draft')}
+                    className={`p-2.5 rounded-xl border text-left transition flex items-center space-x-2.5 cursor-pointer ${
+                      status === 'draft'
+                        ? 'border-neutral-700 bg-neutral-100 text-neutral-900 ring-2 ring-neutral-400/20'
+                        : 'border-neutral-200 bg-neutral-50/60 hover:bg-neutral-100 text-neutral-700'
+                    }`}
+                  >
+                    <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center flex-shrink-0 ${
+                      status === 'draft' ? 'border-neutral-700 bg-neutral-700' : 'border-neutral-300 bg-white'
+                    }`}>
+                      {status === 'draft' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                    </span>
+                    <div>
+                      <div className="text-xs font-bold font-devanagari">ड्राफ्ट रखें</div>
+                      <div className="text-[10px] text-neutral-400 font-sans">Save Draft</div>
+                    </div>
+                  </button>
                 </div>
               </div>
+
+              {status === 'scheduled' && (
+                <div className="p-3.5 rounded-xl bg-purple-50/90 border border-purple-200 space-y-3 font-devanagari">
+                  <div className="flex items-center justify-between text-purple-950 font-bold text-xs">
+                    <div className="flex items-center space-x-1.5">
+                      <Clock size={15} className="text-purple-600 flex-shrink-0" />
+                      <span>प्रकाशन का समय (Publish Date & Time) *</span>
+                    </div>
+                  </div>
+
+                  <input
+                    type="datetime-local"
+                    value={scheduledAt}
+                    onChange={(e) => setScheduledAt(e.target.value)}
+                    required={status === 'scheduled'}
+                    className="w-full bg-white border border-purple-300 rounded-xl p-2.5 text-xs font-bold text-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-500 font-sans shadow-xs"
+                  />
+
+                  {/* Quick Presets */}
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-bold text-purple-800 uppercase tracking-wider block font-sans">
+                      त्वरित विकल्प (Presets):
+                    </span>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => applyModalPreset(1)}
+                        className="px-2 py-1.5 text-[11px] font-bold bg-white hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg transition text-center cursor-pointer shadow-2xs"
+                      >
+                        ⚡ 1 घंटा बाद
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyModalPreset(3)}
+                        className="px-2 py-1.5 text-[11px] font-bold bg-white hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg transition text-center cursor-pointer shadow-2xs"
+                      >
+                        ⏱️ 3 घंटे बाद
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyModalTomorrow(9)}
+                        className="px-2 py-1.5 text-[11px] font-bold bg-white hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg transition text-center cursor-pointer shadow-2xs"
+                      >
+                        🌅 कल 9:00 AM
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyModalTomorrow(18)}
+                        className="px-2 py-1.5 text-[11px] font-bold bg-white hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg transition text-center cursor-pointer shadow-2xs"
+                      >
+                        🌆 कल 6:00 PM
+                      </button>
+                    </div>
+                  </div>
+
+                  {scheduledAt && (
+                    <div className="p-2 bg-purple-100/70 border border-purple-200/80 rounded-lg text-[11px] text-purple-900 leading-relaxed font-devanagari">
+                      💡 <span className="font-bold">ऑटो-पब्लिश:</span> यह वीडियो{' '}
+                      <span className="font-black underline decoration-purple-400">
+                        {new Date(scheduledAt).toLocaleString('hi-IN', {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>{' '}
+                      पर अपने-आप लाइव प्रकाशित हो जाएगा।
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Form Buttons */}
               <div className="pt-3 sm:pt-4 flex justify-end space-x-2.5 sm:space-x-3 border-t border-neutral-100">
@@ -1114,7 +1408,7 @@ export default function AdminVideos() {
                   className="px-4 sm:px-5 py-2 sm:py-2.5 bg-red-600 hover:bg-red-700 active:scale-98 text-white rounded-xl text-xs font-bold shadow-md shadow-red-600/20 transition flex items-center space-x-1.5 font-devanagari disabled:opacity-50"
                 >
                   <Check size={14} />
-                  <span>{submitting ? 'सहेजा जा रहा है...' : 'सहेजें (Save Video)'}</span>
+                  <span>{submitting ? 'सहेजा जा रहा है...' : status === 'scheduled' ? '⏰ शेड्यूल करें' : 'सहेजें (Save Video)'}</span>
                 </button>
               </div>
             </form>
@@ -1178,6 +1472,132 @@ export default function AdminVideos() {
                 <span>लाइव देखें</span>
                 <ExternalLink size={12} />
               </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Schedule Modal for Videos */}
+      {scheduleModalVideo && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-2xs flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 w-full max-w-md shadow-2xl border border-neutral-100 space-y-4 font-devanagari">
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
+              <div className="flex items-center space-x-2">
+                <span className="p-2 rounded-xl bg-purple-100 text-purple-700">
+                  <Clock size={18} />
+                </span>
+                <div>
+                  <h3 className="text-base font-black text-neutral-900">
+                    वीडियो का समय तय करें (Schedule)
+                  </h3>
+                  <span className="text-[10px] text-purple-700 font-bold bg-purple-50 px-1.5 py-0.2 rounded font-sans">
+                    AUTOMATIC VIDEO PUBLISH
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setScheduleModalVideo(null)}
+                className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Video Info */}
+            <div className="p-3 bg-neutral-50 rounded-xl border border-neutral-200/60 flex items-center space-x-3">
+              {scheduleModalVideo.thumbnailUrl && (
+                <img
+                  src={scheduleModalVideo.thumbnailUrl}
+                  alt=""
+                  className="w-12 h-9 rounded-lg object-cover flex-shrink-0 border border-neutral-200"
+                />
+              )}
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block font-sans">
+                  चयनित वीडियो:
+                </span>
+                <p className="text-xs font-bold text-neutral-800 line-clamp-1">
+                  {scheduleModalVideo.title}
+                </p>
+              </div>
+            </div>
+
+            {/* DateTime Input */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-neutral-700">
+                तारीख और समय चुनें (Date & Time): *
+              </label>
+              <input
+                type="datetime-local"
+                value={quickVideoScheduleTime}
+                onChange={(e) => setQuickVideoScheduleTime(e.target.value)}
+                className="w-full bg-neutral-50 border border-neutral-300 rounded-xl p-2.5 text-xs font-bold text-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-500 font-sans"
+              />
+            </div>
+
+            {/* Quick 1-click Presets */}
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider block font-sans">
+                त्वरित विकल्प (Presets):
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => applyQuickVideoPreset(1)}
+                  className="px-2.5 py-1.5 text-xs font-bold bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-xl transition cursor-pointer text-center"
+                >
+                  ⚡ 1 घंटा बाद
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyQuickVideoPreset(3)}
+                  className="px-2.5 py-1.5 text-xs font-bold bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-xl transition cursor-pointer text-center"
+                >
+                  ⏱️ 3 घंटे बाद
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyQuickVideoTomorrow(9)}
+                  className="px-2.5 py-1.5 text-xs font-bold bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-xl transition cursor-pointer text-center"
+                >
+                  🌅 कल सुबह 9:00
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyQuickVideoTomorrow(18)}
+                  className="px-2.5 py-1.5 text-xs font-bold bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-xl transition cursor-pointer text-center"
+                >
+                  🌆 कल शाम 6:00
+                </button>
+              </div>
+            </div>
+
+            {/* Info Message */}
+            {quickVideoScheduleTime && (
+              <p className="text-[11px] text-purple-700 bg-purple-50/80 p-2.5 rounded-xl border border-purple-200/80 leading-relaxed">
+                💡 निर्धारित समय आते ही यह वीडियो ऑटोमैटिकली वेबसाइट पर लाइव हो जाएगा।
+              </p>
+            )}
+
+            {/* Modal Actions */}
+            <div className="pt-2 border-t border-neutral-100 flex flex-col sm:flex-row gap-2 justify-end">
+              <button
+                type="button"
+                onClick={() => handleSaveVideoSchedule('published')}
+                disabled={savingVideoSchedule}
+                className="px-3 py-2 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition cursor-pointer text-center"
+              >
+                तुरंत लाइव करें
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSaveVideoSchedule('scheduled')}
+                disabled={savingVideoSchedule}
+                className="px-4 py-2 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 rounded-xl transition shadow-md shadow-purple-600/20 cursor-pointer text-center"
+              >
+                {savingVideoSchedule ? 'सहेज रहे हैं...' : '⏰ शेड्यूल सेट करें'}
+              </button>
             </div>
           </div>
         </div>

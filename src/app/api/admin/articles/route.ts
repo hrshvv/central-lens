@@ -4,6 +4,7 @@ import dbConnect from '@/lib/db/connect';
 import { Article } from '@/lib/db/models/Article';
 import { User } from '@/lib/db/models/User';
 import '@/lib/db/models/Category';
+import { processScheduledPublish } from '@/lib/db/publishHelper';
 
 async function getHandler(req: NextRequest, user: any) {
   try {
@@ -31,6 +32,7 @@ async function getHandler(req: NextRequest, user: any) {
     }
 
     await dbConnect();
+    await processScheduledPublish();
     
     const articles = await Article.find(query)
       .sort({ createdAt: -1 })
@@ -64,6 +66,32 @@ async function postHandler(req: NextRequest, user: any) {
 
     // Attach creator user ID
     body.createdBy = user.id;
+
+    // Handle scheduled status and dates
+    if (body.status === 'scheduled') {
+      if (!body.scheduledAt) {
+        return NextResponse.json(
+          { error: 'शेड्यूल करने के लिए प्रकाशन का समय चुनना अनिवार्य है।' },
+          { status: 400 }
+        );
+      }
+      const schedDate = new Date(body.scheduledAt);
+      if (isNaN(schedDate.getTime())) {
+        return NextResponse.json({ error: 'अमान्य तारीख या समय।' }, { status: 400 });
+      }
+      if (schedDate <= new Date()) {
+        body.status = 'published';
+        body.publishedAt = new Date();
+        delete body.scheduledAt;
+      } else {
+        body.scheduledAt = schedDate;
+      }
+    } else if (body.status === 'published') {
+      body.publishedAt = body.publishedAt ? new Date(body.publishedAt) : new Date();
+      delete body.scheduledAt;
+    } else {
+      delete body.scheduledAt;
+    }
 
     // Ensure author name is populated from user record if missing
     if (!body.author?.name || body.author.name === 'Central Lens Bureau') {
