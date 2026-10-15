@@ -76,12 +76,12 @@ export default function AdminDashboard() {
       href: '/admin/articles?status=published',
     },
     {
-      title: '⏰ शेड्यूल लेख (Scheduled)',
+      title: 'शेड्यूल लेख (Scheduled)',
       value: stats.scheduledArticles || 0,
       icon: Clock,
-      accent: 'border-t-4 border-t-purple-600',
-      iconColor: 'bg-purple-50 text-purple-600',
-      badge: 'ऑटो-पब्लिश NEW',
+      accent: 'border-t-4 border-t-neutral-800',
+      iconColor: 'bg-neutral-100 text-neutral-800',
+      badge: 'कतार',
       href: '/admin/articles?status=scheduled',
     },
     {
@@ -113,12 +113,12 @@ export default function AdminDashboard() {
       href: '/admin/articles?status=published',
     },
     {
-      title: '⏰ शेड्यूल लेख (Scheduled)',
+      title: 'आपके शेड्यूल लेख (Scheduled)',
       value: stats.scheduledArticles || 0,
       icon: Clock,
-      accent: 'border-t-4 border-t-purple-600',
-      iconColor: 'bg-purple-50 text-purple-600',
-      badge: 'ऑटो-पब्लिश NEW',
+      accent: 'border-t-4 border-t-neutral-800',
+      iconColor: 'bg-neutral-100 text-neutral-800',
+      badge: 'कतार',
       href: '/admin/articles?status=scheduled',
     },
     {
@@ -194,39 +194,40 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Scheduled Publishing Feature Banner */}
-      <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-neutral-900 rounded-2xl p-4 sm:p-5 text-white shadow-md border border-purple-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center space-x-3.5">
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300 flex-shrink-0">
-            <Clock size={22} className="animate-pulse text-purple-300" />
+      {/* Scheduled Publishing Feature Banner - Clean Central Lens Theme */}
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-neutral-200/80 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-l-4 border-l-red-600">
+        <div className="flex items-start sm:items-center space-x-3.5">
+          <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 border border-red-100 flex items-center justify-center flex-shrink-0">
+            <Clock size={20} />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-[10px] font-black text-amber-300 bg-amber-400/20 px-2 py-0.5 rounded-full font-sans">
-                NEW FEATURE
+              <span className="text-[10px] font-bold text-red-700 bg-red-50 border border-red-200/80 px-2 py-0.5 rounded-md font-sans">
+                नया फीचर
               </span>
-              <h3 className="text-sm sm:text-base font-bold font-devanagari text-white">
+              <h3 className="text-sm sm:text-base font-bold text-neutral-900 font-devanagari">
                 समय तय करके प्रकाशन (Scheduled Publishing)
               </h3>
             </div>
-            <p className="text-xs text-purple-200/90 mt-1 font-devanagari">
-              अब आप लेख और वीडियो का भविष्य का प्रकाशन समय सेट कर सकते हैं। समय आते ही कंटेंट अपने-आप लाइव हो जाएगा।
+            <p className="text-xs text-neutral-500 mt-0.5 font-devanagari">
+              अब आप लेख और वीडियो का प्रकाशन समय पहले से निर्धारित कर सकते हैं। समय आते ही कंटेंट स्वतः लाइव हो जाएगा।
             </p>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+        <div className="flex items-center gap-2 w-full md:w-auto">
           <Link
             href="/admin/articles/new"
-            className="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition shadow-sm font-devanagari text-center whitespace-nowrap"
+            className="flex-1 md:flex-initial flex items-center justify-center space-x-1.5 px-3.5 py-2 bg-red-600 hover:bg-red-700 active:scale-98 text-white rounded-xl text-xs font-bold shadow-xs transition-all font-devanagari whitespace-nowrap"
           >
-            ⏰ लेख शेड्यूल करें
+            <Clock size={14} />
+            <span>लेख शेड्यूल करें</span>
           </Link>
           <Link
             href="/admin/videos"
-            className="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition border border-white/20 font-devanagari text-center whitespace-nowrap"
+            className="flex-1 md:flex-initial flex items-center justify-center space-x-1.5 px-3.5 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-xl text-xs font-bold border border-neutral-200/80 transition font-devanagari whitespace-nowrap"
           >
-            🎬 वीडियो स्टूडियो
+            <span>वीडियो स्टूडियो</span>
           </Link>
         </div>
       </div>
@@ -339,17 +340,17 @@ export default function AdminDashboard() {
                         article.status === 'published' 
                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
                           : article.status === 'scheduled'
-                            ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                            ? 'bg-neutral-100 text-neutral-700 border border-neutral-200'
                             : 'bg-amber-50 text-amber-700 border border-amber-200'
                       }`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${
                           article.status === 'published' 
                             ? 'bg-emerald-500' 
                             : article.status === 'scheduled'
-                              ? 'bg-purple-500'
+                              ? 'bg-neutral-600'
                               : 'bg-amber-500'
                         }`}></span>
-                        <span>{article.status === 'published' ? 'लाइव' : article.status === 'scheduled' ? '⏰ शेड्यूल' : 'ड्राफ्ट'}</span>
+                        <span>{article.status === 'published' ? 'लाइव' : article.status === 'scheduled' ? 'शेड्यूल' : 'ड्राफ्ट'}</span>
                       </span>
                     </td>
                     <td className="py-4 px-6 text-xs text-neutral-500 font-sans">

@@ -223,12 +223,13 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
               }}
               className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition whitespace-nowrap flex items-center space-x-1 cursor-pointer ${
                 status === 'scheduled'
-                  ? 'bg-purple-600 text-white shadow-xs font-black'
+                  ? 'bg-neutral-900 text-white shadow-xs font-bold'
                   : 'text-neutral-600 hover:text-neutral-900'
               }`}
             >
-              <span>⏰ शेड्यूल</span>
-              <span className="text-[9px] bg-amber-400 text-neutral-900 px-1 py-0.2 rounded font-black font-sans">NEW</span>
+              <Clock size={13} className="inline mr-1" />
+              <span>शेड्यूल</span>
+              <span className="text-[9px] bg-red-100 text-red-700 px-1 py-0.2 rounded font-bold font-sans">NEW</span>
             </button>
             <button
               type="button"
@@ -254,11 +255,9 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
             type="submit"
             disabled={loading}
             className={`flex items-center justify-center space-x-1.5 px-4 sm:px-6 py-2 sm:py-2.5 active:scale-98 text-white rounded-xl text-xs font-bold shadow-md transition disabled:opacity-50 font-devanagari text-center cursor-pointer ${
-              status === 'scheduled'
-                ? 'bg-purple-600 hover:bg-purple-700 shadow-purple-600/20'
-                : status === 'draft'
-                  ? 'bg-neutral-800 hover:bg-neutral-900'
-                  : 'bg-red-600 hover:bg-red-700 shadow-red-600/20'
+              status === 'draft'
+                ? 'bg-neutral-800 hover:bg-neutral-900'
+                : 'bg-red-600 hover:bg-red-700 shadow-red-600/20'
             }`}
           >
             <Check size={16} />
@@ -266,7 +265,7 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
               {loading
                 ? 'सहेजा जा रहा है...'
                 : status === 'scheduled'
-                  ? '⏰ शेड्यूल सहेजें (Schedule)'
+                  ? 'शेड्यूल सहेजें (Schedule)'
                   : status === 'published'
                     ? 'प्रकाशित करें (Publish Now)'
                     : 'ड्राफ्ट सहेजें (Save Draft)'}
@@ -351,9 +350,6 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
             <div>
               <label className="block text-xs font-bold text-neutral-700 mb-2 font-devanagari flex items-center justify-between">
                 <span>प्रकाशन स्थिति (Publishing Status) *</span>
-                <span className="text-[10px] text-purple-700 font-bold bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full">
-                  ⏰ शेड्यूलिंग उपलब्ध
-                </span>
               </label>
 
               <div className="space-y-2">
@@ -363,7 +359,7 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
                   onClick={() => setStatus('published')}
                   className={`w-full p-3 rounded-xl border text-left transition-all flex items-start space-x-3 cursor-pointer ${
                     status === 'published'
-                      ? 'bg-emerald-50/70 border-emerald-500 ring-2 ring-emerald-500/20 text-emerald-950 shadow-xs'
+                      ? 'bg-emerald-50/70 border-emerald-500 ring-1 ring-emerald-500/20 text-emerald-950 shadow-xs'
                       : 'bg-neutral-50/70 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
                   }`}
                 >
@@ -374,14 +370,14 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
                   </span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-1.5">
-                      <span className="text-xs font-black font-devanagari text-neutral-900">तुरंत लाइव करें (Publish Now)</span>
+                      <span className="text-xs font-bold font-devanagari text-neutral-900">तुरंत लाइव करें (Publish Now)</span>
                       <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded font-sans">LIVE</span>
                     </div>
                     <p className="text-[11px] text-neutral-500 mt-0.5 font-devanagari">सहेजते ही यह लेख तुरंत वेबसाइट पर सभी पाठकों को दिखेगा।</p>
                   </div>
                 </button>
 
-                {/* Option 2: Schedule for Later (NEW FEATURE) */}
+                {/* Option 2: Schedule for Later */}
                 <button
                   type="button"
                   onClick={() => {
@@ -390,23 +386,21 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
                   }}
                   className={`w-full p-3 rounded-xl border text-left transition-all flex items-start space-x-3 cursor-pointer ${
                     status === 'scheduled'
-                      ? 'bg-purple-50/80 border-purple-500 ring-2 ring-purple-500/20 text-purple-950 shadow-xs'
+                      ? 'bg-neutral-100 border-neutral-900 ring-1 ring-neutral-900/10 text-neutral-950 shadow-xs'
                       : 'bg-neutral-50/70 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
                   }`}
                 >
                   <span className={`w-4 h-4 rounded-full mt-0.5 border flex items-center justify-center flex-shrink-0 ${
-                    status === 'scheduled' ? 'border-purple-600 bg-purple-600' : 'border-neutral-300 bg-white'
+                    status === 'scheduled' ? 'border-neutral-900 bg-neutral-900' : 'border-neutral-300 bg-white'
                   }`}>
                     {status === 'scheduled' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                   </span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-1.5">
-                      <span className="text-xs font-black font-devanagari text-purple-950">⏰ समय तय करें (Schedule for Later)</span>
-                      <span className="text-[9px] bg-gradient-to-r from-amber-400 to-amber-500 text-neutral-900 font-black px-1.5 py-0.2 rounded font-sans animate-pulse">
-                        NEW
-                      </span>
+                      <span className="text-xs font-bold font-devanagari text-neutral-900">समय तय करें (Schedule for Later)</span>
+                      <span className="text-[9px] bg-red-100 text-red-700 font-bold px-1.5 py-0.2 rounded font-sans">NEW</span>
                     </div>
-                    <p className="text-[11px] text-purple-900/80 mt-0.5 font-devanagari">तय की गई तारीख व समय पर यह लेख अपने-आप लाइव हो जाएगा।</p>
+                    <p className="text-[11px] text-neutral-500 mt-0.5 font-devanagari">तय की गई तारीख व समय पर यह लेख अपने-आप लाइव हो जाएगा।</p>
                   </div>
                 </button>
 
@@ -416,7 +410,7 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
                   onClick={() => setStatus('draft')}
                   className={`w-full p-3 rounded-xl border text-left transition-all flex items-start space-x-3 cursor-pointer ${
                     status === 'draft'
-                      ? 'bg-neutral-100 border-neutral-600 ring-2 ring-neutral-400/20 text-neutral-900 shadow-xs'
+                      ? 'bg-neutral-100 border-neutral-600 ring-1 ring-neutral-400/20 text-neutral-900 shadow-xs'
                       : 'bg-neutral-50/70 hover:bg-neutral-100 border-neutral-200 text-neutral-700'
                   }`}
                 >
@@ -427,7 +421,7 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
                   </span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-1.5">
-                      <span className="text-xs font-black font-devanagari text-neutral-900">ड्राफ्ट रखें (Save as Draft)</span>
+                      <span className="text-xs font-bold font-devanagari text-neutral-900">ड्राफ्ट रखें (Save as Draft)</span>
                       <span className="text-[9px] bg-neutral-200 text-neutral-700 font-bold px-1.5 py-0.2 rounded font-sans">DRAFT</span>
                     </div>
                     <p className="text-[11px] text-neutral-500 mt-0.5 font-devanagari">केवल एडमिन पैनल में रहेगा, सार्वजनिक रूप से छिपा रहेगा।</p>
@@ -436,12 +430,12 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
               </div>
             </div>
 
-            {/* If Scheduled: Show Full Time Box with Presets */}
+            {/* If Scheduled: Show Clean Time Box with Presets */}
             {status === 'scheduled' && (
-              <div className="p-3.5 sm:p-4 rounded-xl bg-purple-50/90 border border-purple-200 space-y-3 font-devanagari">
-                <div className="flex items-center justify-between text-purple-950 font-bold text-xs">
+              <div className="p-3.5 sm:p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-3 font-devanagari">
+                <div className="flex items-center justify-between text-neutral-900 font-bold text-xs">
                   <div className="flex items-center space-x-1.5">
-                    <Clock size={15} className="text-purple-600 flex-shrink-0" />
+                    <Clock size={15} className="text-neutral-700 flex-shrink-0" />
                     <span>प्रकाशन का समय (Publish Date & Time) *</span>
                   </div>
                 </div>
@@ -451,50 +445,50 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
                   value={scheduledAt}
                   onChange={(e) => setScheduledAt(e.target.value)}
                   required={status === 'scheduled'}
-                  className="w-full bg-white border border-purple-300 rounded-xl p-2.5 text-xs font-bold text-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-500 font-sans shadow-xs"
+                  className="w-full bg-white border border-neutral-300 rounded-xl p-2.5 text-xs font-semibold text-neutral-900 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans shadow-xs"
                 />
 
                 {/* Quick 1-click Preset Buttons */}
                 <div className="space-y-1.5">
-                  <span className="text-[10px] font-bold text-purple-800 uppercase tracking-wider block font-sans">
-                    त्वरित विकल्प (Quick Presets):
+                  <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider block font-sans">
+                    त्वरित विकल्प (Presets):
                   </span>
                   <div className="grid grid-cols-2 gap-1.5">
                     <button
                       type="button"
                       onClick={() => applyPreset(1)}
-                      className="px-2 py-1.5 text-[11px] font-bold bg-white hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg transition text-center cursor-pointer shadow-2xs"
+                      className="px-2 py-1.5 text-[11px] font-semibold bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200 rounded-lg transition text-center cursor-pointer shadow-2xs"
                     >
-                      ⚡ 1 घंटा बाद
+                      1 घंटा बाद
                     </button>
                     <button
                       type="button"
                       onClick={() => applyPreset(3)}
-                      className="px-2 py-1.5 text-[11px] font-bold bg-white hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg transition text-center cursor-pointer shadow-2xs"
+                      className="px-2 py-1.5 text-[11px] font-semibold bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200 rounded-lg transition text-center cursor-pointer shadow-2xs"
                     >
-                      ⏱️ 3 घंटे बाद
+                      3 घंटे बाद
                     </button>
                     <button
                       type="button"
                       onClick={() => applyTomorrow(9)}
-                      className="px-2 py-1.5 text-[11px] font-bold bg-white hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg transition text-center cursor-pointer shadow-2xs"
+                      className="px-2 py-1.5 text-[11px] font-semibold bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200 rounded-lg transition text-center cursor-pointer shadow-2xs"
                     >
-                      🌅 कल सुबह 9:00
+                      कल सुबह 9:00
                     </button>
                     <button
                       type="button"
                       onClick={() => applyTomorrow(18)}
-                      className="px-2 py-1.5 text-[11px] font-bold bg-white hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg transition text-center cursor-pointer shadow-2xs"
+                      className="px-2 py-1.5 text-[11px] font-semibold bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200 rounded-lg transition text-center cursor-pointer shadow-2xs"
                     >
-                      🌆 कल शाम 6:00
+                      कल शाम 6:00
                     </button>
                   </div>
                 </div>
 
                 {scheduledAt && (
-                  <div className="p-2 bg-purple-100/70 border border-purple-200/80 rounded-lg text-[11px] text-purple-900 leading-relaxed font-devanagari">
-                    💡 <span className="font-bold">ऑटो-पब्लिश:</span> यह लेख{' '}
-                    <span className="font-black underline decoration-purple-400">
+                  <div className="p-2.5 bg-neutral-100 border border-neutral-200 rounded-lg text-[11px] text-neutral-600 leading-relaxed font-devanagari">
+                    <span className="font-bold text-neutral-800">ऑटो-पब्लिश:</span> यह लेख{' '}
+                    <span className="font-semibold text-neutral-900">
                       {new Date(scheduledAt).toLocaleString('hi-IN', {
                         month: 'short',
                         day: 'numeric',
@@ -502,7 +496,7 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
                         minute: '2-digit',
                       })}
                     </span>{' '}
-                    पर अपने-आप प्रकाशित हो जाएगा।
+                    पर स्वतः प्रकाशित हो जाएगा।
                   </div>
                 )}
               </div>

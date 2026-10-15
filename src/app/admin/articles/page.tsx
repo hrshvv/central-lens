@@ -227,10 +227,10 @@ export default function AdminArticles() {
           <button
             onClick={() => setStatusFilter('scheduled')}
             className={`flex-1 md:flex-initial px-3 py-1.5 rounded-lg transition whitespace-nowrap text-center ${
-              statusFilter === 'scheduled' ? 'bg-white text-purple-700 shadow-xs font-bold' : 'text-neutral-500 hover:text-neutral-900'
+              statusFilter === 'scheduled' ? 'bg-white text-neutral-900 shadow-xs font-bold' : 'text-neutral-500 hover:text-neutral-900'
             }`}
           >
-            ⏰ शेड्यूल ({articles.filter(a => a.status === 'scheduled').length})
+            शेड्यूल ({articles.filter(a => a.status === 'scheduled').length})
           </button>
           <button
             onClick={() => setStatusFilter('draft')}
@@ -307,11 +307,11 @@ export default function AdminArticles() {
                       {article.status === 'scheduled' ? (
                         <button 
                           onClick={() => handleToggleStatus(article)}
-                          className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider transition-colors border bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100"
+                          className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wider transition-colors border bg-neutral-100 text-neutral-700 border-neutral-200 hover:bg-neutral-200 cursor-pointer"
                           title="तुरंत लाइव करने के लिए क्लिक करें"
                         >
-                          <Clock size={11} className="text-purple-600 flex-shrink-0" />
-                          <span>⏰ शेड्यूल</span>
+                          <Clock size={11} className="text-neutral-500 flex-shrink-0" />
+                          <span>शेड्यूल</span>
                         </button>
                       ) : (
                         <button 
@@ -346,10 +346,10 @@ export default function AdminArticles() {
                   <div className="flex items-center justify-end space-x-2 pt-1">
                     <button 
                       onClick={() => openScheduleModal(article)}
-                      className="inline-flex items-center space-x-1 px-2.5 py-1.5 text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-colors font-devanagari cursor-pointer"
+                      className="inline-flex items-center space-x-1 px-2.5 py-1.5 text-xs font-semibold text-neutral-700 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 rounded-lg transition-colors font-devanagari cursor-pointer"
                       title="प्रकाशन समय तय करें (Schedule Article)"
                     >
-                      <Clock size={13} className="text-purple-600" />
+                      <Clock size={13} className="text-neutral-500" />
                       <span>शेड्यूल</span>
                     </button>
                     <Link 
@@ -450,15 +450,15 @@ export default function AdminArticles() {
                         {article.status === 'scheduled' ? (
                           <div className="flex flex-col items-start gap-1">
                             <button 
-                              onClick={() => handleToggleStatus(article)}
-                              className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wider transition-colors border bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100 cursor-pointer"
-                              title="तुरंत लाइव करने के लिए क्लिक करें"
+                              onClick={() => openScheduleModal(article)}
+                              className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wider transition-colors border bg-neutral-100 text-neutral-700 border-neutral-200 hover:bg-neutral-200 cursor-pointer"
+                              title="शेड्यूल बदलने या लाइव करने के लिए क्लिक करें"
                             >
-                              <Clock size={13} className="text-purple-600 flex-shrink-0" />
-                              <span>⏰ शेड्यूल</span>
+                              <Clock size={13} className="text-neutral-500 flex-shrink-0" />
+                              <span>शेड्यूल</span>
                             </button>
                             {article.scheduledAt && (
-                              <span className="text-[10px] text-purple-600/90 font-mono font-medium pl-1">
+                              <span className="text-[10px] text-neutral-500 font-mono font-medium pl-1">
                                 {new Date(article.scheduledAt).toLocaleDateString('hi-IN', {
                                   month: 'short',
                                   day: 'numeric',
@@ -506,10 +506,10 @@ export default function AdminArticles() {
                         <div className="flex items-center justify-end space-x-2">
                           <button 
                             onClick={() => openScheduleModal(article)}
-                            className="inline-flex items-center space-x-1 px-2.5 py-1.5 text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-colors font-devanagari cursor-pointer"
+                            className="inline-flex items-center space-x-1 px-2.5 py-1.5 text-xs font-semibold text-neutral-700 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 rounded-lg transition-colors font-devanagari cursor-pointer"
                             title="प्रकाशन समय तय करें (Schedule Article)"
                           >
-                            <Clock size={13} className="text-purple-600" />
+                            <Clock size={13} className="text-neutral-500" />
                             <span>शेड्यूल</span>
                           </button>
                           <Link 
@@ -544,14 +544,14 @@ export default function AdminArticles() {
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
               <div className="flex items-center space-x-2">
-                <span className="p-2 rounded-xl bg-purple-100 text-purple-700">
+                <span className="p-2 rounded-xl bg-red-50 text-red-600 border border-red-100">
                   <Clock size={18} />
                 </span>
                 <div>
-                  <h3 className="text-base font-black text-neutral-900">
+                  <h3 className="text-base font-bold text-neutral-900">
                     प्रकाशन समय तय करें (Schedule)
                   </h3>
-                  <span className="text-[10px] text-purple-700 font-bold bg-purple-50 px-1.5 py-0.2 rounded font-sans">
+                  <span className="text-[10px] text-neutral-500 font-semibold font-sans">
                     AUTOMATIC PUBLISH
                   </span>
                 </div>
@@ -583,7 +583,7 @@ export default function AdminArticles() {
                 type="datetime-local"
                 value={quickScheduleTime}
                 onChange={(e) => setQuickScheduleTime(e.target.value)}
-                className="w-full bg-neutral-50 border border-neutral-300 rounded-xl p-2.5 text-xs font-bold text-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-500 font-sans"
+                className="w-full bg-white border border-neutral-300 rounded-xl p-2.5 text-xs font-semibold text-neutral-900 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans shadow-xs"
               />
             </div>
 
@@ -596,38 +596,38 @@ export default function AdminArticles() {
                 <button
                   type="button"
                   onClick={() => applyArticlePreset(1)}
-                  className="px-2.5 py-1.5 text-xs font-bold bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-xl transition cursor-pointer text-center"
+                  className="px-2.5 py-1.5 text-xs font-semibold bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200 rounded-xl transition cursor-pointer text-center"
                 >
-                  ⚡ 1 घंटा बाद
+                  1 घंटा बाद
                 </button>
                 <button
                   type="button"
                   onClick={() => applyArticlePreset(3)}
-                  className="px-2.5 py-1.5 text-xs font-bold bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-xl transition cursor-pointer text-center"
+                  className="px-2.5 py-1.5 text-xs font-semibold bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200 rounded-xl transition cursor-pointer text-center"
                 >
-                  ⏱️ 3 घंटे बाद
+                  3 घंटे बाद
                 </button>
                 <button
                   type="button"
                   onClick={() => applyArticleTomorrow(9)}
-                  className="px-2.5 py-1.5 text-xs font-bold bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-xl transition cursor-pointer text-center"
+                  className="px-2.5 py-1.5 text-xs font-semibold bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200 rounded-xl transition cursor-pointer text-center"
                 >
-                  🌅 कल सुबह 9:00
+                  कल सुबह 9:00
                 </button>
                 <button
                   type="button"
                   onClick={() => applyArticleTomorrow(18)}
-                  className="px-2.5 py-1.5 text-xs font-bold bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-xl transition cursor-pointer text-center"
+                  className="px-2.5 py-1.5 text-xs font-semibold bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200 rounded-xl transition cursor-pointer text-center"
                 >
-                  🌆 कल शाम 6:00
+                  कल शाम 6:00
                 </button>
               </div>
             </div>
 
             {/* Info Message */}
             {quickScheduleTime && (
-              <p className="text-[11px] text-purple-700 bg-purple-50/80 p-2.5 rounded-xl border border-purple-200/80 leading-relaxed">
-                💡 निर्धारित समय आते ही यह लेख ऑटोमैटिकली वेबसाइट पर लाइव हो जाएगा।
+              <p className="text-[11px] text-neutral-600 bg-neutral-50 p-2.5 rounded-xl border border-neutral-200 leading-relaxed">
+                निर्धारित समय आते ही यह लेख स्वतः वेबसाइट पर लाइव हो जाएगा।
               </p>
             )}
 
@@ -637,7 +637,7 @@ export default function AdminArticles() {
                 type="button"
                 onClick={() => handleSaveSchedule('published')}
                 disabled={savingSchedule}
-                className="px-3 py-2 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition cursor-pointer text-center"
+                className="px-3.5 py-2 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition cursor-pointer text-center"
               >
                 तुरंत लाइव करें
               </button>
@@ -645,9 +645,9 @@ export default function AdminArticles() {
                 type="button"
                 onClick={() => handleSaveSchedule('scheduled')}
                 disabled={savingSchedule}
-                className="px-4 py-2 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 rounded-xl transition shadow-md shadow-purple-600/20 cursor-pointer text-center"
+                className="px-4 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 active:scale-98 rounded-xl transition shadow-xs cursor-pointer text-center"
               >
-                {savingSchedule ? 'सहेज रहे हैं...' : '⏰ शेड्यूल सेट करें'}
+                {savingSchedule ? 'सहेज रहे हैं...' : 'शेड्यूल सेट करें'}
               </button>
             </div>
           </div>
