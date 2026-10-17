@@ -15,20 +15,54 @@ export const revalidate = 120;
 // In-request cache so generateMetadata and page component share one DB call
 const articleCache = new Map<string, { data: any; ts: number }>();
 
-async function getArticle(slug: string) {
-  const cached = articleCache.get(slug);
+async function getArticle(rawSlug: string) {
+  let decodedSlug = rawSlug;
+  try {
+    decodedSlug = decodeURIComponent(rawSlug);
+  } catch {
+    decodedSlug = rawSlug;
+  }
+
+  const cached = articleCache.get(decodedSlug) || articleCache.get(rawSlug);
   if (cached && Date.now() - cached.ts < 5000) {
     return cached.data;
   }
 
   try {
     await dbConnect();
-    const article = await Article.findOne({ slug, status: 'published' })
+    const slugVariants = Array.from(new Set([
+      rawSlug,
+      decodedSlug,
+      decodedSlug.trim().replace(/\s+/g, '-'),
+      decodedSlug.trim().replace(/-/g, ' '),
+      rawSlug.trim().replace(/\s+/g, '-'),
+    ])).filter(Boolean);
+
+    const article = await Article.findOneAndUpdate(
+      {
+        $or: [
+          { slug: { $in: slugVariants } },
+          { title: decodedSlug },
+        ],
+        status: 'published',
+      },
+      { $inc: { views: 1 } },
+      { returnDocument: 'after' }
+    )
       .populate('category', 'name slug color')
       .lean();
-    articleCache.set(slug, { data: article, ts: Date.now() });
+
+    if (article) {
+      articleCache.set(decodedSlug, { data: article, ts: Date.now() });
+      articleCache.set(rawSlug, { data: article, ts: Date.now() });
+      if ((article as any).slug) {
+        articleCache.set((article as any).slug, { data: article, ts: Date.now() });
+      }
+    }
+
     return article;
-  } catch {
+  } catch (error) {
+    console.error('Error fetching article:', error);
     return null;
   }
 }
@@ -77,11 +111,23 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
 
 async function getRelatedArticles(categoryId: string, currentSlug: string) {
   try {
+    let decodedSlug = currentSlug;
+    try {
+      decodedSlug = decodeURIComponent(currentSlug);
+    } catch {}
+
+    const slugVariants = Array.from(new Set([
+      currentSlug,
+      decodedSlug,
+      decodedSlug.replace(/\s+/g, '-'),
+      decodedSlug.replace(/-/g, ' ')
+    ])).filter(Boolean);
+
     // dbConnect already called by getArticle, connection is pooled
     const related = await Article.find(
       {
         category: categoryId,
-        slug: { $ne: currentSlug },
+        slug: { $nin: slugVariants },
         status: 'published',
       },
       // Only fetch fields needed for the related cards
@@ -106,7 +152,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ catego
   }
 
   const categoryId = article.category?._id || article.category;
-  const relatedArticles = await getRelatedArticles(categoryId, slug);
+  const relatedArticles = await getRelatedArticles(categoryId, article.slug || slug);
   const catSlug = article.category?.slug || 'news';
   const catName = article.category?.name || 'समाचार';
 

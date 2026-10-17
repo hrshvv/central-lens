@@ -37,8 +37,15 @@ const LISTING_PROJECTION = {
 const dataCache = new Map<string, { data: any; ts: number }>();
 
 async function getCategoryData(categorySlug: string) {
-  const cacheKey = categorySlug.toLowerCase();
-  const cached = dataCache.get(cacheKey);
+  let decodedCategory = categorySlug;
+  try {
+    decodedCategory = decodeURIComponent(categorySlug);
+  } catch {
+    decodedCategory = categorySlug;
+  }
+
+  const cacheKey = decodedCategory.toLowerCase();
+  const cached = dataCache.get(cacheKey) || dataCache.get(categorySlug.toLowerCase());
   if (cached && Date.now() - cached.ts < 5000) {
     return cached.data;
   }
@@ -47,7 +54,12 @@ async function getCategoryData(categorySlug: string) {
     await dbConnect();
     const resolvedSlug = SLUG_ALIASES[cacheKey] || cacheKey;
     const categoryDoc = await Category.findOne({ 
-      $or: [{ slug: resolvedSlug }, { slug: categorySlug }] 
+      $or: [
+        { slug: resolvedSlug }, 
+        { slug: categorySlug },
+        { slug: decodedCategory },
+        { name: decodedCategory }
+      ] 
     }).lean();
     if (!categoryDoc) {
       dataCache.set(cacheKey, { data: null, ts: Date.now() });

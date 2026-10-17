@@ -5,11 +5,32 @@ import { Article } from '@/lib/db/models/Article';
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { slug } = await params;
+    let decodedSlug = slug;
+    try {
+      decodedSlug = decodeURIComponent(slug);
+    } catch {
+      decodedSlug = slug;
+    }
+
+    const slugVariants = Array.from(new Set([
+      slug,
+      decodedSlug,
+      decodedSlug.trim().replace(/\s+/g, '-'),
+      decodedSlug.trim().replace(/-/g, ' '),
+      slug.trim().replace(/\s+/g, '-'),
+    ])).filter(Boolean);
+
     await dbConnect();
     const article = await Article.findOneAndUpdate(
-      { slug, status: 'published' },
+      {
+        $or: [
+          { slug: { $in: slugVariants } },
+          { title: decodedSlug },
+        ],
+        status: 'published',
+      },
       { $inc: { views: 1 } },
-      { new: true }
+      { returnDocument: 'after' }
     ).populate('category', 'name slug color').lean();
 
     if (!article) {

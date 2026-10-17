@@ -36,6 +36,7 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
   const router = useRouter();
   const [title, setTitle] = useState(initialData?.title || '');
   const [slug, setSlug] = useState(initialData?.slug || '');
+  const [isSlugCustomized, setIsSlugCustomized] = useState(Boolean(initialData?.slug));
   const [subtitle, setSubtitle] = useState(initialData?.subtitle || '');
   const [coverImage, setCoverImage] = useState(initialData?.coverImage || '');
   const [content, setContent] = useState(initialData?.content || '');
@@ -74,17 +75,20 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
       .catch(console.error);
   }, []);
 
-  // Auto-generate slug if not manually edited
+  // Helper to generate clean slug allowing English and Hindi characters
+  const cleanSlug = (text: string) => {
+    return text
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9\u0900-\u097F]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
+  };
+
+  // Auto-generate slug continuously unless user has manually customized it
   const handleTitleChange = (val: string) => {
     setTitle(val);
-    if (!initialData && !slug) {
-      // Create slug allowing English or Devanagari or fallback timestamp
-      const generated = val
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9\u0900-\u097F]+/g, '-')
-        .replace(/(^-|-$)+/g, '');
-      setSlug(generated || `article-${Date.now().toString(36)}`);
+    if (!initialData && !isSlugCustomized) {
+      setSlug(cleanSlug(val));
     }
   };
 
@@ -128,11 +132,8 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
 
     setLoading(true);
 
-    const safeSlug = slug || title
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9\u0900-\u097F]+/g, '-')
-      .replace(/(^-|-$)+/g, '') || `news-${Date.now()}`;
+    const rawSlug = (slug || title).trim();
+    const safeSlug = cleanSlug(rawSlug) || `news-${Date.now().toString(36)}`;
 
     const tags = tagsInput
       .split(',')
@@ -315,7 +316,10 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
               <input
                 type="text"
                 value={slug}
-                onChange={(e) => setSlug(e.target.value)}
+                onChange={(e) => {
+                  setIsSlugCustomized(true);
+                  setSlug(e.target.value);
+                }}
                 placeholder="custom-article-slug"
                 className="w-full text-xs text-neutral-600 bg-neutral-50 border border-neutral-200 rounded-lg p-2 font-mono focus:outline-none focus:ring-1 focus:ring-red-500"
               />
