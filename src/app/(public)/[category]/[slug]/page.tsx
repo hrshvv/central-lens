@@ -8,6 +8,7 @@ import ShareButtons from '@/components/article/ShareButtons';
 import ReadingProgressBar from '@/components/article/ReadingProgressBar';
 import { Clock, Calendar, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { sanitizeHtml } from '@/lib/utils/sanitize';
+import { processScheduledPublish } from '@/lib/db/publishHelper';
 
 // Revalidate article pages every 120 seconds
 export const revalidate = 120;
@@ -30,6 +31,8 @@ async function getArticle(rawSlug: string) {
 
   try {
     await dbConnect();
+    await processScheduledPublish();
+
     const slugVariants = Array.from(new Set([
       rawSlug,
       decodedSlug,
@@ -38,15 +41,26 @@ async function getArticle(rawSlug: string) {
       rawSlug.trim().replace(/\s+/g, '-'),
     ])).filter(Boolean);
 
+    const now = new Date();
     const article = await Article.findOneAndUpdate(
       {
         $or: [
           { slug: { $in: slugVariants } },
           { title: decodedSlug },
         ],
-        status: 'published',
+        $and: [
+          {
+            $or: [
+              { status: 'published' },
+              { status: 'scheduled', scheduledAt: { $lte: now } },
+            ],
+          },
+        ],
       },
-      { $inc: { views: 1 } },
+      { 
+        $inc: { views: 1 },
+        $set: { status: 'published', publishedAt: now },
+      },
       { returnDocument: 'after' }
     )
       .populate('category', 'name slug color')

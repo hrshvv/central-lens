@@ -54,9 +54,13 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  const applyPreset = (hoursFromNow: number) => {
-    const target = new Date(Date.now() + hoursFromNow * 3600 * 1000);
+  const applyMinutesPreset = (minsFromNow: number) => {
+    const target = new Date(Date.now() + minsFromNow * 60 * 1000);
     setScheduledAt(formatDatetimeLocal(target));
+  };
+
+  const applyPreset = (hoursFromNow: number) => {
+    applyMinutesPreset(hoursFromNow * 60);
   };
 
   const applyTomorrow = (hour: number) => {
@@ -220,7 +224,7 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
               type="button"
               onClick={() => {
                 setStatus('scheduled');
-                if (!scheduledAt) applyPreset(2);
+                if (!scheduledAt) applyMinutesPreset(5);
               }}
               className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition whitespace-nowrap flex items-center space-x-1 cursor-pointer ${
                 status === 'scheduled'
@@ -386,7 +390,7 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
                   type="button"
                   onClick={() => {
                     setStatus('scheduled');
-                    if (!scheduledAt) applyPreset(2);
+                    if (!scheduledAt) applyMinutesPreset(5);
                   }}
                   className={`w-full p-3 rounded-xl border text-left transition-all flex items-start space-x-3 cursor-pointer ${
                     status === 'scheduled'
@@ -458,6 +462,20 @@ export default function ArticleEditor({ initialData = null }: { initialData?: an
                     त्वरित विकल्प (Presets):
                   </span>
                   <div className="grid grid-cols-2 gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => applyMinutesPreset(5)}
+                      className="px-2 py-1.5 text-[11px] font-semibold bg-white hover:bg-neutral-100 text-red-600 border border-red-200 rounded-lg transition text-center cursor-pointer shadow-2xs font-bold"
+                    >
+                      ⚡ 5 मिनट बाद
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyMinutesPreset(15)}
+                      className="px-2 py-1.5 text-[11px] font-semibold bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200 rounded-lg transition text-center cursor-pointer shadow-2xs"
+                    >
+                      15 मिनट बाद
+                    </button>
                     <button
                       type="button"
                       onClick={() => applyPreset(1)}
