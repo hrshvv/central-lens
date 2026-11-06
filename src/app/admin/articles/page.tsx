@@ -38,13 +38,36 @@ export default function AdminArticles() {
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   };
 
+  const formatDisplayDateTime = (dateStr?: string | Date | null) => {
+    if (!dateStr) return null;
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return null;
+
+    const dateFormatted = d.toLocaleDateString('hi-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+
+    const timeFormatted = d.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    }).toLowerCase();
+
+    return {
+      date: dateFormatted,
+      time: timeFormatted,
+    };
+  };
+
   const openScheduleModal = (article: any) => {
     setScheduleModalArticle(article);
     if (article.scheduledAt) {
       setQuickScheduleTime(formatDatetimeLocal(article.scheduledAt));
     } else {
-      const d = new Date(Date.now() + 5 * 60 * 1000);
-      setQuickScheduleTime(formatDatetimeLocal(d));
+      const fiveMinsLater = new Date(new Date().getTime() + 5 * 60 * 1000);
+      setQuickScheduleTime(formatDatetimeLocal(fiveMinsLater));
     }
   };
 
@@ -369,13 +392,45 @@ export default function AdminArticles() {
                         <Eye size={12} />
                         <span>{article.views || 0}</span>
                       </span>
-                      <span>
-                        {new Date(article.createdAt).toLocaleDateString('hi-IN', {
-                          month: 'short',
-                          day: 'numeric',
-                        })}
+                    </div>
+                  </div>
+
+                  {/* Dates on Mobile */}
+                  <div className="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-neutral-100 font-sans">
+                    <div className="flex flex-col text-neutral-600">
+                      <span className="text-[10px] uppercase font-bold text-neutral-400 font-devanagari flex items-center space-x-1">
+                        <Calendar size={10} className="text-neutral-400" />
+                        <span>अपलोड दिनांक</span>
+                      </span>
+                      <span className="font-semibold text-neutral-800 mt-0.5">
+                        {formatDisplayDateTime(article.createdAt)?.date || '—'}
+                      </span>
+                      <span className="text-[10px] text-neutral-400 font-mono">
+                        {formatDisplayDateTime(article.createdAt)?.time || ''}
                       </span>
                     </div>
+
+                    {article.status === 'scheduled' && article.scheduledAt ? (
+                      <div className="flex flex-col text-neutral-700">
+                        <span className="text-[10px] uppercase font-bold text-amber-600 font-devanagari flex items-center space-x-1">
+                          <Clock size={10} className="text-amber-500" />
+                          <span>शेड्यूल दिनांक</span>
+                        </span>
+                        <span className="font-bold text-neutral-900 mt-0.5">
+                          {formatDisplayDateTime(article.scheduledAt)?.date}
+                        </span>
+                        <span className="text-[10px] text-amber-600 font-mono font-semibold">
+                          {formatDisplayDateTime(article.scheduledAt)?.time}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col text-neutral-400">
+                        <span className="text-[10px] uppercase font-bold text-neutral-400 font-devanagari">
+                          शेड्यूल
+                        </span>
+                        <span className="font-mono text-neutral-400 mt-0.5">—</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex items-center justify-end space-x-2 pt-1">
@@ -411,25 +466,29 @@ export default function AdminArticles() {
         {/* Desktop Table View (>= md) */}
         {!loading && filteredArticles.length > 0 && (
           <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-left min-w-[720px]">
+            <table className="w-full text-left min-w-[960px]">
               <thead>
                 <tr className="bg-neutral-50/80 text-neutral-500 text-xs uppercase tracking-wider border-b border-neutral-100">
-                  <th className="py-4 px-6 font-semibold">लेख (Article)</th>
-                  {isOwner && <th className="py-4 px-6 font-semibold">लेखक / एडमिन</th>}
-                  <th className="py-4 px-6 font-semibold">राज्य</th>
-                  <th className="py-4 px-6 font-semibold">स्थिति (Status)</th>
-                  <th className="py-4 px-6 font-semibold">व्यूज</th>
-                  <th className="py-4 px-6 font-semibold">दिनांक</th>
-                  <th className="py-4 px-6 font-semibold text-right">कार्रवाई</th>
+                  <th className="py-4 px-5 font-semibold">लेख (Article)</th>
+                  {isOwner && <th className="py-4 px-4 font-semibold">लेखक / एडमिन</th>}
+                  <th className="py-4 px-4 font-semibold">राज्य</th>
+                  <th className="py-4 px-4 font-semibold">स्थिति (Status)</th>
+                  <th className="py-4 px-4 font-semibold">अपलोड दिनांक</th>
+                  <th className="py-4 px-4 font-semibold">शेड्यूल दिनांक</th>
+                  <th className="py-4 px-4 font-semibold">व्यूज</th>
+                  <th className="py-4 px-5 font-semibold text-right">कार्रवाई</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 text-sm">
                 {filteredArticles.map((article: any) => {
                   const catSlug = article.category?.slug || 'news';
+                  const uploadInfo = formatDisplayDateTime(article.createdAt);
+                  const schedInfo = article.scheduledAt ? formatDisplayDateTime(article.scheduledAt) : null;
+
                   return (
                     <tr key={article._id} className="hover:bg-neutral-50/60 transition-colors">
                       {/* Title & Cover */}
-                      <td className="py-4 px-6 max-w-sm sm:max-w-md">
+                      <td className="py-4 px-5 max-w-xs sm:max-w-sm">
                         <div className="flex items-center space-x-3.5">
                           <div className="w-12 h-12 rounded-xl bg-neutral-100 overflow-hidden flex-shrink-0 border border-neutral-200/60">
                             {article.coverImage ? (
@@ -459,7 +518,7 @@ export default function AdminArticles() {
 
                       {/* Author Column if Owner */}
                       {isOwner && (
-                        <td className="py-4 px-6">
+                        <td className="py-4 px-4">
                           <div className="flex flex-col">
                             <span className="font-bold text-neutral-900 text-xs">
                               {article.createdBy?.name || article.author?.name || 'अज्ञात'}
@@ -474,43 +533,31 @@ export default function AdminArticles() {
                       )}
 
                       {/* Category */}
-                      <td className="py-4 px-6">
+                      <td className="py-4 px-4">
                         <span className="inline-block px-2.5 py-1 rounded-md text-xs font-semibold bg-neutral-100 text-neutral-700 font-devanagari">
                           {article.category?.name || 'सामान्य'}
                         </span>
                       </td>
 
-                      {/* Status Toggle Button */}
-                      <td className="py-4 px-6">
+                      {/* Status Column */}
+                      <td className="py-4 px-4">
                         {article.status === 'scheduled' ? (
-                          <div className="flex flex-col items-start gap-1">
-                            <div className="flex items-center gap-1.5">
-                              <button 
-                                onClick={() => openScheduleModal(article)}
-                                className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wider transition-colors border bg-neutral-100 text-neutral-700 border-neutral-200 hover:bg-neutral-200 cursor-pointer"
-                                title="शेड्यूल बदलने के लिए क्लिक करें"
-                              >
-                                <Clock size={13} className="text-neutral-500 flex-shrink-0" />
-                                <span>शेड्यूल</span>
-                              </button>
-                              <button
-                                onClick={() => handlePublishImmediately(article)}
-                                className="px-2 py-0.5 text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-600 hover:text-white rounded-full transition cursor-pointer"
-                                title="बिना प्रतीक्षा किए अभी तुरंत लाइव करें"
-                              >
-                                🟢 लाइव करें
-                              </button>
-                            </div>
-                            {article.scheduledAt && (
-                              <span className="text-[10px] text-neutral-500 font-mono font-medium pl-1">
-                                {new Date(article.scheduledAt).toLocaleDateString('hi-IN', {
-                                  month: 'short',
-                                  day: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })}
-                              </span>
-                            )}
+                          <div className="flex items-center gap-1.5">
+                            <button 
+                              onClick={() => openScheduleModal(article)}
+                              className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wider transition-colors border bg-neutral-100 text-neutral-700 border-neutral-200 hover:bg-neutral-200 cursor-pointer"
+                              title="शेड्यूल बदलने के लिए क्लिक करें"
+                            >
+                              <Clock size={13} className="text-neutral-500 flex-shrink-0" />
+                              <span>शेड्यूल</span>
+                            </button>
+                            <button
+                              onClick={() => handlePublishImmediately(article)}
+                              className="px-2 py-0.5 text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-600 hover:text-white rounded-full transition cursor-pointer"
+                              title="बिना प्रतीक्षा किए अभी तुरंत लाइव करें"
+                            >
+                              🟢 लाइव करें
+                            </button>
                           </div>
                         ) : (
                           <button 
@@ -528,25 +575,54 @@ export default function AdminArticles() {
                         )}
                       </td>
 
+                      {/* Uploaded Date */}
+                      <td className="py-4 px-4 text-xs text-neutral-600 font-sans">
+                        {uploadInfo ? (
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-neutral-800 text-xs flex items-center space-x-1">
+                              <Calendar size={12} className="text-neutral-400 flex-shrink-0" />
+                              <span>{uploadInfo.date}</span>
+                            </span>
+                            <span className="text-[11px] text-neutral-400 font-mono pl-4">
+                              {uploadInfo.time}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-neutral-400 font-mono">—</span>
+                        )}
+                      </td>
+
+                      {/* Scheduled Date */}
+                      <td className="py-4 px-4 text-xs font-sans">
+                        {article.status === 'scheduled' && schedInfo ? (
+                          <button
+                            onClick={() => openScheduleModal(article)}
+                            className="flex flex-col text-left group cursor-pointer hover:opacity-80 transition"
+                            title="शेड्यूल बदलने के लिए क्लिक करें"
+                          >
+                            <span className="font-semibold text-neutral-900 group-hover:text-red-600 text-xs flex items-center space-x-1">
+                              <Clock size={12} className="text-amber-500 group-hover:text-red-600 flex-shrink-0" />
+                              <span>{schedInfo.date}</span>
+                            </span>
+                            <span className="text-[11px] text-amber-700 font-mono pl-4 font-semibold">
+                              {schedInfo.time}
+                            </span>
+                          </button>
+                        ) : (
+                          <span className="text-neutral-400 font-mono pl-1">—</span>
+                        )}
+                      </td>
+
                       {/* Views */}
-                      <td className="py-4 px-6 text-xs text-neutral-600 font-sans">
+                      <td className="py-4 px-4 text-xs text-neutral-600 font-sans">
                         <span className="flex items-center space-x-1">
                           <Eye size={13} className="text-neutral-400" />
                           <span>{article.views || 0}</span>
                         </span>
                       </td>
 
-                      {/* Date */}
-                      <td className="py-4 px-6 text-xs text-neutral-500 font-sans">
-                        {new Date(article.createdAt).toLocaleDateString('hi-IN', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })}
-                      </td>
-
                       {/* Actions */}
-                      <td className="py-4 px-6 text-right">
+                      <td className="py-4 px-5 text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <button 
                             onClick={() => openScheduleModal(article)}
